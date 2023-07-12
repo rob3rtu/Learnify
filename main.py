@@ -41,12 +41,6 @@ white_pieces_images = [white_bishop, white_king,
 black_pieces_images = [black_bishop, black_king,
                        black_knight, black_queen, black_rook, black_pawn]
 
-# for i, j in zip(range(len(white_pieces_images)), range(len(black_pieces_images))):
-#     white_pieces_images[i] = pygame.transform.scale(
-#         white_pieces_images[i], (80, 80))
-#     black_pieces_images[j] = pygame.transform.scale(
-#         black_pieces_images[j], (80, 80))
-
 pieces = ['b', 'k', 'n', 'q', 'r', 'p']
 
 DARK_SQUARE_COLOR = "#7C9EB3"
@@ -77,7 +71,7 @@ def draw_table():
 
 
 def draw_pieces():
-    PADDING = 10
+    PADDING = 5
     for i, white_piece in enumerate(white_pieces):
         existing_piece = pieces.index(white_piece)
 
