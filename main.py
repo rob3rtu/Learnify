@@ -64,8 +64,8 @@ white_can_passant = False
 # global black_can_passant
 black_can_passant = False
 
-black_pos_passant = ()
-white_pos_passant = ()
+black_pos_passant = (99, 99)
+white_pos_passant = (99, 99)
 
 
 def draw_table():
@@ -144,7 +144,7 @@ def get_pawn_moves(pos, turn):
         if (x, y - 2) not in white_positions and (x, y - 2) not in black_positions and y == 6:
             moves.append((x, y - 2))
             black_can_passant = True
-            white_pos_passant = (x, y - 2)
+            # white_pos_passant = (x, y - 2)
 
         if (x + 1, y - 1) in black_positions:
             moves.append((x + 1, y - 1))
@@ -153,11 +153,11 @@ def get_pawn_moves(pos, turn):
             moves.append((x - 1, y - 1))
 
         # en passant, the special move
-        # if white_can_passant:
-        #     if black_pos_passant[0] == x + 1 and black_pos_passant[1] == y:
-        #         moves.append((x + 1, y - 1))
-        #     if black_pos_passant[0] == x - 1 and black_pos_passant[1] == y:
-        #         moves.append((x - 1, y - 1))
+        if white_can_passant:
+            if black_pos_passant[0] == x + 1 and black_pos_passant[1] == y:
+                moves.append((x + 1, y - 1))
+            if black_pos_passant[0] == x - 1 and black_pos_passant[1] == y:
+                moves.append((x - 1, y - 1))
 
     if turn == 'black':
         x, y = pos
@@ -168,7 +168,7 @@ def get_pawn_moves(pos, turn):
         if (x, y + 2) not in white_positions and (x, y + 2) not in black_positions and y == 1:
             moves.append((x, y + 2))
             white_can_passant = True
-            black_pos_passant = (x, y - 2)
+            # black_pos_passant = (x, y + 2)
 
         if (x + 1, y + 1) in white_positions:
             moves.append((x + 1, y + 1))
@@ -177,11 +177,11 @@ def get_pawn_moves(pos, turn):
             moves.append((x - 1, y + 1))
 
         # en passant, the special move
-        # if black_can_passant:
-        #     if white_pos_passant[0] == x + 1 and white_pos_passant[1] == y:
-        #         moves.append((x + 1, y + 1))
-        #     if white_pos_passant[0] == x - 1 and white_pos_passant[1] == y:
-        #         moves.append((x - 1, y + 1))
+        if black_can_passant:
+            if white_pos_passant[0] == x + 1 and white_pos_passant[1] == y:
+                moves.append((x + 1, y + 1))
+            if white_pos_passant[0] == x - 1 and white_pos_passant[1] == y:
+                moves.append((x - 1, y + 1))
 
     return moves
 
@@ -240,14 +240,20 @@ while isRunning:
                     turn = 1 if turn == 0 else turn
 
                 if (x, y) in valid_moves and selected_piece != 99:
-                    # if white_pieces[selected_piece] == 'p' and white_positions[selected_piece][0] == x and white_positions[selected_piece][1] - 2 == y:
-                    #     black_can_passant = True
-                    #     white_pos_passant = (x, y)
+                    if white_pieces[selected_piece] == 'p' and white_positions[selected_piece][0] == x and white_positions[selected_piece][1] - 2 == y:
+                        black_can_passant = True
+                        white_pos_passant = (x, y)
 
                     white_positions[selected_piece] = (x, y)
 
                     if (x, y) in black_positions:
                         black_piece_index = black_positions.index((x, y))
+                        captured_by_white.append(
+                            black_pieces[black_piece_index])
+                        black_pieces.pop(black_piece_index)
+                        black_positions.pop(black_piece_index)
+                    elif white_can_passant and (x, y + 1) == black_pos_passant:
+                        black_piece_index = black_positions.index((x, y + 1))
                         captured_by_white.append(
                             black_pieces[black_piece_index])
                         black_pieces.pop(black_piece_index)
@@ -261,7 +267,7 @@ while isRunning:
                     turn = 2
                     selected_piece = 99
                     valid_moves = []
-                    # white_can_passant = False
+                    white_can_passant = False
 
             if turn >= 2:
                 if (x, y) not in black_positions and (x, y) not in valid_moves:
@@ -272,14 +278,20 @@ while isRunning:
                     turn = 3 if turn == 2 else turn
 
                 if (x, y) in valid_moves and selected_piece != 99:
-                    # if black_pieces[selected_piece] == 'p' and black_positions[selected_piece][0] == x and black_positions[selected_piece][1] + 2 == y:
-                    #     white_can_passant = True
-                    #     black_pos_passant = (x, y)
+                    if black_pieces[selected_piece] == 'p' and black_positions[selected_piece][0] == x and black_positions[selected_piece][1] + 2 == y:
+                        white_can_passant = True
+                        black_pos_passant = (x, y)
 
                     black_positions[selected_piece] = (x, y)
 
                     if (x, y) in white_positions:
                         white_piece_index = white_positions.index((x, y))
+                        captured_by_black.append(
+                            white_pieces[white_piece_index])
+                        white_pieces.pop(white_piece_index)
+                        white_positions.pop(white_piece_index)
+                    elif black_can_passant and (x, y - 1) == white_pos_passant:
+                        white_piece_index = white_positions.index((x, y - 1))
                         captured_by_black.append(
                             white_pieces[white_piece_index])
                         white_pieces.pop(white_piece_index)
@@ -293,7 +305,7 @@ while isRunning:
                     turn = 0
                     selected_piece = 99
                     valid_moves = []
-                    # black_can_passant = False
+                    black_can_passant = False
 
     pygame.display.flip()
 pygame.quit()
