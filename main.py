@@ -115,17 +115,99 @@ def get_options(pieces, positions, turn):
             piece_moves = get_pawn_moves(pos, turn)
         elif piece == 'r':
             piece_moves = get_rook_moves(pos, turn)
-        # elif piece == 'n':
-        #     piece_moves = get_knight_moves(pos, turn)
-        # elif piece == 'b':
-        #     piece_moves = get_bishop_moves(pos, turn)
-        # elif piece == 'q':
-        #     piece_moves = get_queen_moves(pos, turn)
-        # elif piece == 'k':
-        #     piece_moves = get_king_moves(pos, turn)
+        elif piece == 'n':
+            piece_moves = get_knight_moves(pos, turn)
+        elif piece == 'b':
+            piece_moves = get_bishop_moves(pos, turn)
+        elif piece == 'q':
+            piece_moves = get_queen_moves(pos, turn)
+        elif piece == 'k':
+            piece_moves = get_king_moves(pos, turn)
 
         all_pieces_moves.append(piece_moves)
     return all_pieces_moves
+
+
+def get_king_moves(pos, turn):
+    moves = []
+    directions = [(0, -1), (1, -1), (1, 0), (1, 1),
+                  (0, 1), (-1, 1), (-1, 0), (-1, -1)]
+
+    if turn == 'white':
+        friends = white_positions
+        enemies = black_positions
+    else:
+        friends = black_positions
+        enemies = white_positions
+
+    for d in directions:
+        x, y = pos
+        x += d[0]
+        y += d[1]
+
+        if 0 <= x <= 7 and 0 <= y <= 7 and (x, y) not in friends:
+            moves.append((x, y))
+
+    return moves
+
+
+def get_queen_moves(pos, turn):
+    moves = []
+
+    diagonal_moves = get_bishop_moves(pos, turn)
+    line_moves = get_rook_moves(pos, turn)
+
+    moves = [*diagonal_moves, *line_moves]
+
+    return moves
+
+
+def get_bishop_moves(pos, turn):
+    moves = []
+    directions = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
+
+    if turn == 'white':
+        friends = white_positions
+        enemies = black_positions
+    else:
+        friends = black_positions
+        enemies = white_positions
+
+    for d in directions:
+        x, y = pos
+        x += d[0]
+        y += d[1]
+
+        while 0 <= x <= 7 and 0 <= y <= 7 and (x, y) not in friends and (x, y) not in enemies:
+            moves.append((x, y))
+            x += d[0]
+            y += d[1]
+        if (x, y) in enemies:
+            moves.append((x, y))
+
+    return moves
+
+
+def get_knight_moves(pos, turn):
+    moves = []
+
+    if turn == 'white':
+        friends = white_positions
+    else:
+        friends = black_positions
+
+    directions = [(1, -2), (1, 2), (-1, -2), (-1, 2),
+                  (2, -1), (2, 1), (-2, -1), (-2, 1)]
+
+    for d in directions:
+        x, y = pos
+        x += d[0]
+        y += d[1]
+
+        if 0 <= x <= 7 and 0 <= y <= 7 and (x, y) not in friends:
+            moves.append((x, y))
+
+    return moves
 
 
 def get_rook_moves(pos, turn):
