@@ -99,7 +99,7 @@ def draw_pieces():
         existing_piece = pieces.index(black_piece)
 
         if i == selected_piece and turn >= 2:
-            pygame.draw.rect(screen, 'red',
+            pygame.draw.rect(screen, 'blue',
                              (black_positions[i][0] * 100 + 1, black_positions[i][1] * 100 + 1, 100, 100), 5)
 
         screen.blit(black_pieces_images[existing_piece],
@@ -302,7 +302,7 @@ def draw_valid_moves(moves):
     if turn < 2:
         color = 'green'
     else:
-        color = 'red'
+        color = 'blue'
 
     for move in moves:
         pygame.draw.circle(
@@ -318,6 +318,26 @@ def get_valid_moves():
 
     valid_options = options[selected_piece]
     return valid_options
+
+
+def draw_check():
+    if turn < 2:
+        king_index = white_pieces.index('k')
+        king_location = white_positions[king_index]
+
+        for moves in black_options:
+            if king_location in moves:
+                pygame.draw.rect(
+                    screen, 'red', (king_location[0] * 100 + 1, king_location[1] * 100 + 1, 100, 100), 5)
+
+    if turn >= 2:
+        king_index = black_pieces.index('k')
+        king_location = black_positions[king_index]
+
+        for moves in white_options:
+            if king_location in moves:
+                pygame.draw.rect(
+                    screen, 'red', (king_location[0] * 100 + 1, king_location[1] * 100 + 1, 100, 100), 5)
 
 
 def highlight_last_move(last_move):
@@ -336,6 +356,7 @@ while isRunning:
 
     draw_table()
     draw_pieces()
+    draw_check()
 
     if selected_piece != 99:
         valid_moves = get_valid_moves()
