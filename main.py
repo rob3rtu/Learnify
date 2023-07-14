@@ -251,7 +251,7 @@ def get_pawn_moves(pos, turn):
         if (x, y - 1) not in white_positions and (x, y - 1) not in black_positions and y - 1 >= 0:
             moves.append((x, y - 1))
 
-        if (x, y - 2) not in white_positions and (x, y - 2) not in black_positions and y == 6:
+        if (x, y - 2) not in white_positions and (x, y - 2) not in black_positions and (x, y - 1) not in white_positions and (x, y - 1) not in black_positions and y == 6:
             moves.append((x, y - 2))
             black_can_passant = True
             # white_pos_passant = (x, y - 2)
@@ -275,7 +275,7 @@ def get_pawn_moves(pos, turn):
         if (x, y + 1) not in white_positions and (x, y + 1) not in black_positions and y + 1 < 8:
             moves.append((x, y + 1))
 
-        if (x, y + 2) not in white_positions and (x, y + 2) not in black_positions and y == 1:
+        if (x, y + 2) not in white_positions and (x, y + 2) not in black_positions and (x, y + 1) not in white_positions and (x, y + 1) not in black_positions and y == 1:
             moves.append((x, y + 2))
             white_can_passant = True
             # black_pos_passant = (x, y + 2)
