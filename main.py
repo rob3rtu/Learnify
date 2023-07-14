@@ -45,7 +45,8 @@ pieces = ['b', 'k', 'n', 'q', 'r', 'p']
 
 DARK_SQUARE_COLOR = "#7C9EB3"
 LIGHT_SQUARE_COLOR = "#D6E1E6"
-SELECTED_SQUARE_COLOR = 'green'  # '#8CDBEA'
+SELECTED_SQUARE_COLOR = 'green'
+LAST_MOVE_HIGHLIGHT = '#8CDBEA'
 
 
 # 0 -> white turn
@@ -57,6 +58,7 @@ selected_piece = 99
 valid_moves = []
 captured_by_white = []
 captured_by_black = []
+last_move = []
 
 # global white_can_passant
 white_can_passant = False
@@ -318,6 +320,12 @@ def get_valid_moves():
     return valid_options
 
 
+def highlight_last_move(last_move):
+    for pos in last_move:
+        pygame.draw.rect(screen, LAST_MOVE_HIGHLIGHT,
+                         (pos[0] * 100 + 1, pos[1] * 100 + 1, 100, 100), 5)
+
+
 white_options = get_options(white_pieces, white_positions, 'white')
 black_options = get_options(black_pieces, black_positions, 'black')
 
@@ -332,6 +340,9 @@ while isRunning:
     if selected_piece != 99:
         valid_moves = get_valid_moves()
         draw_valid_moves(valid_moves)
+
+    if len(last_move) > 0:
+        highlight_last_move(last_move)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -353,6 +364,9 @@ while isRunning:
                     if white_pieces[selected_piece] == 'p' and white_positions[selected_piece][0] == x and white_positions[selected_piece][1] - 2 == y:
                         black_can_passant = True
                         white_pos_passant = (x, y)
+
+                    last_move = [(white_positions[selected_piece][0],
+                                  white_positions[selected_piece][1]), (x, y)]
 
                     white_positions[selected_piece] = (x, y)
 
@@ -391,6 +405,9 @@ while isRunning:
                     if black_pieces[selected_piece] == 'p' and black_positions[selected_piece][0] == x and black_positions[selected_piece][1] + 2 == y:
                         white_can_passant = True
                         black_pos_passant = (x, y)
+
+                    last_move = [(black_positions[selected_piece][0],
+                                  black_positions[selected_piece][1]), (x, y)]
 
                     black_positions[selected_piece] = (x, y)
 
