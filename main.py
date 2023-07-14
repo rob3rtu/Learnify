@@ -113,8 +113,8 @@ def get_options(pieces, positions, turn):
     for piece, pos in zip(pieces, positions):
         if piece == 'p':
             piece_moves = get_pawn_moves(pos, turn)
-        # elif piece == 'r':
-        #     piece_moves = get_rook_moves(pos, turn)
+        elif piece == 'r':
+            piece_moves = get_rook_moves(pos, turn)
         # elif piece == 'n':
         #     piece_moves = get_knight_moves(pos, turn)
         # elif piece == 'b':
@@ -126,6 +126,34 @@ def get_options(pieces, positions, turn):
 
         all_pieces_moves.append(piece_moves)
     return all_pieces_moves
+
+
+def get_rook_moves(pos, turn):
+    moves = []
+
+    # N, E, S, W
+    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
+
+    if turn == 'white':
+        friends = white_positions
+        enemies = black_positions
+    else:
+        friends = black_positions
+        enemies = white_positions
+
+    for d in directions:
+        x, y = pos
+        x += d[0]
+        y += d[1]
+
+        while 0 <= x <= 7 and 0 <= y <= 7 and (x, y) not in friends and (x, y) not in enemies:
+            moves.append((x, y))
+            x += d[0]
+            y += d[1]
+        if (x, y) in enemies:
+            moves.append((x, y))
+
+    return moves
 
 
 def get_pawn_moves(pos, turn):
