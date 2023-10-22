@@ -7,14 +7,39 @@ import {
   IconButton,
   Divider,
   AbsoluteCenter,
+  useToast,
 } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import LoginSVG from "../../assets/login.svg";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Google } from "../../assets/customChakraIcons/Google";
 import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
+import { sendSignInLinkToEmail } from "firebase/auth";
+import { useState } from "react";
+import { auth } from "../../firebase-config";
 
 export const Login = () => {
+  const [email, setEmail] = useState<string>("");
+  const [checkEmail, setCheckEmail] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+  const toast = useToast();
+
+  if (checkEmail) {
+    return (
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        bg={colors.black}
+        height="100vh"
+      >
+        <Text color={colors.white}>
+          Check your email for a confirmation link.
+        </Text>
+      </Flex>
+    );
+  }
+
   return (
     <Flex
       direction="column"
@@ -52,6 +77,14 @@ export const Login = () => {
             placeholder="Email"
             marginRight={10}
             color={colors.white}
+            value={email}
+            borderColor={error ? "red" : ""}
+            onChange={(e) => {
+              if (e.target.value !== "") {
+                setError(false);
+              }
+              setEmail(e.target.value);
+            }}
           />
           <IconButton
             isRound={true}
@@ -60,6 +93,30 @@ export const Login = () => {
             aria-label="email login"
             fontSize="20px"
             icon={<ChevronRightIcon />}
+            onClick={() => {
+              if (email === "") {
+                setError(true);
+                toast({
+                  title: "Error!",
+                  description: "You must provide an email.",
+                  status: "error",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              } else {
+                sendSignInLinkToEmail(auth, email, {
+                  url: "http://localhost:3000/confirm-email",
+                  handleCodeInApp: true,
+                })
+                  .then(() => {
+                    localStorage.setItem("userEmail", email);
+                    setCheckEmail(true);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }
+            }}
           />
         </Flex>
 

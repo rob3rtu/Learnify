@@ -2,27 +2,39 @@ import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Login } from "./components/Login";
 import { NotFound } from "./components/NotFound";
-import { initializeApp } from "firebase/app";
-
-export const firebaseConfig = {
-  apiKey: "AIzaSyB6mTEwhaWLK0od7nz3Q8HkmfJFld7O8UU",
-  authDomain: "licenta-fmi.firebaseapp.com",
-  projectId: "licenta-fmi",
-  storageBucket: "licenta-fmi.appspot.com",
-  messagingSenderId: "1041916442718",
-  appId: "1:1041916442718:web:b205ced93335b8b6cb9ccf",
-};
-
-// Initialize Firebase
-// const app = initializeApp(firebaseConfig);
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./Store";
+import { Home } from "./components/Home";
+import { ConfirmEmail } from "./components/Login/ConfirmEmail";
+import { useEffect } from "react";
 
 function App() {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.account);
+
+  useEffect(() => {
+    if (!localStorage.getItem("uid")) {
+      dispatch({ type: "login/setAccount", payload: null });
+    } else {
+      dispatch({ type: "login/setAccount", payload: { lala: "test" } });
+    }
+  }, []);
+
   return (
     <BrowserRouter>
-      <Routes>
-        <Route index element={<Login />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      {user ? (
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/confirm-email" element={<ConfirmEmail />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      )}
     </BrowserRouter>
   );
 }
