@@ -18,6 +18,7 @@ function App() {
     } else {
       dispatch({ type: "login/setAccount", payload: { lala: "test" } });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

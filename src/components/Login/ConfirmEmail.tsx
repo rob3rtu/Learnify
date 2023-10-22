@@ -3,9 +3,8 @@ import { colors } from "../../theme";
 import { useEffect } from "react";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { auth } from "../../firebase-config";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RootState } from "../../Store";
 
 export const ConfirmEmail = () => {
   const dispatch = useDispatch();
@@ -39,10 +38,12 @@ export const ConfirmEmail = () => {
           console.log(err);
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     nav("/");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
 
   return (
