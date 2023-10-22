@@ -14,11 +14,7 @@ import LoginSVG from "../../assets/login.svg";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Google } from "../../assets/customChakraIcons/Google";
 import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
-import {
-  OAuthProvider,
-  sendSignInLinkToEmail,
-  signInWithPopup,
-} from "firebase/auth";
+import { sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
 import MSprovider, { auth } from "../../firebase-config";
 import { useDispatch } from "react-redux";
