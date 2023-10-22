@@ -1,9 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { AccountInterface } from "./types";
 
 type SliceState = {
   error: string;
   loading: boolean;
-  account?: any;
+  account: AccountInterface | null;
 };
 
 const initialState = {
@@ -23,7 +24,7 @@ export const loginSlice = createSlice({
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
     },
-    setAccount: (state, action: PayloadAction<any | null>) => {
+    setAccount: (state, action: PayloadAction<AccountInterface | null>) => {
       state.account = action.payload;
     },
   },

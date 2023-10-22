@@ -14,11 +14,17 @@ import LoginSVG from "../../assets/login.svg";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Google } from "../../assets/customChakraIcons/Google";
 import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
-import { sendSignInLinkToEmail } from "firebase/auth";
+import {
+  OAuthProvider,
+  sendSignInLinkToEmail,
+  signInWithPopup,
+} from "firebase/auth";
 import { useState } from "react";
-import { auth } from "../../firebase-config";
+import MSprovider, { auth } from "../../firebase-config";
+import { useDispatch } from "react-redux";
 
 export const Login = () => {
+  const dispatch = useDispatch();
   const [email, setEmail] = useState<string>("");
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -151,6 +157,24 @@ export const Login = () => {
             aria-label="microsoft login"
             fontSize="20px"
             icon={<Microsoft />}
+            onClick={() => {
+              signInWithPopup(auth, MSprovider)
+                .then((res) => {
+                  dispatch({
+                    type: "login/setAccount",
+                    payload: {
+                      email: res.user.email,
+                      fullName: res.user.displayName,
+                      uid: res.user.uid,
+                    },
+                  });
+                  localStorage.setItem("uid", res.user.uid);
+                })
+                .catch((err) => {
+                  console.log("Microsoft login error:");
+                  console.log(err);
+                });
+            }}
           />
         </Flex>
       </Flex>

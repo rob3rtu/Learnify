@@ -27,7 +27,7 @@ export const ConfirmEmail = () => {
             type: "login/setAccount",
             payload: {
               email: res.user.email,
-              name: res.user.displayName,
+              fullName: res.user.displayName,
               uid: res.user.uid,
             },
           });

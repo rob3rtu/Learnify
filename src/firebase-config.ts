@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { OAuthProvider } from "firebase/auth";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyB6mTEwhaWLK0od7nz3Q8HkmfJFld7O8UU",
@@ -10,5 +11,11 @@ export const firebaseConfig = {
   appId: "1:1041916442718:web:b205ced93335b8b6cb9ccf",
 };
 
+//for email auth
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+//for microsoft auth
+const MSprovider = new OAuthProvider("microsoft.com");
+
+export default MSprovider;
