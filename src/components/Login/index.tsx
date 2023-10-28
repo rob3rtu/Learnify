@@ -12,7 +12,6 @@ import {
 import { colors } from "../../theme";
 import LoginSVG from "../../assets/login.svg";
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { Google } from "../../assets/customChakraIcons/Google";
 import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
 import { sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
@@ -25,6 +24,50 @@ export const Login = () => {
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const toast = useToast();
+
+  const handleMicrosoftLogin = () => {
+    signInWithPopup(auth, MSprovider)
+      .then((res) => {
+        dispatch({
+          type: "login/setAccount",
+          payload: {
+            email: res.user.email,
+            fullName: res.user.displayName,
+            uid: res.user.uid,
+          },
+        });
+        localStorage.setItem("uid", res.user.uid);
+      })
+      .catch((err) => {
+        console.log("Microsoft login error:");
+        console.log(err);
+      });
+  };
+
+  const handleEmailLogin = () => {
+    if (email === "") {
+      setError(true);
+      toast({
+        title: "Error!",
+        description: "You must provide an email.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } else {
+      sendSignInLinkToEmail(auth, email, {
+        url: "http://localhost:3000/confirm-email",
+        handleCodeInApp: true,
+      })
+        .then(() => {
+          localStorage.setItem("userEmail", email);
+          setCheckEmail(true);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
 
   if (checkEmail) {
     return (
@@ -95,30 +138,7 @@ export const Login = () => {
             aria-label="email login"
             fontSize="20px"
             icon={<ChevronRightIcon />}
-            onClick={() => {
-              if (email === "") {
-                setError(true);
-                toast({
-                  title: "Error!",
-                  description: "You must provide an email.",
-                  status: "error",
-                  duration: 5000,
-                  isClosable: true,
-                });
-              } else {
-                sendSignInLinkToEmail(auth, email, {
-                  url: "http://localhost:3000/confirm-email",
-                  handleCodeInApp: true,
-                })
-                  .then(() => {
-                    localStorage.setItem("userEmail", email);
-                    setCheckEmail(true);
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-              }
-            }}
+            onClick={handleEmailLogin}
           />
         </Flex>
 
@@ -138,39 +158,15 @@ export const Login = () => {
           marginTop={10}
           width={32}
           alignItems="center"
-          justifyContent="space-between"
+          justifyContent="center"
         >
-          <IconButton
-            isRound
-            variant="outline"
-            aria-label="google login"
-            fontSize="20px"
-            icon={<Google />}
-          />
           <IconButton
             isRound
             variant="outline"
             aria-label="microsoft login"
             fontSize="20px"
             icon={<Microsoft />}
-            onClick={() => {
-              signInWithPopup(auth, MSprovider)
-                .then((res) => {
-                  dispatch({
-                    type: "login/setAccount",
-                    payload: {
-                      email: res.user.email,
-                      fullName: res.user.displayName,
-                      uid: res.user.uid,
-                    },
-                  });
-                  localStorage.setItem("uid", res.user.uid);
-                })
-                .catch((err) => {
-                  console.log("Microsoft login error:");
-                  console.log(err);
-                });
-            }}
+            onClick={handleMicrosoftLogin}
           />
         </Flex>
       </Flex>
