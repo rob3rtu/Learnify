@@ -4,13 +4,11 @@ import { useEffect } from "react";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const ConfirmEmail = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
-
-  const { search } = useLocation();
 
   //if the user open the link on another device, ask the user to input the email again
   useEffect(() => {
@@ -33,6 +31,7 @@ export const ConfirmEmail = () => {
           });
           localStorage.setItem("uid", res.user.uid);
           localStorage.removeItem("userEmail");
+          nav("/");
         })
         .catch((err) => {
           console.log(err);
@@ -40,11 +39,6 @@ export const ConfirmEmail = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    nav("/");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [search]);
 
   return (
     <Flex
@@ -54,7 +48,7 @@ export const ConfirmEmail = () => {
       bg={colors.black}
       height="100vh"
     >
-      <Spinner color={colors.white} />
+      <Spinner size="xl" color={colors.white} />
     </Flex>
   );
 };
