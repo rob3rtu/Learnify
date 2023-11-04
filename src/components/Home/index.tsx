@@ -1,8 +1,10 @@
-import { Button, Text } from "@chakra-ui/react";
+import { Button, Text, Flex } from "@chakra-ui/react";
 import { auth } from "../../firebase-config";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
 import { RootState } from "../../Store";
+import { NavBar } from "./NavBar";
+import { colors } from "../../theme";
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -23,9 +25,19 @@ export const Home = () => {
   };
 
   return (
-    <>
-      <Text size="xl">Hello there, {account?.fullName ?? "who?"}</Text>
+    <Flex
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      bg={colors.black}
+      minH="100vh"
+      position="relative"
+    >
+      <NavBar user={account} />
+      <Text size="xl" color={colors.white}>
+        Hello there, {account?.fullName ?? "who?"}
+      </Text>
       <Button onClick={handleLogOut}>Log out</Button>
-    </>
+    </Flex>
   );
 };
