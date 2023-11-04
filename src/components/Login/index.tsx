@@ -78,7 +78,13 @@ export const Login = () => {
         bg={colors.black}
         height="100vh"
       >
-        <Text color={colors.white}>
+        <Text
+          style={{
+            fontFamily: "WorkSans-Bold",
+            color: colors.white,
+          }}
+          color={colors.white}
+        >
           Check your email for a confirmation link.
         </Text>
       </Flex>

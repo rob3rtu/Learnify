@@ -1,5 +1,4 @@
 import { Button, Text } from "@chakra-ui/react";
-import { useEffect } from "react";
 import { auth } from "../../firebase-config";
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
@@ -9,19 +8,7 @@ export const Home = () => {
   const dispatch = useDispatch();
   const account = useSelector((state: RootState) => state.auth.account);
 
-  useEffect(() => {
-    const user = auth.currentUser;
-
-    console.log("User: ", user);
-    dispatch({
-      type: "login/setAccount",
-      payload: {
-        email: user?.providerData[0].email,
-        fullName: user?.providerData[0].displayName,
-        uid: user?.uid,
-      },
-    });
-  }, []);
+  console.log("ACCOUNT INFO", account);
 
   const handleLogOut = () => {
     signOut(auth)
