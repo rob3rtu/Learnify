@@ -1,4 +1,4 @@
-import { Flex, Text, Avatar } from "@chakra-ui/react";
+import { Flex, Text, Avatar, Divider } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { AccountInterface } from "../Login/types";
 import { NavTabs } from "./NavTabs";
@@ -24,28 +24,35 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        padding="5px 20px 5px 20px"
+        padding="0 20px 15px 20px"
         width="100%"
-        border="1px solid "
-        borderColor={colors.white}
-        borderRadius="40px"
+        // border="1px solid "
+        // borderColor={colors.white}
+        // borderRadius="40px"
       >
         <Text
           fontFamily="WorkSans-BoldItalic"
           color={colors.white}
-          fontSize={20}
+          fontSize={25}
         >
           LEARNIFY
         </Text>
-        <Avatar name={user?.fullName} size="md"></Avatar>
+        <Avatar
+          fontFamily="WorkSans-Regular"
+          cursor="pointer"
+          name={user?.fullName}
+          size="md"
+        ></Avatar>
       </Flex>
+
+      <Divider width="100%" padding="0 20px 0 20px" opacity={0.2} />
 
       <Flex
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         width="100%"
-        padding="15px 25px 5px 25px"
+        padding="15px 20px 5px 20px"
       >
         <NavTabs tabs={["MATE", "INFO", "CTI"]} />
         <NavTabs tabs={["AN I", "AN II", "AN III", "AN IV"]} />
