@@ -9,6 +9,7 @@ import { ConfirmEmail } from "./components/Login/ConfirmEmail";
 import { NotFound } from "./components/NotFound";
 import { useAuth } from "./components/Utils/useAuth";
 import { colors } from "./theme";
+import { Profile } from "./components/Profile";
 
 function App() {
   const { user, loading } = useAuth();
@@ -46,6 +47,7 @@ function App() {
       {user ? (
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       ) : (

@@ -2,12 +2,15 @@ import { Flex, Text, Avatar, Divider } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { AccountInterface } from "../Login/types";
 import { NavTabs } from "./NavTabs";
+import { useNavigate } from "react-router-dom";
 
 interface NavBarProps {
   user: AccountInterface | null;
 }
 
 export const NavBar: React.FC<NavBarProps> = ({ user }) => {
+  const nav = useNavigate();
+
   return (
     <Flex
       position="fixed"
@@ -26,9 +29,6 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
         justifyContent="space-between"
         padding="0 20px 15px 20px"
         width="100%"
-        // border="1px solid "
-        // borderColor={colors.white}
-        // borderRadius="40px"
       >
         <Text
           fontFamily="WorkSans-BoldItalic"
@@ -42,6 +42,10 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
           cursor="pointer"
           name={user?.fullName}
           size="md"
+          bg={colors.blue}
+          onClick={() => {
+            nav("/profile");
+          }}
         ></Avatar>
       </Flex>
 
