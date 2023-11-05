@@ -13,7 +13,7 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
 
   return (
     <Flex
-      position="fixed"
+      position="sticky"
       top={0}
       bg={colors.darkerGrey}
       height="17vh"

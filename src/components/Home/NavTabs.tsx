@@ -11,10 +11,11 @@ export const NavTabs: React.FC<NavTabsProps> = ({ tabs }) => {
       <TabList>
         {tabs.map((tab) => (
           <Tab
-            fontFamily="WorkSans-Light"
+            key={tab}
+            fontFamily="WorkSans-ExtraLight"
             _selected={{
               backgroundColor: colors.blue,
-              fontFamily: "WorkSans-Bold",
+              fontFamily: "WorkSans-Medium",
             }}
             color={colors.white}
           >
