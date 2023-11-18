@@ -58,9 +58,9 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
         width="100%"
         padding="15px 20px 5px 20px"
       >
-        <NavTabs tabs={["MATE", "INFO", "CTI"]} />
-        <NavTabs tabs={["AN I", "AN II", "AN III", "AN IV"]} />
-        <NavTabs tabs={["SEM I", "SEM II"]} />
+        <NavTabs type="domain" />
+        <NavTabs type="year" />
+        <NavTabs type="semester" />
       </Flex>
     </Flex>
   );

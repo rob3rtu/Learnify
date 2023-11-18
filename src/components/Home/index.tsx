@@ -1,38 +1,43 @@
-import { Flex, SimpleGrid, Text } from "@chakra-ui/react";
-import { useSelector } from "react-redux";
+import { Flex, SimpleGrid, Spinner, Text, Image } from "@chakra-ui/react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AnyAction } from "redux";
 import { RootState } from "../../Store";
 import { colors } from "../../theme";
-import { NavBar } from "./NavBar";
-import { CourseInterface, FiltersInterface, defaultFilters } from "./types";
 import { CourseCard } from "./CourseCard";
-import { useState } from "react";
+import { NavBar } from "./NavBar";
+import { getAllCourses } from "./api";
+import { CourseInterface } from "./types";
+import SadSVG from "../../assets/sad.svg";
 
 export const Home = () => {
   const account = useSelector((state: RootState) => state.auth.account);
-  const [filters, setFilters] = useState<FiltersInterface>(defaultFilters);
+  const dispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.home.loading);
+  const courses = useSelector((state: RootState) => state.home.courses);
+  const filteredCourses = useSelector(
+    (state: RootState) => state.home.filteredCourses
+  );
+  const filters = useSelector((state: RootState) => state.home.filters);
 
-  const temporaryCourses: CourseInterface[] = [
-    {
-      shortName: "PAO",
-      longName: "Programare Avansata pe Obiecte",
-    },
-    {
-      shortName: "PAO",
-      longName: "Programare Avansata pe Obiecte",
-    },
-    {
-      shortName: "PAO",
-      longName: "Programare Avansata pe Obiecte",
-    },
-    {
-      shortName: "PAO",
-      longName: "Programare Avansata pe Obiecte",
-    },
-    {
-      shortName: "PAO",
-      longName: "Programare Avansata pe Obiecte",
-    },
-  ];
+  useEffect(() => {
+    dispatch(getAllCourses() as unknown as AnyAction);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    dispatch({
+      type: "home/setFilteredCourses",
+      payload: courses.filter((course) => {
+        return (
+          course.domain === filters.domain &&
+          course.year === filters.year &&
+          course.semester === filters.semester
+        );
+      }),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   return (
     <Flex
@@ -44,26 +49,37 @@ export const Home = () => {
     >
       <NavBar user={account} />
 
-      {temporaryCourses.length ? (
+      {loading ? (
+        <Spinner color="white" marginTop={20} />
+      ) : filteredCourses.length ? (
         <SimpleGrid
           width="100vw"
           padding={20}
           spacing={20}
           templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
         >
-          {temporaryCourses.map((course, i) => (
-            <CourseCard key={i} course={course} />
+          {filteredCourses.map((course: CourseInterface) => (
+            <CourseCard key={course.id} course={course} />
           ))}
         </SimpleGrid>
       ) : (
-        <Text
-          marginTop={20}
-          fontFamily="WorkSans-SemiBold"
-          fontSize={30}
-          color={colors.white}
+        <Flex
+          flex={1}
+          width="100vw"
+          align="center"
+          justify="center"
+          direction="column"
         >
-          There is no course available.
-        </Text>
+          <Image src={SadSVG} />
+          <Text
+            marginTop={5}
+            fontFamily="WorkSans-SemiBold"
+            fontSize={20}
+            color={colors.white}
+          >
+            There is no course available.
+          </Text>
+        </Flex>
       )}
     </Flex>
   );

@@ -1,15 +1,36 @@
 import { Tabs, TabList, Tab } from "@chakra-ui/react";
 import { colors } from "../../theme";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Store";
+import { filtersObject, semesterObject, yearsObject } from "./types";
 
 interface NavTabsProps {
-  tabs: string[];
+  type: "domain" | "year" | "semester";
 }
 
-export const NavTabs: React.FC<NavTabsProps> = ({ tabs }) => {
+export const NavTabs: React.FC<NavTabsProps> = ({ type }) => {
+  const dispatch = useDispatch();
+  const filters = useSelector((state: RootState) => state.home.filters);
+
+  const handleChangeFilters = (index: number) => {
+    dispatch({
+      type: "home/setFilters",
+      payload: {
+        ...filters,
+        [type]: filtersObject[type][index],
+      },
+    });
+  };
+
   return (
-    <Tabs variant="solid-rounded" size="sm">
+    <Tabs
+      index={filtersObject[type].indexOf(filters[type] as never)}
+      onChange={handleChangeFilters}
+      variant="solid-rounded"
+      size="sm"
+    >
       <TabList>
-        {tabs.map((tab) => (
+        {filtersObject[type].map((tab) => (
           <Tab
             key={tab}
             fontFamily="WorkSans-ExtraLight"
@@ -19,7 +40,18 @@ export const NavTabs: React.FC<NavTabsProps> = ({ tabs }) => {
             }}
             color={colors.white}
           >
-            {tab}
+            {(() => {
+              switch (type) {
+                case "domain":
+                  return tab.toString().toUpperCase();
+                case "year":
+                  return yearsObject[tab as number];
+                case "semester":
+                  return semesterObject[tab as number];
+                default:
+                  return null;
+              }
+            })()}
           </Tab>
         ))}
       </TabList>
