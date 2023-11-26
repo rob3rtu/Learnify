@@ -1,25 +1,22 @@
-import { Flex, Text, Avatar, Divider } from "@chakra-ui/react";
+import { Avatar, Flex, Text } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { AccountInterface } from "../Login/types";
-import { NavTabs } from "./NavTabs";
-import { useNavigate } from "react-router-dom";
 
-interface NavBarProps {
+interface ProfileNavInterface {
   user: AccountInterface | null;
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ user }) => {
-  const nav = useNavigate();
-
+export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
   return (
     <Flex
-      position="sticky"
+      position="absolute"
       top={0}
       zIndex={999}
-      bg={colors.darkerGrey}
+      bg={colors.black}
       height="17vh"
       width="100vw"
-      borderRadius="0 0 30px 30px"
+      borderBottomColor={colors.white}
+      borderBottomWidth={1}
       direction="column"
       alignItems="center"
       padding={5}
@@ -45,23 +42,22 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
           size="md"
           bg={colors.blue}
           onClick={() => {
-            nav("/profile");
+            //TO DO: CHANGE PROFILE PICTURE
           }}
         ></Avatar>
       </Flex>
-
-      <Divider width="100%" padding="0 20px 0 20px" opacity={0.2} />
-
       <Flex
-        direction="row"
+        position="absolute"
+        alignSelf="center"
+        flexDirection="column"
         alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-        padding="15px 20px 5px 20px"
       >
-        <NavTabs type="domain" />
-        <NavTabs type="year" />
-        <NavTabs type="semester" />
+        <Text fontFamily="WorkSans-Bold" color="white" fontSize={30}>
+          {user?.fullName ?? user?.email.split("@")[0]}
+        </Text>
+        <Text fontFamily="WorkSans-Regular" color={colors.white} fontSize={20}>
+          {user?.role}
+        </Text>
       </Flex>
     </Flex>
   );

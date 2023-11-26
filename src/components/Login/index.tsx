@@ -15,8 +15,10 @@ import { ChevronRightIcon } from "@chakra-ui/icons";
 import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
 import { sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
-import MSprovider, { auth } from "../../firebase-config";
+import MSprovider, { auth, firestore } from "../../firebase-config";
 import { useDispatch } from "react-redux";
+import { collection, getDocs } from "firebase/firestore";
+import { TeacherInterface } from "./types";
 
 export const Login = () => {
   const dispatch = useDispatch();
@@ -27,12 +29,23 @@ export const Login = () => {
 
   const handleMicrosoftLogin = () => {
     signInWithPopup(auth, MSprovider)
-      .then((res) => {
+      .then(async (res) => {
+        const resp = await getDocs(collection(firestore, "teachers"));
+        const data: TeacherInterface[] = [];
+        resp.forEach((doc) => {
+          data.push({ ...doc.data() } as TeacherInterface);
+        });
+
+        let role = "student";
+        if (data.map((t) => t.email).find((mail) => mail === res.user.email)) {
+          role = "profesor";
+        }
         dispatch({
           type: "login/setAccount",
           payload: {
             email: res.user.email,
             fullName: res.user.displayName,
+            role: role,
             uid: res.user.uid,
           },
         });
