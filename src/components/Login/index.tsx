@@ -1,53 +1,37 @@
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
-  Text,
-  Flex,
-  Image,
-  Box,
-  Input,
-  IconButton,
-  Divider,
   AbsoluteCenter,
+  Box,
+  Divider,
+  Flex,
+  IconButton,
+  Image,
+  Input,
+  Text,
   useToast,
 } from "@chakra-ui/react";
-import { colors } from "../../theme";
-import LoginSVG from "../../assets/login.svg";
-import { ChevronRightIcon } from "@chakra-ui/icons";
-import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
 import { sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
-import MSprovider, { auth, firestore } from "../../firebase-config";
-import { useDispatch } from "react-redux";
-import { collection, getDocs } from "firebase/firestore";
-import { TeacherInterface } from "./types";
+import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
+import LoginSVG from "../../assets/login.svg";
+import MSprovider, { auth } from "../../firebase-config";
+import { colors } from "../../theme";
+import { useLoginApi } from "./useLoginApi";
 
 export const Login = () => {
-  const dispatch = useDispatch();
   const [email, setEmail] = useState<string>("");
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const toast = useToast();
+  const { setUserAccount } = useLoginApi();
 
   const handleMicrosoftLogin = () => {
     signInWithPopup(auth, MSprovider)
       .then(async (res) => {
-        const resp = await getDocs(collection(firestore, "teachers"));
-        const data: TeacherInterface[] = [];
-        resp.forEach((doc) => {
-          data.push({ ...doc.data() } as TeacherInterface);
-        });
-
-        let role = "student";
-        if (data.map((t) => t.email).find((mail) => mail === res.user.email)) {
-          role = "profesor";
-        }
-        dispatch({
-          type: "login/setAccount",
-          payload: {
-            email: res.user.email,
-            fullName: res.user.displayName,
-            role: role,
-            uid: res.user.uid,
-          },
+        setUserAccount({
+          email: res.user.email ?? "",
+          displayName: res.user.displayName ?? "",
+          uid: res.user.uid,
         });
         localStorage.setItem("uid", res.user.uid);
       })

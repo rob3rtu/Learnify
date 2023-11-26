@@ -39,6 +39,7 @@ export const NavBar: React.FC<NavBarProps> = ({ user }) => {
           LEARNIFY
         </Text>
         <Avatar
+          src={user?.profileImage ?? undefined}
           fontFamily="WorkSans-Regular"
           cursor="pointer"
           name={user?.fullName ?? user?.email.split("@")[0]}

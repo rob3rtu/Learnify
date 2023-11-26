@@ -1,16 +1,14 @@
 import { Flex, Spinner } from "@chakra-ui/react";
-import { colors } from "../../theme";
-import { useEffect } from "react";
 import { isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
-import { auth, firestore } from "../../firebase-config";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
-import { TeacherInterface } from "./types";
+import { auth } from "../../firebase-config";
+import { colors } from "../../theme";
+import { useLoginApi } from "./useLoginApi";
 
 export const ConfirmEmail = () => {
-  const dispatch = useDispatch();
   const nav = useNavigate();
+  const { setUserAccount } = useLoginApi();
 
   //if the user open the link on another device, ask the user to input the email again
   useEffect(() => {
@@ -24,27 +22,10 @@ export const ConfirmEmail = () => {
         .then(async (res) => {
           //actual login
           console.log(res.user);
-          const resp = await getDocs(collection(firestore, "teachers"));
-          const data: TeacherInterface[] = [];
-          resp.forEach((doc) => {
-            data.push({ ...doc.data() } as TeacherInterface);
-          });
-
-          let role = "student";
-          if (
-            data.map((t) => t.email).find((mail) => mail === res.user.email)
-          ) {
-            role = "profesor";
-          }
-
-          dispatch({
-            type: "login/setAccount",
-            payload: {
-              email: res.user.email,
-              fullName: res.user.displayName,
-              role: role,
-              uid: res.user.uid,
-            },
+          setUserAccount({
+            email: res.user.email ?? "",
+            displayName: res.user.displayName ?? "",
+            uid: res.user.uid,
           });
           localStorage.setItem("uid", res.user.uid);
           localStorage.removeItem("userEmail");

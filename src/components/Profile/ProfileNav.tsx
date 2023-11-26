@@ -1,12 +1,39 @@
-import { Avatar, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Flex, Stack, Text } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { AccountInterface } from "../Login/types";
+import { useNavigate } from "react-router-dom";
+import { ChangeEvent, useRef } from "react";
+import { storage } from "../../firebase-config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { useDispatch } from "react-redux";
 
 interface ProfileNavInterface {
   user: AccountInterface | null;
 }
 
 export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
+  const nav = useNavigate();
+  const dispatch = useDispatch();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.item(0);
+    const profileImageRef = ref(storage, `${user?.email}/profile-image.jpg`);
+    if (file) {
+      uploadBytes(profileImageRef, file).then(async () => {
+        const downloadURL = await getDownloadURL(profileImageRef);
+
+        dispatch({
+          type: "login/setAccount",
+          payload: {
+            ...user,
+            profileImage: downloadURL,
+          },
+        });
+      });
+    }
+  };
+
   return (
     <Flex
       position="absolute"
@@ -32,19 +59,33 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
           fontFamily="WorkSans-BoldItalic"
           color={colors.white}
           fontSize={25}
+          cursor="pointer"
+          onClick={() => {
+            nav("/");
+          }}
         >
           LEARNIFY
         </Text>
-        <Avatar
-          fontFamily="WorkSans-Regular"
-          cursor="pointer"
-          name={user?.fullName ?? user?.email.split("@")[0]}
-          size="md"
-          bg={colors.blue}
-          onClick={() => {
-            //TO DO: CHANGE PROFILE PICTURE
-          }}
-        ></Avatar>
+        <Stack spacing={4} align="center">
+          <Avatar
+            src={user?.profileImage ?? undefined}
+            fontFamily="WorkSans-Regular"
+            cursor="pointer"
+            name={user?.fullName ?? user?.email.split("@")[0]}
+            size="md"
+            bg={colors.blue}
+            onClick={() => {
+              fileInputRef.current?.click();
+            }}
+          ></Avatar>
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleSelectImage}
+          />
+        </Stack>
       </Flex>
       <Flex
         position="absolute"

@@ -21,7 +21,9 @@ export const Home = () => {
   const filters = useSelector((state: RootState) => state.home.filters);
 
   useEffect(() => {
-    dispatch(getAllCourses() as unknown as AnyAction);
+    if (courses.length === 0) {
+      dispatch(getAllCourses() as unknown as AnyAction);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

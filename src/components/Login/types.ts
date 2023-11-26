@@ -2,6 +2,7 @@ export interface AccountInterface {
   email: string;
   fullName: string;
   role: string;
+  profileImage: string | null;
   uid: string;
 }
 
