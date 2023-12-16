@@ -1,14 +1,10 @@
 const { GraphQLObjectType, GraphQLString } = require("graphql");
+const createUser = require("./mutations/user/createUser");
 
 const mutationType = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    dummyMutation: {
-      type: GraphQLString,
-      resolve: () => {
-        return "hello mutation";
-      },
-    },
+    createUser: createUser,
   },
 });
 
