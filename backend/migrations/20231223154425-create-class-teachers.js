@@ -2,27 +2,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.sequelize.query(
-      'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
-    );
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("ClassTeachers", {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.literal("uuid_generate_v4()"),
       },
-      fullName: {
-        type: Sequelize.STRING,
+      classId: {
+        type: Sequelize.UUID,
+        references: {
+          model: {
+            tableName: "Classes",
+          },
+          key: "id",
+        },
       },
-      email: {
-        type: Sequelize.STRING,
-      },
-      passwordHash: {
-        type: Sequelize.STRING,
-      },
-      role: {
-        type: Sequelize.ENUM("admin", "teacher", "student"),
+      teacherId: {
+        type: Sequelize.UUID,
+        references: {
+          model: {
+            tableName: "Teachers",
+          },
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +38,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("ClassTeachers");
   },
 };
