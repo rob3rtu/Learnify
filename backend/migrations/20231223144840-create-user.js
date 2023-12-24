@@ -9,6 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID,
         defaultValue: Sequelize.literal("uuid_generate_v4()"),
+        unique: true,
       },
       fullName: {
         type: Sequelize.STRING,
