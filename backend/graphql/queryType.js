@@ -1,14 +1,10 @@
 const { GraphQLObjectType, GraphQLString } = require("graphql");
+const loginQuery = require("./queries/login");
 
 const queryType = new GraphQLObjectType({
   name: "Query",
   fields: {
-    dummyQuery: {
-      type: GraphQLString,
-      resolve: () => {
-        return "hello query";
-      },
-    },
+    login: loginQuery,
   },
 });
 

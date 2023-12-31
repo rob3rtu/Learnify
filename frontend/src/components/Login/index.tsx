@@ -17,6 +17,7 @@ import LoginSVG from "../../assets/login.svg";
 import MSprovider, { auth } from "../../firebase-config";
 import { colors } from "../../theme";
 import { useLoginApi } from "./useLoginApi";
+import { apiClient } from "../Utils/apiClient";
 
 export const Login = () => {
   const [email, setEmail] = useState<string>("");
@@ -41,7 +42,7 @@ export const Login = () => {
   //     });
   // };
 
-  const handleEmailLogin = () => {
+  const handleEmailLogin = async () => {
     if (email === "") {
       setError(true);
       toast({
@@ -52,17 +53,38 @@ export const Login = () => {
         isClosable: true,
       });
     } else {
-      sendSignInLinkToEmail(auth, email, {
-        url: "http://localhost:3000/confirm-email",
-        handleCodeInApp: true,
-      })
-        .then(() => {
-          localStorage.setItem("userEmail", email);
-          setCheckEmail(true);
+      await apiClient
+        .post("", {
+          query: `
+          query {
+            login(email: "${email}")
+          }
+        `,
+        })
+        .then((res) => {
+          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);
+          toast({
+            title: "Error!",
+            description: "Something went wrong.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
         });
+      // sendSignInLinkToEmail(auth, email, {
+      //   url: "http://localhost:3000/confirm-email",
+      //   handleCodeInApp: true,
+      // })
+      //   .then(() => {
+      //     localStorage.setItem("userEmail", email);
+      //     setCheckEmail(true);
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
     }
   };
 

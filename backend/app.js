@@ -2,9 +2,11 @@ const express = require("express");
 const { createHandler } = require("graphql-http/lib/use/express");
 const schema = require("./graphql");
 const db = require("./models");
+const cors = require("cors");
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 const port = 3001;
 
 const checkAuthorization = async (req, res, next) => {
