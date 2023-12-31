@@ -25,21 +25,21 @@ export const Login = () => {
   const toast = useToast();
   const { setUserAccount } = useLoginApi();
 
-  const handleMicrosoftLogin = () => {
-    signInWithPopup(auth, MSprovider)
-      .then(async (res) => {
-        setUserAccount({
-          email: res.user.email ?? "",
-          displayName: res.user.displayName ?? "",
-          uid: res.user.uid,
-        });
-        localStorage.setItem("uid", res.user.uid);
-      })
-      .catch((err) => {
-        console.log("Microsoft login error:");
-        console.log(err);
-      });
-  };
+  // const handleMicrosoftLogin = () => {
+  //   signInWithPopup(auth, MSprovider)
+  //     .then(async (res) => {
+  //       setUserAccount({
+  //         email: res.user.email ?? "",
+  //         displayName: res.user.displayName ?? "",
+  //         uid: res.user.uid,
+  //       });
+  //       localStorage.setItem("uid", res.user.uid);
+  //     })
+  //     .catch((err) => {
+  //       console.log("Microsoft login error:");
+  //       console.log(err);
+  //     });
+  // };
 
   const handleEmailLogin = () => {
     if (email === "") {
@@ -145,7 +145,7 @@ export const Login = () => {
           />
         </Flex>
 
-        <Box position="relative" width={250}>
+        {/* <Box position="relative" width={250}>
           <Divider />
           <AbsoluteCenter
             color={colors.white}
@@ -171,7 +171,7 @@ export const Login = () => {
             icon={<Microsoft />}
             onClick={handleMicrosoftLogin}
           />
-        </Flex>
+        </Flex> */}
       </Flex>
 
       <Box
