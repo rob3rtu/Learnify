@@ -63,6 +63,7 @@ export const Login = () => {
         })
         .then((res) => {
           console.log(res.data);
+          setCheckEmail(true);
         })
         .catch((err) => {
           console.log(err);
