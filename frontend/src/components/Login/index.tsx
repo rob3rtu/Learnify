@@ -16,7 +16,6 @@ import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
 import LoginSVG from "../../assets/login.svg";
 import MSprovider, { auth } from "../../firebase-config";
 import { colors } from "../../theme";
-import { useLoginApi } from "./useLoginApi";
 import { apiClient } from "../Utils/apiClient";
 
 export const Login = () => {
@@ -24,7 +23,6 @@ export const Login = () => {
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const toast = useToast();
-  const { setUserAccount } = useLoginApi();
 
   // const handleMicrosoftLogin = () => {
   //   signInWithPopup(auth, MSprovider)

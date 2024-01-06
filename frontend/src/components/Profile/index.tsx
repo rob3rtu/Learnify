@@ -1,7 +1,5 @@
 import { Button, Flex, Image } from "@chakra-ui/react";
 import { colors } from "../../theme";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebase-config";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { ProfileNav } from "./ProfileNav";
@@ -15,16 +13,10 @@ export const Profile = () => {
   const account = useSelector((state: RootState) => state.auth.account);
 
   const handleLogOut = () => {
-    signOut(auth)
-      .then(() => {
-        localStorage.removeItem("uid");
-        dispatch({ type: "login/setAccount", payload: null });
-        nav("/");
-        console.log("Successfully log out!");
-      })
-      .catch((err) => {
-        console.log("Log out error: ", err);
-      });
+    localStorage.removeItem("learnifyToken");
+    dispatch({ type: "login/setAccount", payload: null });
+    nav("/");
+    console.log("Successfully log out!");
   };
 
   return (

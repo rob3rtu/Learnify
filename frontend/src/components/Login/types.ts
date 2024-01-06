@@ -3,7 +3,7 @@ export interface AccountInterface {
   fullName: string;
   role: string;
   profileImage: string | null;
-  uid: string;
+  id: string;
 }
 
 export interface TeacherInterface {
