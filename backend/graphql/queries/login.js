@@ -20,7 +20,7 @@ const loginQuery = {
     const [user, created] = await db.User.findOrCreate({
       where: { email },
       defaults: {
-        fullName: "Created User",
+        fullName: email.split("@")[0],
         role: "student",
       },
     });

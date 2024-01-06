@@ -3,8 +3,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { colors } from "../../theme";
 import { apiClient } from "../Utils/apiClient";
+import { useDispatch } from "react-redux";
 
 export const ConfirmEmail = () => {
+  const dispatch = useDispatch();
   const toast = useToast();
   const searchParams = new URLSearchParams(document.location.search);
   const nav = useNavigate();
@@ -17,12 +19,19 @@ export const ConfirmEmail = () => {
         query: `
           query {
             verifyToken(token: "${token}") {
-              id
+              id,
+              fullName,
+              email,
+              role
             }
           }
         `,
       })
       .then((res) => {
+        dispatch({
+          type: "login/setAccount",
+          payload: { ...res.data.data.verifyToken },
+        });
         localStorage.setItem("learnifyToken", token ?? "");
         nav("/");
       })
@@ -36,6 +45,7 @@ export const ConfirmEmail = () => {
         });
         nav("/");
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
