@@ -1,8 +1,6 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import {
-  AbsoluteCenter,
   Box,
-  Divider,
   Flex,
   IconButton,
   Image,
@@ -10,11 +8,8 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { sendSignInLinkToEmail, signInWithPopup } from "firebase/auth";
 import { useState } from "react";
-import { Microsoft } from "../../assets/customChakraIcons/Microsoft";
 import LoginSVG from "../../assets/login.svg";
-import MSprovider, { auth } from "../../firebase-config";
 import { colors } from "../../theme";
 import { apiClient } from "../Utils/apiClient";
 
@@ -23,22 +18,6 @@ export const Login = () => {
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const toast = useToast();
-
-  // const handleMicrosoftLogin = () => {
-  //   signInWithPopup(auth, MSprovider)
-  //     .then(async (res) => {
-  //       setUserAccount({
-  //         email: res.user.email ?? "",
-  //         displayName: res.user.displayName ?? "",
-  //         uid: res.user.uid,
-  //       });
-  //       localStorage.setItem("uid", res.user.uid);
-  //     })
-  //     .catch((err) => {
-  //       console.log("Microsoft login error:");
-  //       console.log(err);
-  //     });
-  // };
 
   const handleEmailLogin = async () => {
     if (email === "") {
@@ -73,17 +52,6 @@ export const Login = () => {
             isClosable: true,
           });
         });
-      // sendSignInLinkToEmail(auth, email, {
-      //   url: "http://localhost:3000/confirm-email",
-      //   handleCodeInApp: true,
-      // })
-      //   .then(() => {
-      //     localStorage.setItem("userEmail", email);
-      //     setCheckEmail(true);
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
     }
   };
 
@@ -165,34 +133,6 @@ export const Login = () => {
             onClick={handleEmailLogin}
           />
         </Flex>
-
-        {/* <Box position="relative" width={250}>
-          <Divider />
-          <AbsoluteCenter
-            color={colors.white}
-            backgroundColor={colors.black}
-            px={6}
-          >
-            or
-          </AbsoluteCenter>
-        </Box>
-
-        <Flex
-          direction="row"
-          marginTop={10}
-          width={32}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <IconButton
-            isRound
-            variant="outline"
-            aria-label="microsoft login"
-            fontSize="20px"
-            icon={<Microsoft />}
-            onClick={handleMicrosoftLogin}
-          />
-        </Flex> */}
       </Flex>
 
       <Box

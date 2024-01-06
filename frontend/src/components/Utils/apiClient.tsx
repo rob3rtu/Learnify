@@ -3,7 +3,7 @@ import axios, { AxiosInstance } from "axios";
 export const BASE_URL = "http://localhost:3001/graphql";
 
 export const getAccesToken = () => {
-  return localStorage.getItem("accesToken");
+  return localStorage.getItem("lernifyToken");
 };
 
 const errorInterceptor = (val: AxiosInstance) => {
@@ -13,7 +13,7 @@ const errorInterceptor = (val: AxiosInstance) => {
     },
     (err) => {
       if (err.response.status === 401 || err.response.status === 403) {
-        localStorage.removeItem("accesToken");
+        localStorage.removeItem("lernifyToken");
         window.location.reload();
       } else {
         return Promise.reject(err);

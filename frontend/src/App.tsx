@@ -18,11 +18,10 @@ function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    const token = localStorage.getItem("learnifyToken");
     //if i just logged in the use is set and i dont want to make another
     //useless request
     if (user === null) {
-      const token = localStorage.getItem("learnifyToken");
-
       apiClient
         .post("", {
           query: `
