@@ -16,7 +16,6 @@ export const Profile = () => {
     localStorage.removeItem("learnifyToken");
     dispatch({ type: "login/setAccount", payload: null });
     nav("/");
-    console.log("Successfully log out!");
   };
 
   return (

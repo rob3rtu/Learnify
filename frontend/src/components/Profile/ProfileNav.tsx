@@ -1,4 +1,4 @@
-import { Avatar, Flex, Stack, Text } from "@chakra-ui/react";
+import { Avatar, Flex, Stack, Text, useToast } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { AccountInterface } from "../Login/types";
 import { useNavigate } from "react-router-dom";
@@ -6,30 +6,60 @@ import { ChangeEvent, useRef } from "react";
 import { storage } from "../../firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch } from "react-redux";
+import { apiClient } from "../Utils/apiClient";
 
 interface ProfileNavInterface {
   user: AccountInterface | null;
 }
 
 export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
+  const toast = useToast();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSelectImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
     const profileImageRef = ref(storage, `${user?.email}/profile-image.jpg`);
+
     if (file) {
       uploadBytes(profileImageRef, file).then(async () => {
         const downloadURL = await getDownloadURL(profileImageRef);
 
-        dispatch({
-          type: "login/setAccount",
-          payload: {
-            ...user,
-            profileImage: downloadURL,
-          },
-        });
+        apiClient
+          .post("", {
+            query: `
+          mutation {
+            saveProfilePicture(url: "${downloadURL}")
+          }
+        `,
+          })
+          .then((res) => {
+            dispatch({
+              type: "login/setAccount",
+              payload: {
+                ...user,
+                profileImage: downloadURL,
+              },
+            });
+
+            toast({
+              title: "Looking good",
+              description: "Image updated successfully.",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          })
+          .catch((err) => {
+            toast({
+              title: "Error!",
+              description: "Could not save the image",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          });
       });
     }
   };

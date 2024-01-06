@@ -6,7 +6,7 @@ const sendgrid = require("@sendgrid/mail");
 require("dotenv").config();
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
-const loginQuery = {
+const login = {
   type: GraphQLString,
   args: {
     email: {
@@ -32,6 +32,7 @@ const loginQuery = {
           fullName: user.fullName,
           email: user.email,
           role: user.role,
+          profileImage: user.profileImage,
         },
         process.env.JWT_KEY,
         { expiresIn: "1h" }
@@ -51,4 +52,4 @@ const loginQuery = {
   },
 };
 
-module.exports = loginQuery;
+module.exports = login;

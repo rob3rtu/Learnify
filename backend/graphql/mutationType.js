@@ -1,10 +1,10 @@
 const { GraphQLObjectType, GraphQLString } = require("graphql");
-const createUser = require("./mutations/user/createUser");
+const saveProfilePicture = require("./mutations/saveProfilePicture");
 
 const mutationType = new GraphQLObjectType({
   name: "Mutation",
   fields: {
-    createUser: createUser,
+    saveProfilePicture: saveProfilePicture,
   },
 });
 

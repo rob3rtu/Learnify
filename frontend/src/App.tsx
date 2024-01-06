@@ -31,6 +31,7 @@ function App() {
               fullName
               email
               role
+              profileImage
             }
           }
         `,

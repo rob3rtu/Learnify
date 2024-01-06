@@ -19,10 +19,11 @@ export const ConfirmEmail = () => {
         query: `
           query {
             verifyToken(token: "${token}") {
-              id,
-              fullName,
-              email,
+              id
+              fullName
+              email
               role
+              profileImage
             }
           }
         `,

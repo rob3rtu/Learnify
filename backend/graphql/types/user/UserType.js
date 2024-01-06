@@ -15,6 +15,9 @@ const UserType = new GraphQLObjectType({
     role: {
       type: GraphQLString,
     },
+    profileImage: {
+      type: GraphQLString,
+    },
   },
 });
 

@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { GraphQLString, GraphQLNonNull } = require("graphql");
 const UserType = require("../types/user/UserType");
 
-const verifyTokenQuery = {
+const verifyToken = {
   type: UserType,
   args: {
     token: {
@@ -25,4 +25,4 @@ const verifyTokenQuery = {
   },
 };
 
-module.exports = verifyTokenQuery;
+module.exports = verifyToken;
