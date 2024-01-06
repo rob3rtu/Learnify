@@ -1,7 +1,7 @@
 const db = require("../../models");
 const { GraphQLString } = require("graphql");
 
-const saveProfilePicture = {
+const saveProfileImage = {
   type: GraphQLString,
   args: {
     url: { type: GraphQLString },
@@ -18,4 +18,4 @@ const saveProfilePicture = {
   },
 };
 
-module.exports = saveProfilePicture;
+module.exports = saveProfileImage;

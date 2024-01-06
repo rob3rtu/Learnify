@@ -30,7 +30,7 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
           .post("", {
             query: `
           mutation {
-            saveProfilePicture(url: "${downloadURL}")
+            saveProfileImage(url: "${downloadURL}")
           }
         `,
           })
