@@ -11,13 +11,15 @@ import {
 import { useState } from "react";
 import LoginSVG from "../../assets/login.svg";
 import { colors } from "../../theme";
-import { apiClient } from "../Utils/apiClient";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "../../graphql/mutations";
 
 export const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const toast = useToast();
+  const [login] = useMutation(LOGIN);
 
   const handleEmailLogin = async () => {
     if (email === "") {
@@ -30,28 +32,20 @@ export const Login = () => {
         isClosable: true,
       });
     } else {
-      await apiClient
-        .post("", {
-          query: `
-          query {
-            login(email: "${email}")
-          }
-        `,
-        })
-        .then((res) => {
-          console.log(res.data);
-          setCheckEmail(true);
-        })
-        .catch((err) => {
-          console.log(err);
-          toast({
-            title: "Error!",
-            description: "Something went wrong.",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
+      try {
+        const data = await login({ variables: { email } });
+        console.log(data);
+        setCheckEmail(true);
+      } catch (err) {
+        console.log(err);
+        toast({
+          title: "Error!",
+          description: "Something went wrong.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
         });
+      }
     }
   };
 

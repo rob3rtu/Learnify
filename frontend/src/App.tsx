@@ -7,53 +7,44 @@ import { ConfirmEmail } from "./components/Login/ConfirmEmail";
 import { NotFound } from "./components/NotFound";
 import { colors } from "./theme";
 import { Profile } from "./components/Profile";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./Store";
-import { apiClient } from "./components/Utils/apiClient";
+import { useQuery } from "@apollo/client";
+import { VERIFY_TOKEN } from "./graphql/queries";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.account);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState<boolean>(true);
+
+  const token = localStorage.getItem("learnifyToken");
+
+  const { data, error, loading } = useQuery(VERIFY_TOKEN, {
+    variables: { token },
+  });
 
   useEffect(() => {
-    const token = localStorage.getItem("learnifyToken");
-    //if i just logged in the use is set and i dont want to make another
-    //useless request
-    if (user === null) {
-      apiClient
-        .post("", {
-          query: `
-          query {
-            verifyToken(token: "${token}") {
-              id
-              fullName
-              email
-              role
-              profileImage
-            }
-          }
-        `,
-        })
-        .then((res) => {
-          const potentialUser = res.data.data.verifyToken;
-          if (potentialUser !== null) {
-            dispatch({
-              type: "login/setAccount",
-              payload: { ...potentialUser },
-            });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => {
-          setLoading(false);
+    if (data) {
+      console.log(data);
+
+      const potentialUser = data.verifyToken;
+      if (potentialUser !== null && potentialUser !== undefined) {
+        dispatch({
+          type: "login/setAccount",
+          payload: { ...potentialUser },
         });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [data]);
+
+  if (error) {
+    console.log(error);
+    dispatch({
+      type: "login/setAccount",
+      payload: null,
+    });
+  }
 
   if (loading)
     return (
