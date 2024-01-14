@@ -6,7 +6,8 @@ import { ChangeEvent, useRef } from "react";
 import { storage } from "../../firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch } from "react-redux";
-import { apiClient } from "../Utils/apiClient";
+import { useMutation } from "@apollo/client";
+import { SAVE_PROFILE_IMAGE } from "../../graphql/mutations";
 
 interface ProfileNavInterface {
   user: AccountInterface | null;
@@ -17,6 +18,7 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [saveProfileImage] = useMutation(SAVE_PROFILE_IMAGE);
 
   const handleSelectImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
@@ -26,40 +28,32 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
       uploadBytes(profileImageRef, file).then(async () => {
         const downloadURL = await getDownloadURL(profileImageRef);
 
-        apiClient
-          .post("", {
-            query: `
-          mutation {
-            saveProfileImage(url: "${downloadURL}")
-          }
-        `,
-          })
-          .then((res) => {
-            dispatch({
-              type: "login/setAccount",
-              payload: {
-                ...user,
-                profileImage: downloadURL,
-              },
-            });
-
-            toast({
-              title: "Looking good",
-              description: "Image updated successfully.",
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-            });
-          })
-          .catch((err) => {
-            toast({
-              title: "Error!",
-              description: "Could not save the image",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-            });
+        try {
+          await saveProfileImage({ variables: { downloadURL } });
+          dispatch({
+            type: "login/setAccount",
+            payload: {
+              ...user,
+              profileImage: downloadURL,
+            },
           });
+
+          toast({
+            title: "Looking good",
+            description: "Image updated successfully.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        } catch (err) {
+          toast({
+            title: "Error!",
+            description: "Could not save the image",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       });
     }
   };

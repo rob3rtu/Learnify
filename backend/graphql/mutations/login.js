@@ -17,7 +17,7 @@ const login = {
     const { email } = args;
 
     //find the user or create a new one if it doesn't exist
-    const [user, created] = await db.User.findOrCreate({
+    const [user] = await db.User.findOrCreate({
       where: { email },
       defaults: {
         fullName: email.split("@")[0],

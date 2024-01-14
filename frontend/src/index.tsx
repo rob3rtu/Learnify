@@ -9,6 +9,7 @@ import { store } from "./Store";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
+  connectToDevTools: true,
   cache: new InMemoryCache(),
   uri: "http://localhost:3001/graphql",
 });
