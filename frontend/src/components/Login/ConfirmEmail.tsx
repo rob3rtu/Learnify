@@ -13,7 +13,7 @@ export const ConfirmEmail = () => {
   const searchParams = new URLSearchParams(document.location.search);
   const token = searchParams.get("token");
 
-  const { data, error, loading } = useQuery(VERIFY_TOKEN, {
+  const { data, error } = useQuery(VERIFY_TOKEN, {
     variables: { token },
   });
 

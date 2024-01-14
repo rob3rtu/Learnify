@@ -7,7 +7,7 @@ export const LOGIN = gql`
 `;
 
 export const SAVE_PROFILE_IMAGE = gql`
-    mutation saveProfileImage($downloadURL: String!) {
-            saveProfileImage(url: $$downloadURL)
-          }
+  mutation saveProfileImage($downloadURL: String!) {
+    saveProfileImage(url: $downloadURL)
+  }
 `;
