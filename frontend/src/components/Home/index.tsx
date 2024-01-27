@@ -9,20 +9,19 @@ import {
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AnyAction } from "redux";
 import { RootState } from "../../Store";
 import { colors } from "../../theme";
 import { CourseCard } from "./CourseCard";
 import { NavBar } from "./NavBar";
-import { getAllCourses } from "./api";
 import { CourseInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { CreateCourseModal } from "./CreateCourseModal";
+import { useQuery } from "@apollo/client";
+import { COURSES } from "../../graphql/queries";
 
 export const Home = () => {
   const account = useSelector((state: RootState) => state.auth.account);
   const dispatch = useDispatch();
-  const loading = useSelector((state: RootState) => state.home.loading);
   const courses = useSelector((state: RootState) => state.home.courses);
   const filteredCourses = useSelector(
     (state: RootState) => state.home.filteredCourses
@@ -30,12 +29,19 @@ export const Home = () => {
   const filters = useSelector((state: RootState) => state.home.filters);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const { data, error, loading } = useQuery(COURSES);
+
   useEffect(() => {
-    if (courses.length === 0) {
-      dispatch(getAllCourses() as unknown as AnyAction);
+    if (!loading) {
+      console.log(data);
+
+      dispatch({
+        type: "home/setCourses",
+        payload: data.courses,
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loading]);
 
   useEffect(() => {
     dispatch({
@@ -49,7 +55,7 @@ export const Home = () => {
       }),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+  }, [filters, courses]);
 
   return (
     <>

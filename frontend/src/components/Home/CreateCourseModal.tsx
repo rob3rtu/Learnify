@@ -13,6 +13,10 @@ import {
 } from "@chakra-ui/react";
 import { FiltersInterface, semesterObject, yearsObject } from "./types";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Store";
+import { ADD_COURSE } from "../../graphql/mutations";
+import { useMutation } from "@apollo/client";
 
 interface CreateCourseModalProps {
   filters: FiltersInterface;
@@ -25,8 +29,12 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const dispatch = useDispatch();
+  const courses = useSelector((state: RootState) => state.home.courses);
   const [courseName, setCourseName] = useState<string>("");
   const [shortName, setShortName] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [addCourse] = useMutation(ADD_COURSE);
 
   const handleOnClose = () => {
     setCourseName("");
@@ -40,6 +48,26 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
       .map((word) => word[0])
       .filter((letter) => letter && letter === letter.toUpperCase())
       .join("");
+  };
+
+  const handleAddCourse = async () => {
+    setLoading(true);
+    const newCourse = { shortName, longName: courseName, ...filters };
+    try {
+      await addCourse({
+        variables: newCourse,
+      });
+
+      dispatch({
+        type: "home/setCourses",
+        payload: [...courses, newCourse],
+      });
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoading(false);
+    handleOnClose();
   };
 
   return (
@@ -68,8 +96,9 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={handleOnClose}
+            onClick={handleAddCourse}
             isDisabled={courseName === ""}
+            isLoading={loading}
           >
             Add
           </Button>
