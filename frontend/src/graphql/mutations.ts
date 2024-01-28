@@ -28,6 +28,19 @@ export const ADD_COURSE = gql`
         year: $year
         semester: $semester
       }
-    )
+    ) {
+      id
+      shortName
+      longName
+      domain
+      year
+      semester
+    }
+  }
+`;
+
+export const DELETE_COURSE = gql`
+  mutation deleteCourse($id: String!) {
+    deleteCourse(id: $id)
   }
 `;

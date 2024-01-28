@@ -13,6 +13,7 @@ import { CourseInterface } from "./types";
 import { colors } from "../../theme";
 import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
 interface CourseCardProps {
   course: CourseInterface;
@@ -26,6 +27,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   createCard = false,
 }) => {
   const [isHover, setisHover] = useState<boolean>(false);
+  const nav = useNavigate();
 
   return (
     <Card
@@ -46,6 +48,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         setisHover(false);
       }}
       cursor="pointer"
+      onClick={
+        !createCard
+          ? () => {
+              nav(`/course/${course.id}`);
+            }
+          : undefined
+      }
     >
       {createCard ? (
         <CardBody onClick={onClick}>

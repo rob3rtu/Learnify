@@ -52,15 +52,15 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
 
   const handleAddCourse = async () => {
     setLoading(true);
-    const newCourse = { shortName, longName: courseName, ...filters };
+
     try {
-      await addCourse({
-        variables: newCourse,
+      const res = await addCourse({
+        variables: { shortName, longName: courseName, ...filters },
       });
 
       dispatch({
         type: "home/setCourses",
-        payload: [...courses, newCourse],
+        payload: [...courses, res.data.addCourse],
       });
     } catch (error) {
       console.log(error);

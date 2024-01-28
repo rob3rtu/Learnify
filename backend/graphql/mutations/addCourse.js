@@ -1,9 +1,9 @@
-const { GraphQLString } = require("graphql");
 const CourseInputType = require("../types/course/CourseInputType");
+const CourseType = require("../types/course/CourseType");
 const db = require("../../models");
 
 const addCourse = {
-  type: GraphQLString,
+  type: CourseType,
   args: {
     course: { type: CourseInputType },
   },
@@ -13,9 +13,9 @@ const addCourse = {
 
     console.log(args);
 
-    await db.Class.create(course);
+    const newCourse = await db.Class.create(course);
 
-    return "ok";
+    return newCourse;
   },
 };
 
