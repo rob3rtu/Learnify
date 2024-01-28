@@ -1,14 +1,12 @@
 import { Flex, Text, Avatar, Divider } from "@chakra-ui/react";
 import { colors } from "../../theme";
-import { AccountInterface } from "../Login/types";
 import { NavTabs } from "./NavTabs";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
 
-interface NavBarProps {
-  user: AccountInterface | null;
-}
-
-export const NavBar: React.FC<NavBarProps> = ({ user }) => {
+export const NavBar = () => {
+  const user = useSelector((state: RootState) => state.auth.account);
   const nav = useNavigate();
 
   return (

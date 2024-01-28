@@ -11,3 +11,16 @@ export const VERIFY_TOKEN = gql`
     }
   }
 `;
+
+export const COURSES = gql`
+  query {
+    courses {
+      id
+      shortName
+      longName
+      domain
+      year
+      semester
+    }
+  }
+`;

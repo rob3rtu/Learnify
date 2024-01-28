@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./Store";
 import { useQuery } from "@apollo/client";
 import { VERIFY_TOKEN } from "./graphql/queries";
+import { Course } from "./components/Course";
 
 function App() {
   const user = useSelector((state: RootState) => state.auth.account);
@@ -65,6 +66,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/course/:id" element={<Course />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       ) : (
