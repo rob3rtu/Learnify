@@ -3,6 +3,7 @@ const login = require("./mutations/login");
 const saveProfileImage = require("./mutations/saveProfileImage");
 const addCourse = require("./mutations/addCourse");
 const deleteCourse = require("./mutations/deleteCourse");
+const addUser = require("./mutations/addUser");
 
 const mutationType = new GraphQLObjectType({
   name: "Mutation",
@@ -11,6 +12,7 @@ const mutationType = new GraphQLObjectType({
     saveProfileImage: saveProfileImage,
     addCourse: addCourse,
     deleteCourse: deleteCourse,
+    addUser: addUser,
   },
 });
 

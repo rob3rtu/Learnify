@@ -11,8 +11,6 @@ const addCourse = {
     const user = context.req.raw.user;
     const { course } = args;
 
-    console.log(args);
-
     const newCourse = await db.Class.create(course);
 
     return newCourse;
