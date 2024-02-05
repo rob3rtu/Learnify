@@ -22,8 +22,8 @@ model ClassTeachers {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   classId   String?  @db.Uuid
   teacherId String?  @db.Uuid
-  createdAt DateTime @db.Timestamptz(6)
-  updatedAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   class     Class?   @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   teacher   Teacher? @relation(fields: [teacherId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -35,8 +35,8 @@ model Class {
   year          Int?
   semester      Int?
   domain        enum_Classes_domain?
-  createdAt     DateTime             @db.Timestamptz(6)
-  updatedAt     DateTime             @db.Timestamptz(6)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
   classTeachers ClassTeachers[]
   forum         Forum?
   posts         Post[]
@@ -47,8 +47,8 @@ model Comment {
   postId    String?  @db.Uuid
   userId    String?  @db.Uuid
   message   String?  @db.VarChar(255)
-  createdAt DateTime @db.Timestamptz(6)
-  updatedAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   post      Post?    @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -56,8 +56,8 @@ model Comment {
 model Forum {
   id        String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   classId   String?   @unique @db.Uuid
-  createdAt DateTime  @db.Timestamptz(6)
-  updatedAt DateTime  @db.Timestamptz(6)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   class     Class?    @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   messages  Message[]
 }
@@ -66,8 +66,8 @@ model Like {
   id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   postId    String?  @db.Uuid
   userId    String?  @db.Uuid
-  createdAt DateTime @db.Timestamptz(6)
-  updatedAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   post      Post?    @relation(fields: [postId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -77,8 +77,8 @@ model Message {
   forumId   String?  @db.Uuid
   userId    String?  @db.Uuid
   message   String?  @db.VarChar(255)
-  createdAt DateTime @db.Timestamptz(6)
-  updatedAt DateTime @db.Timestamptz(6)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   forum     Forum?   @relation(fields: [forumId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user      User?    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -92,8 +92,8 @@ model Post {
   resourceType String?   @db.VarChar(255)
   resourceUrl  String?   @db.VarChar(255)
   classSection String?   @db.VarChar(255)
-  createdAt    DateTime  @db.Timestamptz(6)
-  updatedAt    DateTime  @db.Timestamptz(6)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
   comments     Comment[]
   likes        Like[]
   class        Class?    @relation(fields: [classId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -103,8 +103,8 @@ model Post {
 model Teacher {
   id            String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   userId        String?         @unique @db.Uuid
-  createdAt     DateTime        @db.Timestamptz(6)
-  updatedAt     DateTime        @db.Timestamptz(6)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   classTeachers ClassTeachers[]
   user          User?           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -114,8 +114,8 @@ model User {
   fullName     String?          @db.VarChar(255)
   email        String?          @db.VarChar(255)
   role         enum_Users_role?
-  createdAt    DateTime         @db.Timestamptz(6)
-  updatedAt    DateTime         @db.Timestamptz(6)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
   profileImage String?          @db.VarChar(255)
   comments     Comment[]
   likes        Like[]

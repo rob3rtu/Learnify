@@ -6,7 +6,7 @@ Table ClassTeachers {
   id String [pk]
   classId String
   teacherId String
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   class Class
   teacher Teacher
@@ -19,7 +19,7 @@ Table Class {
   year Int
   semester Int
   domain enum_Classes_domain
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   classTeachers ClassTeachers [not null]
   forum Forum
@@ -31,7 +31,7 @@ Table Comment {
   postId String
   userId String
   message String
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   post Post
   user User
@@ -40,7 +40,7 @@ Table Comment {
 Table Forum {
   id String [pk]
   classId String [unique]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   class Class
   messages Message [not null]
@@ -50,7 +50,7 @@ Table Like {
   id String [pk]
   postId String
   userId String
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   post Post
   user User
@@ -61,7 +61,7 @@ Table Message {
   forumId String
   userId String
   message String
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   forum Forum
   user User
@@ -76,7 +76,7 @@ Table Post {
   resourceType String
   resourceUrl String
   classSection String
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   comments Comment [not null]
   likes Like [not null]
@@ -87,7 +87,7 @@ Table Post {
 Table Teacher {
   id String [pk]
   userId String [unique]
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   classTeachers ClassTeachers [not null]
   user User
@@ -98,7 +98,7 @@ Table User {
   fullName String
   email String
   role enum_Users_role
-  createdAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   profileImage String
   comments Comment [not null]
