@@ -1,0 +1,23 @@
+import { PrismaClient } from "@prisma/client";
+import express from "express";
+
+const userRouter = express.Router();
+const prisma = new PrismaClient();
+
+userRouter.put("/update-profile-image", async (req, res) => {
+  const user = req.user;
+  const imageUrl = req.body.url;
+
+  try {
+    await prisma.user.update({
+      where: { id: user?.id },
+      data: { profileImage: imageUrl },
+    });
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
+export default userRouter;

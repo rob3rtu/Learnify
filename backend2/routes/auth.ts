@@ -1,12 +1,25 @@
 import express from "express";
 import { PrismaClient, enum_Users_role } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
-import { sign } from "jsonwebtoken";
+import { decode, sign } from "jsonwebtoken";
 
 const authRouter = express.Router();
-
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
 const prisma = new PrismaClient();
+
+authRouter.get("/verify-token/:token", async (req, res) => {
+  const token = req.params.token;
+  const user = decode(token);
+
+  if (user === null) {
+    res.sendStatus(404);
+  }
+
+  //@ts-ignore
+  const fullUser = await prisma.user.findFirst({ where: { id: user.id } });
+
+  res.json(fullUser);
+});
 
 authRouter.post("/login", async (req, res) => {
   const email = req.body.email;

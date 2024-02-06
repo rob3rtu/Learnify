@@ -3,6 +3,8 @@ import cors = require("cors");
 import "dotenv/config";
 import authRouter from "./routes/auth";
 import { PrismaClient } from "@prisma/client";
+import userRouter from "./routes/user";
+import authorization from "./middlewares/authorization";
 
 require("dotenv").config();
 
@@ -14,11 +16,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(authorization);
+
 app.get("/", async (req, res) => {
   res.send("Hello there");
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
 
 const checkDbConnection = async () => {
   try {
