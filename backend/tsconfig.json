@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "lib": ["esnext"],
+    "strict": true,
+    "typeRoots": ["./node_modules/@types", "./typings"]
+  }
+}

@@ -1,0 +1,145 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table ClassTeachers {
+  id String [pk]
+  classId String
+  teacherId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  class Class
+  teacher Teacher
+}
+
+Table Class {
+  id String [pk]
+  longName String
+  shortName String
+  year Int
+  semester Int
+  domain enum_Classes_domain
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  classTeachers ClassTeachers [not null]
+  forum Forum
+  posts Post [not null]
+}
+
+Table Comment {
+  id String [pk]
+  postId String
+  userId String
+  message String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  post Post
+  user User
+}
+
+Table Forum {
+  id String [pk]
+  classId String [unique]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  class Class
+  messages Message [not null]
+}
+
+Table Like {
+  id String [pk]
+  postId String
+  userId String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  post Post
+  user User
+}
+
+Table Message {
+  id String [pk]
+  forumId String
+  userId String
+  message String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  forum Forum
+  user User
+}
+
+Table Post {
+  id String [pk]
+  classId String
+  userId String
+  title String
+  description String
+  resourceType String
+  resourceUrl String
+  classSection String
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  comments Comment [not null]
+  likes Like [not null]
+  class Class
+  user User
+}
+
+Table Teacher {
+  id String [pk]
+  userId String [unique]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  classTeachers ClassTeachers [not null]
+  user User
+}
+
+Table User {
+  id String [pk]
+  fullName String
+  email String
+  role enum_Users_role
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  profileImage String
+  comments Comment [not null]
+  likes Like [not null]
+  messages Message [not null]
+  posts Post [not null]
+  teacher Teacher
+}
+
+Enum enum_Classes_domain {
+  info
+  mate
+  cti
+}
+
+Enum enum_Users_role {
+  admin
+  teacher
+  student
+}
+
+Ref: ClassTeachers.classId > Class.id [delete: No Action]
+
+Ref: ClassTeachers.teacherId > Teacher.id [delete: No Action]
+
+Ref: Comment.postId > Post.id [delete: No Action]
+
+Ref: Comment.userId > User.id [delete: No Action]
+
+Ref: Forum.classId - Class.id [delete: No Action]
+
+Ref: Like.postId > Post.id [delete: No Action]
+
+Ref: Like.userId > User.id [delete: No Action]
+
+Ref: Message.forumId > Forum.id [delete: No Action]
+
+Ref: Message.userId > User.id [delete: No Action]
+
+Ref: Post.classId > Class.id [delete: No Action]
+
+Ref: Post.userId > User.id [delete: No Action]
+
+Ref: Teacher.userId - User.id [delete: Cascade]
