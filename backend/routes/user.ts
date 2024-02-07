@@ -51,4 +51,13 @@ userRouter.post("/new", async (req, res) => {
   }
 });
 
+userRouter.delete("/delete/:id", async (req, res) => {
+  try {
+    await prisma.user.delete({ where: { id: req.params.id } });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+});
+
 export default userRouter;
