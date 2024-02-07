@@ -5,6 +5,8 @@ import authRouter from "./routes/auth";
 import { PrismaClient } from "@prisma/client";
 import userRouter from "./routes/user";
 import authorization from "./middlewares/authorization";
+import courseRouter from "./routes/course";
+import teacherRouter from "./routes/teacher";
 
 require("dotenv").config();
 
@@ -24,6 +26,8 @@ app.get("/", async (req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
+app.use("/api/course", courseRouter);
+app.use("/api/teacher", teacherRouter);
 
 const checkDbConnection = async () => {
   try {

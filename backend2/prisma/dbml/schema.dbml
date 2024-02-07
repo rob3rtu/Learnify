@@ -142,4 +142,4 @@ Ref: Post.classId > Class.id [delete: No Action]
 
 Ref: Post.userId > User.id [delete: No Action]
 
-Ref: Teacher.userId - User.id [delete: No Action]
+Ref: Teacher.userId - User.id [delete: Cascade]
