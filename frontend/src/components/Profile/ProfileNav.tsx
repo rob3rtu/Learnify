@@ -6,8 +6,7 @@ import { ChangeEvent, useRef } from "react";
 import { storage } from "../../firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch } from "react-redux";
-import { useMutation } from "@apollo/client";
-import { SAVE_PROFILE_IMAGE } from "../../graphql/mutations";
+import { apiClient } from "../../utils/apiClient";
 
 interface ProfileNavInterface {
   user: AccountInterface | null;
@@ -18,7 +17,6 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [saveProfileImage] = useMutation(SAVE_PROFILE_IMAGE);
 
   const handleSelectImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
@@ -29,7 +27,10 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
         const downloadURL = await getDownloadURL(profileImageRef);
 
         try {
-          await saveProfileImage({ variables: { downloadURL } });
+          await apiClient.put("user/update-profile-image", {
+            url: downloadURL,
+          });
+
           dispatch({
             type: "login/setAccount",
             payload: {

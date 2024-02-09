@@ -26,7 +26,10 @@ courseRouter.post("/new", async (req, res) => {
 
   try {
     await prisma.class.create({ data: course });
-    res.sendStatus(200);
+
+    const newCourses = await prisma.class.findMany();
+
+    res.json({ courses: newCourses });
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

@@ -16,12 +16,13 @@ import { NavBar } from "./NavBar";
 import { CourseInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { CreateCourseModal } from "./CreateCourseModal";
-import { useQuery } from "@apollo/client";
-import { COURSES } from "../../graphql/queries";
+import { getCourses } from "./api";
+import { AnyAction } from "redux";
 
 export const Home = () => {
-  const account = useSelector((state: RootState) => state.auth.account);
   const dispatch = useDispatch();
+  const account = useSelector((state: RootState) => state.auth.account);
+  const loading = useSelector((state: RootState) => state.home.loading);
   const courses = useSelector((state: RootState) => state.home.courses);
   const filteredCourses = useSelector(
     (state: RootState) => state.home.filteredCourses
@@ -29,19 +30,10 @@ export const Home = () => {
   const filters = useSelector((state: RootState) => state.home.filters);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { data, error, loading } = useQuery(COURSES);
-
   useEffect(() => {
-    if (!loading) {
-      console.log(data);
-
-      dispatch({
-        type: "home/setCourses",
-        payload: data.courses,
-      });
-    }
+    dispatch(getCourses() as unknown as AnyAction);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     dispatch({
