@@ -7,45 +7,28 @@ import { ConfirmEmail } from "./components/Login/ConfirmEmail";
 import { NotFound } from "./components/NotFound";
 import { colors } from "./theme";
 import { Profile } from "./components/Profile";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./Store";
-import { useQuery } from "@apollo/client";
-import { VERIFY_TOKEN } from "./graphql/queries";
 import { Course } from "./components/Course";
+import { getUserData } from "./components/Login/api";
+import { AnyAction } from "redux";
 
 function App() {
-  const user = useSelector((state: RootState) => state.auth.account);
   const dispatch = useDispatch();
-
-  const token = localStorage.getItem("learnifyToken");
-
-  const { data, error, loading } = useQuery(VERIFY_TOKEN, {
-    variables: { token },
-  });
+  const loading = useSelector((state: RootState) => state.auth.loading);
+  const user = useSelector((state: RootState) => state.auth.account);
 
   useEffect(() => {
-    if (data) {
-      console.log(data);
-
-      const potentialUser = data.verifyToken;
-      if (potentialUser !== null && potentialUser !== undefined) {
-        dispatch({
-          type: "login/setAccount",
-          payload: { ...potentialUser },
-        });
-      }
+    const token = localStorage.getItem("learnifyToken");
+    if (token !== null) {
+      dispatch(getUserData(token ?? "") as unknown as AnyAction);
+    } else {
+      dispatch({ type: "login/setAccount", payload: null });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
-  if (error) {
-    console.log(error);
-    dispatch({
-      type: "login/setAccount",
-      payload: null,
-    });
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (loading)
     return (

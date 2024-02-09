@@ -1,8 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { Request, Response, NextFunction } from "express";
 import { decode } from "jsonwebtoken";
-
-const prisma = new PrismaClient();
 
 const authorization = async (
   req: Request,
@@ -12,25 +9,33 @@ const authorization = async (
   const header = req.headers["authorization"];
   const token = header?.split(" ")[1];
 
-  if (token === undefined || token === null) {
-    res.sendStatus(401);
-  }
+  // if (
+  //   !req.originalUrl.includes("login") &&
+  //   (token === undefined || token === null || token == "")
+  // ) {
+  //   res.sendStatus(401);
+  //   return;
+  // }
 
-  try {
-    const user = decode(token ?? "");
-    //@ts-ignore
-    const fullUser = await prisma.user.findFirst({ where: { id: user.id } });
+  // try {
+  const user = decode(token ?? "");
 
-    if (fullUser === null) {
-      res.sendStatus(404);
-    } else {
-      req.user = fullUser;
-      next();
-    }
-  } catch (error) {
-    console.log(error);
-    res.sendStatus(401);
-  }
+  // if (
+  //   !req.originalUrl.includes("login") &&
+  //   (user === null || user === undefined)
+  // ) {
+  //   res.sendStatus(404);
+  // } else {
+  //@ts-ignore
+  req.user = user;
+  next();
+  //     return;
+  //   }
+  // } catch (error) {
+  //   console.log(error);
+  //   res.sendStatus(401);
+  //   return;
+  // }
 };
 
 export default authorization;

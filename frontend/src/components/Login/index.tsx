@@ -11,15 +11,13 @@ import {
 import { useState } from "react";
 import LoginSVG from "../../assets/login.svg";
 import { colors } from "../../theme";
-import { useMutation } from "@apollo/client";
-import { LOGIN } from "../../graphql/mutations";
+import { apiClient } from "../../utils/apiClient";
 
 export const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const toast = useToast();
-  const [login] = useMutation(LOGIN);
 
   const handleEmailLogin = async () => {
     if (email === "") {
@@ -33,14 +31,13 @@ export const Login = () => {
       });
     } else {
       try {
-        const data = await login({ variables: { email } });
-        console.log(data);
+        await apiClient.post(`auth/login/${email}`);
         setCheckEmail(true);
-      } catch (err) {
+      } catch (err: any) {
         console.log(err);
         toast({
           title: "Error!",
-          description: "Something went wrong.",
+          description: err.response.data.error ?? "Something went wrong.",
           status: "error",
           duration: 5000,
           isClosable: true,

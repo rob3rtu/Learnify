@@ -15,8 +15,7 @@ import { FiltersInterface, semesterObject, yearsObject } from "./types";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { ADD_COURSE } from "../../graphql/mutations";
-import { useMutation } from "@apollo/client";
+import { apiClient } from "../../utils/apiClient";
 
 interface CreateCourseModalProps {
   filters: FiltersInterface;
@@ -34,7 +33,6 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
   const [courseName, setCourseName] = useState<string>("");
   const [shortName, setShortName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const [addCourse] = useMutation(ADD_COURSE);
 
   const handleOnClose = () => {
     setCourseName("");
@@ -54,13 +52,13 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
     setLoading(true);
 
     try {
-      const res = await addCourse({
-        variables: { shortName, longName: courseName, ...filters },
+      const res = await apiClient.post("course/new", {
+        course: { shortName, longName: courseName, ...filters },
       });
 
       dispatch({
         type: "home/setCourses",
-        payload: [...courses, res.data.addCourse],
+        payload: res.data.courses,
       });
     } catch (error) {
       console.log(error);

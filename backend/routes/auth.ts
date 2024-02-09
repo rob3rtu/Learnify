@@ -21,8 +21,8 @@ authRouter.get("/verify-token/:token", async (req, res) => {
   res.json(fullUser);
 });
 
-authRouter.post("/login", async (req, res) => {
-  const email = req.body.email;
+authRouter.post("/login/:email", async (req, res) => {
+  const email = req.params.email;
 
   let user = await prisma.user.findFirst({ where: { email } });
 
@@ -59,6 +59,7 @@ authRouter.post("/login", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Email not sent." });
+    return;
   }
 
   res.sendStatus(200);
