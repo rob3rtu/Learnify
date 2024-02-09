@@ -16,13 +16,17 @@ export const getUserData = createAsyncThunk(
         type: "login/setAccount",
         payload: resp.data,
       });
-
       thunkApi.dispatch({
         type: "login/setLoading",
         payload: false,
       });
     } catch (e) {
+      localStorage.removeItem("learnifyToken");
       console.log(e);
+      thunkApi.dispatch({
+        type: "login/setLoading",
+        payload: false,
+      });
     }
   }
 );

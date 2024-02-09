@@ -12,7 +12,7 @@ authRouter.get("/verify-token/:token", async (req, res) => {
   const user = decode(token);
 
   if (user === null) {
-    res.sendStatus(404);
+    return res.sendStatus(404);
   }
 
   //@ts-ignore
@@ -58,8 +58,7 @@ authRouter.post("/login/:email", async (req, res) => {
       html: `<a href='http://localhost:3000/confirm-email?token=${token}'>Log in</a>`,
     });
   } catch (error) {
-    res.status(500).json({ error: "Email not sent." });
-    return;
+    return res.status(500).json({ error: "Email not sent." });
   }
 
   res.sendStatus(200);

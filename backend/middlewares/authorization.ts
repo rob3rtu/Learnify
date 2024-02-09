@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { decode } from "jsonwebtoken";
 
+//check if there is a token in the auth header and if it belongs to an existing user
 const authorization = async (
   req: Request,
   res: Response,
@@ -9,33 +10,25 @@ const authorization = async (
   const header = req.headers["authorization"];
   const token = header?.split(" ")[1];
 
-  // if (
-  //   !req.originalUrl.includes("login") &&
-  //   (token === undefined || token === null || token == "")
-  // ) {
-  //   res.sendStatus(401);
-  //   return;
-  // }
+  if (token === undefined || token === null || token == "") {
+    return res.sendStatus(401);
+  }
 
-  // try {
-  const user = decode(token ?? "");
+  try {
+    const user = decode(token ?? "");
 
-  // if (
-  //   !req.originalUrl.includes("login") &&
-  //   (user === null || user === undefined)
-  // ) {
-  //   res.sendStatus(404);
-  // } else {
-  //@ts-ignore
-  req.user = user;
-  next();
-  //     return;
-  //   }
-  // } catch (error) {
-  //   console.log(error);
-  //   res.sendStatus(401);
-  //   return;
-  // }
+    if (user === null || user === undefined) {
+      return res.sendStatus(404);
+    } else {
+      //@ts-ignore
+      req.user = user;
+      next();
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
 };
 
 export default authorization;
