@@ -18,13 +18,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(authorization);
-
 app.get("/", async (req, res) => {
   res.send("Hello there");
 });
 
 app.use("/api/auth", authRouter);
+app.use(authorization);
 app.use("/api/user", userRouter);
 app.use("/api/course", courseRouter);
 app.use("/api/teacher", teacherRouter);

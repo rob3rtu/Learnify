@@ -1,17 +1,14 @@
-import { Flex, Spinner, useToast } from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { colors } from "../../theme";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store";
-import { getUserData } from "./api";
 import { AnyAction } from "redux";
+import { colors } from "../../theme";
+import { getUserData } from "./api";
 
 export const ConfirmEmail = () => {
   const dispatch = useDispatch();
-  const toast = useToast();
   const nav = useNavigate();
-  const user = useSelector((state: RootState) => state.auth.account);
   const searchParams = new URLSearchParams(document.location.search);
 
   useEffect(() => {
@@ -23,26 +20,6 @@ export const ConfirmEmail = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // useEffect(() => {
-  //   if (user) {
-  //     nav("/");
-  //     console.log("YES YES YES");
-  //   } else {
-  //     localStorage.removeItem("learnifyToken");
-  //     toast({
-  //       title: "Error!",
-  //       description: "Invalid credentials.",
-  //       status: "error",
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //     console.log("NO NO NO NO ");
-
-  //     nav("/");
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [user]);
 
   return (
     <Flex
