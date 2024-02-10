@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Spinner, Text, Image } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { NavBar } from "../Navbar/NavBar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +8,9 @@ import { apiClient } from "../../utils/apiClient";
 import { useEffect } from "react";
 import { AnyAction } from "redux";
 import { getCurrentCourse } from "./api";
+import SadSVG from "../../assets/sad.svg";
+import { sortBy } from "./data";
+import { SideBar } from "./Sidebar";
 
 export const Course = () => {
   const { id } = useParams();
@@ -59,14 +62,30 @@ export const Course = () => {
       >
         <NavBar courseName={course?.longName} />
 
-        <Text
-          color={colors.white}
-          marginTop={10}
-          cursor={"pointer"}
-          onClick={handleDeleteCourse}
-        >
-          {id}
-        </Text>
+        {course === null ? (
+          <Flex
+            flex={1}
+            width="100vw"
+            align="center"
+            justify="center"
+            direction="column"
+          >
+            <Image src={SadSVG} />
+            <Text
+              marginTop={5}
+              fontFamily="WorkSans-SemiBold"
+              fontSize={20}
+              color={colors.white}
+            >
+              Course not found...
+            </Text>
+          </Flex>
+        ) : (
+          <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
+            <SideBar />
+            <Flex direction={"column"} height={"83vh"} width={"80vw"}></Flex>
+          </Flex>
+        )}
       </Flex>
     </>
   );
