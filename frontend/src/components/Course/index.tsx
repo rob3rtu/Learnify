@@ -8,7 +8,7 @@ import { apiClient } from "../../utils/apiClient";
 import { useEffect } from "react";
 import { AnyAction } from "redux";
 import { getCurrentCourse } from "./api";
-import SadSVG from "../../assets/sad.svg";
+import NotFoundSVG from "../../assets/not-found.svg";
 import { SideBar } from "./Sidebar";
 import { Feed } from "./Feed";
 
@@ -70,11 +70,11 @@ export const Course = () => {
             justify="center"
             direction="column"
           >
-            <Image src={SadSVG} />
+            <Image src={NotFoundSVG} width={400} maxW={"80vw"} />
             <Text
               marginTop={5}
               fontFamily="WorkSans-SemiBold"
-              fontSize={20}
+              fontSize={25}
               color={colors.white}
             >
               Course not found...
