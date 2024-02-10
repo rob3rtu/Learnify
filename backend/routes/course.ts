@@ -22,13 +22,20 @@ courseRouter.get("/all", async (req, res) => {
 });
 
 courseRouter.get("/:id", async (req, res) => {
-  const course = await prisma.class.findFirst({ where: { id: req.params.id } });
+  try {
+    const course = await prisma.class.findFirst({
+      where: { id: req.params.id },
+    });
 
-  if (course === null) {
-    return res.sendStatus(404);
+    if (course === null) {
+      return res.sendStatus(404);
+    }
+
+    return res.json(course);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
   }
-
-  return res.json(course);
 });
 
 courseRouter.post("/new", async (req, res) => {

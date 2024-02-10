@@ -1,18 +1,26 @@
-import { Center, Text } from "@chakra-ui/react";
+import { Flex, Image, Text } from "@chakra-ui/react";
 import { colors } from "../../theme";
+import NotFoundSVG from "../../assets/not-found.svg";
 
 export const NotFound = () => {
   return (
-    <Center height="100vh">
+    <Flex
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      bg={colors.black}
+      height="100vh"
+    >
+      <Image src={NotFoundSVG} width={400} maxW={"80vw"} />
       <Text
         style={{
           fontFamily: "WorkSans-BoldItalic",
-          fontSize: 50,
-          color: colors.black,
+          fontSize: 25,
+          color: colors.white,
         }}
       >
-        404 Page Not Found
+        Page Not Found
       </Text>
-    </Center>
+    </Flex>
   );
 };

@@ -61,32 +61,48 @@ export const NavBar: React.FC<NavBarProps> = ({ courseName }) => {
 
       <Divider width="100%" padding="0 20px 0 20px" opacity={0.2} />
 
-      <Flex
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        width="100%"
-        padding="15px 20px 5px 20px"
-      >
-        {courseName ? (
-          <>
-            <Text
-              fontFamily="WorkSans-BoldItalic"
-              color={colors.white}
-              fontSize={15}
-            >
-              {courseName}
-            </Text>
-            <CourseTabs />
-          </>
-        ) : (
-          <>
-            <NavTabs type="domain" />
-            <NavTabs type="year" />
-            <NavTabs type="semester" />
-          </>
-        )}
-      </Flex>
+      {!courseName && window.location.pathname.includes("course") ? (
+        <Flex
+          alignItems="center"
+          justifyContent="center"
+          padding="15px 20px 5px 20px"
+        >
+          <Text
+            fontFamily="WorkSans-BoldItalic"
+            color={colors.white}
+            fontSize={15}
+          >
+            We don't have this course
+          </Text>
+        </Flex>
+      ) : (
+        <Flex
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          width="100%"
+          padding="15px 20px 5px 20px"
+        >
+          {courseName ? (
+            <>
+              <Text
+                fontFamily="WorkSans-BoldItalic"
+                color={colors.white}
+                fontSize={15}
+              >
+                {courseName}
+              </Text>
+              <CourseTabs />
+            </>
+          ) : (
+            <>
+              <NavTabs type="domain" />
+              <NavTabs type="year" />
+              <NavTabs type="semester" />
+            </>
+          )}
+        </Flex>
+      )}
     </Flex>
   );
 };
