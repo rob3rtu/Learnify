@@ -1,8 +1,17 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
+import { DeleteIcon } from "@chakra-ui/icons";
 
-export const SideBar = () => {
+interface SideBarProps {
+  handleDeleteCourse: () => void;
+}
+
+export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
+  const user = useSelector((state: RootState) => state.auth.account);
+
   return (
     <Flex
       direction={"column"}
@@ -66,6 +75,20 @@ export const SideBar = () => {
       >
         New post
       </Button>
+
+      {user?.role === "admin" && (
+        <IconButton
+          position={"absolute"}
+          bottom={8}
+          right={2}
+          variant="link"
+          colorScheme="red"
+          aria-label="delete"
+          fontSize="20px"
+          icon={<DeleteIcon />}
+          onClick={handleDeleteCourse}
+        />
+      )}
     </Flex>
   );
 };

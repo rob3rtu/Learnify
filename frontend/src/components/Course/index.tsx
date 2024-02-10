@@ -9,8 +9,8 @@ import { useEffect } from "react";
 import { AnyAction } from "redux";
 import { getCurrentCourse } from "./api";
 import SadSVG from "../../assets/sad.svg";
-import { sortBy } from "./data";
 import { SideBar } from "./Sidebar";
+import { Feed } from "./Feed";
 
 export const Course = () => {
   const { id } = useParams();
@@ -82,8 +82,8 @@ export const Course = () => {
           </Flex>
         ) : (
           <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
-            <SideBar />
-            <Flex direction={"column"} height={"83vh"} width={"80vw"}></Flex>
+            <SideBar handleDeleteCourse={handleDeleteCourse} />
+            <Feed />
           </Flex>
         )}
       </Flex>
