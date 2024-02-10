@@ -21,6 +21,16 @@ courseRouter.get("/all", async (req, res) => {
   });
 });
 
+courseRouter.get("/:id", async (req, res) => {
+  const course = await prisma.class.findFirst({ where: { id: req.params.id } });
+
+  if (course === null) {
+    return res.sendStatus(404);
+  }
+
+  return res.json(course);
+});
+
 courseRouter.post("/new", async (req, res) => {
   const course = req.body.course as CourseDTO;
 
@@ -29,10 +39,10 @@ courseRouter.post("/new", async (req, res) => {
 
     const newCourses = await prisma.class.findMany();
 
-    res.json({ courses: newCourses });
+    return res.json({ courses: newCourses });
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 
@@ -41,10 +51,10 @@ courseRouter.delete("/delete/:id", async (req, res) => {
 
   try {
     await prisma.class.delete({ where: { id } });
-    res.sendStatus(200);
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 

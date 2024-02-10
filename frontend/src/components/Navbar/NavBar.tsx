@@ -1,11 +1,17 @@
 import { Flex, Text, Avatar, Divider } from "@chakra-ui/react";
 import { colors } from "../../theme";
-import { NavTabs } from "./NavTabs";
+
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
+import { CourseTabs } from "./CourseTabs";
+import { NavTabs } from "./NavTabs";
 
-export const NavBar = () => {
+interface NavBarProps {
+  courseName?: string;
+}
+
+export const NavBar: React.FC<NavBarProps> = ({ courseName }) => {
   const user = useSelector((state: RootState) => state.auth.account);
   const nav = useNavigate();
 
@@ -33,6 +39,10 @@ export const NavBar = () => {
           fontFamily="WorkSans-BoldItalic"
           color={colors.white}
           fontSize={25}
+          onClick={() => {
+            nav("/");
+          }}
+          cursor={"pointer"}
         >
           LEARNIFY
         </Text>
@@ -58,9 +68,24 @@ export const NavBar = () => {
         width="100%"
         padding="15px 20px 5px 20px"
       >
-        <NavTabs type="domain" />
-        <NavTabs type="year" />
-        <NavTabs type="semester" />
+        {courseName ? (
+          <>
+            <Text
+              fontFamily="WorkSans-BoldItalic"
+              color={colors.white}
+              fontSize={15}
+            >
+              {courseName}
+            </Text>
+            <CourseTabs />
+          </>
+        ) : (
+          <>
+            <NavTabs type="domain" />
+            <NavTabs type="year" />
+            <NavTabs type="semester" />
+          </>
+        )}
       </Flex>
     </Flex>
   );

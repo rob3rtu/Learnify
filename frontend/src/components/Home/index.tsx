@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { colors } from "../../theme";
 import { CourseCard } from "./CourseCard";
-import { NavBar } from "./NavBar";
+import { NavBar } from "../Navbar/NavBar";
 import { CourseInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { CreateCourseModal } from "./CreateCourseModal";
