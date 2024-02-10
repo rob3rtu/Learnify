@@ -2,7 +2,7 @@ import { Tabs, TabList, Tab } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { filtersObject, semesterObject, yearsObject } from "./types";
+import { filtersObject, semesterObject, yearsObject } from "../Home/types";
 
 interface NavTabsProps {
   type: "domain" | "year" | "semester";
