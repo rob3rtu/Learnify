@@ -36,4 +36,14 @@ postRouter.post("/new", async (req, res) => {
   }
 });
 
+postRouter.delete("/:id", async (req, res) => {
+  try {
+    await prisma.post.delete({ where: { id: req.params.id } });
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 export default postRouter;
