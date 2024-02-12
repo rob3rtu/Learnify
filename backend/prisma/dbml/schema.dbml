@@ -73,9 +73,9 @@ Table Post {
   userId String
   title String
   description String
-  resourceType String
+  resourceType enum_Resource_type [not null]
   resourceUrl String
-  classSection String
+  classSection enum_Class_section [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   comments Comment [not null]
@@ -106,6 +106,18 @@ Table User {
   messages Message [not null]
   posts Post [not null]
   teacher Teacher
+}
+
+Enum enum_Resource_type {
+  link
+  document
+}
+
+Enum enum_Class_section {
+  materials
+  courses
+  seminars
+  laboratory
 }
 
 Enum enum_Classes_domain {
