@@ -83,7 +83,7 @@ export const Course = () => {
         ) : (
           <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
             <SideBar handleDeleteCourse={handleDeleteCourse} />
-            <Feed />
+            <Feed posts={course.posts} />
           </Flex>
         )}
       </Flex>

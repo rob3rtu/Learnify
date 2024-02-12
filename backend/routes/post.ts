@@ -26,7 +26,7 @@ postRouter.post("/new", async (req, res) => {
 
     const updatedClass = await prisma.class.findFirst({
       where: { id: newPost.classId },
-      include: { posts: true },
+      include: { posts: { include: { user: true } } },
     });
 
     return res.json(updatedClass);
