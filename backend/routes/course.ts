@@ -25,6 +25,7 @@ courseRouter.get("/:id", async (req, res) => {
   try {
     const course = await prisma.class.findFirst({
       where: { id: req.params.id },
+      include: { posts: true },
     });
 
     if (course === null) {
