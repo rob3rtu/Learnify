@@ -1,4 +1,17 @@
-import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  IconButton,
+  Text,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
 import { useSelector } from "react-redux";
@@ -11,6 +24,7 @@ interface SideBarProps {
 
 export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
   const user = useSelector((state: RootState) => state.auth.account);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Flex
@@ -72,6 +86,7 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
         _hover={{
           backgroundColor: colors.blue,
         }}
+        onClick={onOpen}
       >
         New post
       </Button>
@@ -89,6 +104,24 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
           onClick={handleDeleteCourse}
         />
       )}
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>New Post</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>New post</Text>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant="ghost">Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };
