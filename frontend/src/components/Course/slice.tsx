@@ -1,14 +1,16 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { FullCourseInterface } from "./types";
+import { CourseFilters, FullCourseInterface } from "./types";
 
 type SliceState = {
   loading: boolean;
   course: FullCourseInterface | null;
+  filters: CourseFilters;
 };
 
 const initialState = {
   loading: false,
   course: null,
+  filters: { section: "materials" },
 };
 
 export const courseSlice = createSlice({
@@ -21,6 +23,9 @@ export const courseSlice = createSlice({
     },
     setCourse: (state, action: PayloadAction<FullCourseInterface>) => {
       state.course = action.payload;
+    },
+    setFilters: (state, action: PayloadAction<CourseFilters>) => {
+      state.filters = action.payload;
     },
   },
 });

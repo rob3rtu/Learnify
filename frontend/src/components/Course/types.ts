@@ -21,3 +21,15 @@ export interface PostInterface {
   classSection: string;
   user: AccountInterface;
 }
+
+export interface CourseFilters {
+  section: "materials" | "courses" | "seminars" | "laboratory" | "forum";
+}
+
+export const courseFiltersObkect = [
+  "materials",
+  "courses",
+  "seminars",
+  "laboratory",
+  "forum",
+];

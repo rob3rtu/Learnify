@@ -3,12 +3,24 @@ import { PostInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { colors } from "../../theme";
 import { PostCard } from "./PostCard";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
 
 interface FeedProps {
   posts: PostInterface[];
 }
 
 export const Feed: React.FC<FeedProps> = ({ posts }) => {
+  const [filteredPosts, setFilteredPosts] = useState<PostInterface[]>(posts);
+  const filters = useSelector((state: RootState) => state.course.filters);
+
+  useEffect(() => {
+    setFilteredPosts(
+      posts.filter((post) => post.classSection === filters.section)
+    );
+  }, [filters, posts]);
+
   return (
     <Flex
       direction={"column"}
@@ -18,7 +30,7 @@ export const Feed: React.FC<FeedProps> = ({ posts }) => {
       p={10}
       gap={10}
     >
-      {posts.length === 0 ? (
+      {filteredPosts.length === 0 ? (
         <Flex
           flex={1}
           width="100%"
@@ -38,7 +50,7 @@ export const Feed: React.FC<FeedProps> = ({ posts }) => {
         </Flex>
       ) : (
         <>
-          {posts.map((post) => {
+          {filteredPosts.map((post) => {
             return <PostCard post={post} />;
           })}
         </>
