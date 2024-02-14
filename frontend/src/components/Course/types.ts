@@ -16,7 +16,7 @@ export interface PostInterface {
   userId: string;
   title: string;
   description: string;
-  resourseType: string;
+  resourceType: string;
   resourceUrl: string;
   classSection: string;
   user: AccountInterface;

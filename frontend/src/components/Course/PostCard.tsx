@@ -8,6 +8,15 @@ interface PostCardProps {
 }
 
 export const PostCard: React.FC<PostCardProps> = ({ post }) => {
+  const handleSelectPost = () => {
+    window.open(
+      post.resourceUrl.includes("https://")
+        ? post.resourceUrl
+        : "https://" + post.resourceUrl,
+      "_blank"
+    );
+  };
+
   return (
     <Flex
       width={"100%"}
@@ -83,9 +92,10 @@ export const PostCard: React.FC<PostCardProps> = ({ post }) => {
           _hover={{
             bgColor: "#1d1d1d",
           }}
+          onClick={handleSelectPost}
         >
           <Text color={colors.grey} fontFamily={"WorkSans-Bold"}>
-            Download
+            Open
           </Text>
         </Box>
       </Flex>

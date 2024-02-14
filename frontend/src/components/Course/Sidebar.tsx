@@ -43,6 +43,7 @@ export const SideBar: React.FC<SideBarProps> = ({
           {sortBy.map((filter) => {
             return (
               <Text
+                key={filter}
                 fontFamily="WorkSans-Regular"
                 fontSize={15}
                 color={colors.white}
@@ -62,6 +63,7 @@ export const SideBar: React.FC<SideBarProps> = ({
           {filterBy.map((filter) => {
             return (
               <Text
+                key={filter}
                 fontFamily="WorkSans-Regular"
                 fontSize={15}
                 color={colors.white}
