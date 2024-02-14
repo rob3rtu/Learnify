@@ -36,6 +36,27 @@ postRouter.post("/new", async (req, res) => {
   }
 });
 
+postRouter.put("/edit/:id", async (req, res) => {
+  const newData = req.body;
+
+  try {
+    const updatedPost = await prisma.post.update({
+      where: { id: req.params.id },
+      data: newData,
+    });
+
+    const updatedClass = await prisma.class.findFirst({
+      where: { id: updatedPost.classId ?? undefined },
+      include: { posts: { include: { user: true } } },
+    });
+
+    return res.json(updatedClass);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 postRouter.delete("/:id", async (req, res) => {
   try {
     await prisma.post.delete({ where: { id: req.params.id } });

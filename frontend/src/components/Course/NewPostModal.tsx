@@ -28,6 +28,7 @@ interface NewPostModalProps {
   onClose: () => void;
   classId: string;
   userId: string;
+  initialValues?: { title: string; description: string; postId: string };
 }
 
 interface NewPostFieldsInterface {
@@ -42,6 +43,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
   onClose,
   classId,
   userId,
+  initialValues,
 }) => {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -56,11 +58,26 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
   });
 
   useEffect(() => {
-    setNewPostDisable(
-      newPostFields.title === "" ||
-        (newPostFields.link === "" &&
-          (newPostFields.file === null || newPostFields.file === undefined))
-    );
+    if (initialValues) {
+      setNewPostFields({
+        ...newPostFields,
+        title: initialValues?.title ?? "",
+        description: initialValues?.description ?? "",
+      });
+    }
+  }, [initialValues]);
+
+  useEffect(() => {
+    if (initialValues === undefined) {
+      //creating new post
+      setNewPostDisable(
+        newPostFields.title === "" ||
+          (newPostFields.link === "" &&
+            (newPostFields.file === null || newPostFields.file === undefined))
+      );
+    } else {
+      setNewPostDisable(newPostFields.title === "");
+    }
   }, [newPostFields]);
 
   const onCloseCustom = () => {
@@ -73,6 +90,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
     let documentRef;
     let documentUrl;
 
+    //on edit file is null so we don't worry about this if
     if (newPostFields.file) {
       documentRef = ref(storage, `${user?.email}/${newPostFields.file.name}`);
 
@@ -80,41 +98,74 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
       documentUrl = await getDownloadURL(documentRef);
     }
 
-    await apiClient
-      .post("post/new", {
-        classId,
-        userId,
-        classSection: "materials",
-        title: newPostFields.title,
-        description: newPostFields.description,
-        resourceType: newPostFields.link === "" ? "document" : "link",
-        resourceUrl:
-          newPostFields.link === "" ? documentUrl : newPostFields.link,
-      })
-      .then((res) => {
-        dispatch({ type: "course/setCourse", payload: res.data });
-        toast({
-          title: "Success!",
-          description: "Nice work!",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
+    if (initialValues) {
+      //we edit the post
+      await apiClient
+        .put(`post/edit/${initialValues.postId}`, {
+          title: newPostFields.title,
+          description: newPostFields.description,
+        })
+        .then((res) => {
+          dispatch({ type: "course/setCourse", payload: res.data });
+          toast({
+            title: "Success!",
+            description: "Post updated!",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast({
+            title: "Error!",
+            description: "Something went wrong.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          onCloseCustom();
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast({
-          title: "Error!",
-          description: "Something went wrong.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
+    } else {
+      await apiClient
+        .post("post/new", {
+          classId,
+          userId,
+          classSection: "materials",
+          title: newPostFields.title,
+          description: newPostFields.description,
+          resourceType: newPostFields.link === "" ? "document" : "link",
+          resourceUrl:
+            newPostFields.link === "" ? documentUrl : newPostFields.link,
+        })
+        .then((res) => {
+          dispatch({ type: "course/setCourse", payload: res.data });
+          toast({
+            title: "Success!",
+            description: "Nice work!",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          toast({
+            title: "Error!",
+            description: "Something went wrong.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          onCloseCustom();
         });
-      })
-      .finally(() => {
-        setLoading(false);
-        onCloseCustom();
-      });
+    }
   };
 
   return (
@@ -126,7 +177,9 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader fontSize={25}>New Post</ModalHeader>
+        <ModalHeader fontSize={25}>
+          {initialValues ? "Edit Post" : "New Post"}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Flex gap={3} alignItems={"baseline"}>
@@ -163,38 +216,41 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
 
           <Box height={10} />
 
-          <Flex direction={"column"} gap={5} alignItems={"center"}>
-            <Input
-              isDisabled={
-                newPostFields.file !== undefined && newPostFields.file !== null
-              }
-              placeholder="Copy link here"
-              value={newPostFields.link}
-              onChange={(e) => {
-                setNewPostFields({
-                  ...newPostFields,
-                  link: e.target.value,
-                });
-              }}
-            />
-            <Box position="relative" width={250}>
-              <Divider />
-              <AbsoluteCenter backgroundColor={"white"} px={6}>
-                or
-              </AbsoluteCenter>
-            </Box>
-            <Input
-              isDisabled={newPostFields.link !== ""}
-              type="file"
-              accept=".doc, .docx, .pdf, .ppt, .pptx, .txt"
-              onChange={(e) => {
-                setNewPostFields({
-                  ...newPostFields,
-                  file: e.target.files?.item(0),
-                });
-              }}
-            />
-          </Flex>
+          {!initialValues && (
+            <Flex direction={"column"} gap={5} alignItems={"center"}>
+              <Input
+                isDisabled={
+                  newPostFields.file !== undefined &&
+                  newPostFields.file !== null
+                }
+                placeholder="Copy link here"
+                value={newPostFields.link}
+                onChange={(e) => {
+                  setNewPostFields({
+                    ...newPostFields,
+                    link: e.target.value,
+                  });
+                }}
+              />
+              <Box position="relative" width={250}>
+                <Divider />
+                <AbsoluteCenter backgroundColor={"white"} px={6}>
+                  or
+                </AbsoluteCenter>
+              </Box>
+              <Input
+                isDisabled={newPostFields.link !== ""}
+                type="file"
+                accept=".doc, .docx, .pdf, .ppt, .pptx, .txt"
+                onChange={(e) => {
+                  setNewPostFields({
+                    ...newPostFields,
+                    file: e.target.files?.item(0),
+                  });
+                }}
+              />
+            </Flex>
+          )}
         </ModalBody>
 
         <ModalFooter>

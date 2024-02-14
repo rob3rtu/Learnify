@@ -1,4 +1,4 @@
-import { Flex, Spinner, Text, Image } from "@chakra-ui/react";
+import { Flex, Spinner, Text, Image, useDisclosure } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { NavBar } from "../Navbar/NavBar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,6 +19,7 @@ export const Course = () => {
   const courses = useSelector((state: RootState) => state.home.courses);
   const loading = useSelector((state: RootState) => state.course.loading);
   const course = useSelector((state: RootState) => state.course.course);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDeleteCourse = async () => {
     try {
@@ -85,8 +86,16 @@ export const Course = () => {
             <SideBar
               handleDeleteCourse={handleDeleteCourse}
               classId={course.id}
+              isOpen={isOpen}
+              onOpen={onOpen}
+              onClose={onClose}
             />
-            <Feed posts={course.posts} />
+            <Feed
+              posts={course.posts}
+              isOpen={isOpen}
+              onOpen={onOpen}
+              onClose={onClose}
+            />
           </Flex>
         )}
       </Flex>
