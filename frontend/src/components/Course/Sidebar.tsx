@@ -1,4 +1,10 @@
-import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  IconButton,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
 import { useSelector } from "react-redux";
@@ -9,18 +15,13 @@ import { NewPostModal } from "./NewPostModal";
 interface SideBarProps {
   handleDeleteCourse: () => void;
   classId: string;
-  isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
 }
 
 export const SideBar: React.FC<SideBarProps> = ({
   handleDeleteCourse,
   classId,
-  isOpen,
-  onOpen,
-  onClose,
 }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state: RootState) => state.auth.account);
 
   return (

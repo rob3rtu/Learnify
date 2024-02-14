@@ -1,26 +1,58 @@
-import { Button, Flex, Image } from "@chakra-ui/react";
-import { colors } from "../../theme";
-import { useDispatch, useSelector } from "react-redux";
+import { Flex, Spinner, useToast } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
+import { colors } from "../../theme";
+import { apiClient } from "../../utils/apiClient";
+import { Feed } from "../Course/Feed";
+import { PostInterface } from "../Course/types";
 import { ProfileNav } from "./ProfileNav";
-import { Logout } from "../../assets/customChakraIcons/Logout";
-import ProfileSVG from "../../assets/profile.svg";
-import { useNavigate } from "react-router-dom";
+import { Sidebar } from "./Sidebar";
 
 export const Profile = () => {
-  const dispatch = useDispatch();
-  const nav = useNavigate();
+  const toast = useToast();
   const account = useSelector((state: RootState) => state.auth.account);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [posts, setPosts] = useState<PostInterface[]>([]);
+  const [fakeReload, setFakeReload] = useState<boolean>(false);
 
-  const handleLogOut = () => {
-    localStorage.removeItem("learnifyToken");
-    dispatch({ type: "login/setAccount", payload: null });
-    nav("/");
-  };
+  useEffect(() => {
+    setLoading(true);
+    apiClient
+      .get("user/posts")
+      .then((res) => {
+        setPosts(res.data.posts);
+      })
+      .catch((err) => {
+        toast({
+          title: "Error!",
+          description: "Could not get posts.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [fakeReload]);
+
+  if (loading)
+    return (
+      <Flex
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        bg={colors.black}
+        height="100vh"
+      >
+        <Spinner size="xl" color={colors.white} />
+      </Flex>
+    );
 
   return (
     <Flex
-      direction="column"
+      direction={"column"}
       alignItems="center"
       justifyContent="center"
       bg={colors.black}
@@ -28,19 +60,15 @@ export const Profile = () => {
     >
       <ProfileNav user={account} />
 
-      <Image src={ProfileSVG} position="absolute" left={0} top="20vh" />
-
-      <Button
-        position="absolute"
-        bottom={5}
-        left={8}
-        onClick={handleLogOut}
-        leftIcon={<Logout />}
-        variant="link"
-        color={colors.white}
-      >
-        Log out
-      </Button>
+      <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
+        <Sidebar />
+        <Feed
+          posts={posts}
+          fakeReload={() => {
+            setFakeReload(!fakeReload);
+          }}
+        />
+      </Flex>
     </Flex>
   );
 };

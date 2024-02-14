@@ -29,6 +29,7 @@ interface NewPostModalProps {
   classId: string;
   userId: string;
   initialValues?: { title: string; description: string; postId: string };
+  fakeReload?: () => void;
 }
 
 interface NewPostFieldsInterface {
@@ -44,6 +45,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
   classId,
   userId,
   initialValues,
+  fakeReload,
 }) => {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -114,6 +116,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
             duration: 5000,
             isClosable: true,
           });
+          fakeReload?.();
         })
         .catch((err) => {
           console.log(err);

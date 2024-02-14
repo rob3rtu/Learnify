@@ -23,9 +23,14 @@ interface PostCardProps {
     description: string;
     postId: string;
   }) => void;
+  fakeReload?: () => void;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({ post, openEditModal }) => {
+export const PostCard: React.FC<PostCardProps> = ({
+  post,
+  openEditModal,
+  fakeReload,
+}) => {
   const toast = useToast();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.account);
@@ -68,6 +73,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, openEditModal }) => {
           duration: 5000,
           isClosable: true,
         });
+        fakeReload?.();
       })
       .catch((err) => {
         console.log(err);

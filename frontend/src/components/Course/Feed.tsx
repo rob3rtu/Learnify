@@ -1,4 +1,4 @@
-import { Flex, Image, Text } from "@chakra-ui/react";
+import { Flex, Image, Text, useDisclosure } from "@chakra-ui/react";
 import { PostInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { colors } from "../../theme";
@@ -10,17 +10,11 @@ import { NewPostModal } from "./NewPostModal";
 
 interface FeedProps {
   posts: PostInterface[];
-  isOpen: boolean;
-  onOpen: () => void;
-  onClose: () => void;
+  fakeReload?: () => void;
 }
 
-export const Feed: React.FC<FeedProps> = ({
-  posts,
-  isOpen,
-  onOpen,
-  onClose,
-}) => {
+export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [filteredPosts, setFilteredPosts] = useState<PostInterface[]>(posts);
   const filters = useSelector((state: RootState) => state.course.filters);
   const [editValues, setEditValues] = useState<
@@ -55,8 +49,9 @@ export const Feed: React.FC<FeedProps> = ({
   return (
     <Flex
       direction={"column"}
-      height={"83vh"}
+      // height={"83vh"}
       width={"80vw"}
+      flex={1}
       overflowY={"scroll"}
       p={10}
       gap={10}
@@ -67,6 +62,7 @@ export const Feed: React.FC<FeedProps> = ({
         classId={""}
         userId={""}
         initialValues={editValues}
+        fakeReload={fakeReload}
       />
       {filteredPosts.length === 0 ? (
         <Flex
@@ -94,6 +90,7 @@ export const Feed: React.FC<FeedProps> = ({
                 key={post.id}
                 post={post}
                 openEditModal={openEditModal}
+                fakeReload={fakeReload}
               />
             );
           })}

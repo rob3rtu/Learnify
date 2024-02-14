@@ -1,16 +1,16 @@
-import { Flex, Spinner, Text, Image, useDisclosure } from "@chakra-ui/react";
-import { colors } from "../../theme";
-import { NavBar } from "../Navbar/NavBar";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store";
-import { apiClient } from "../../utils/apiClient";
+import { Flex, Image, Spinner, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { AnyAction } from "redux";
-import { getCurrentCourse } from "./api";
+import { RootState } from "../../Store";
 import NotFoundSVG from "../../assets/not-found.svg";
-import { SideBar } from "./Sidebar";
+import { colors } from "../../theme";
+import { apiClient } from "../../utils/apiClient";
+import { NavBar } from "../Navbar/NavBar";
 import { Feed } from "./Feed";
+import { SideBar } from "./Sidebar";
+import { getCurrentCourse } from "./api";
 
 export const Course = () => {
   const { id } = useParams();
@@ -19,7 +19,6 @@ export const Course = () => {
   const courses = useSelector((state: RootState) => state.home.courses);
   const loading = useSelector((state: RootState) => state.course.loading);
   const course = useSelector((state: RootState) => state.course.course);
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleDeleteCourse = async () => {
     try {
@@ -86,16 +85,8 @@ export const Course = () => {
             <SideBar
               handleDeleteCourse={handleDeleteCourse}
               classId={course.id}
-              isOpen={isOpen}
-              onOpen={onOpen}
-              onClose={onClose}
             />
-            <Feed
-              posts={course.posts}
-              isOpen={isOpen}
-              onOpen={onOpen}
-              onClose={onClose}
-            />
+            <Feed posts={course.posts} />
           </Flex>
         )}
       </Flex>
