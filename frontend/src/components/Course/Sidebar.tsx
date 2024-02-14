@@ -4,25 +4,23 @@ import {
   IconButton,
   Text,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { NewPostModal } from "./NewPostModal";
 
 interface SideBarProps {
   handleDeleteCourse: () => void;
+  classId: string;
 }
 
-export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
+export const SideBar: React.FC<SideBarProps> = ({
+  handleDeleteCourse,
+  classId,
+}) => {
   const user = useSelector((state: RootState) => state.auth.account);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -105,23 +103,12 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
         />
       )}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>New Post</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text>New post</Text>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <NewPostModal
+        isOpen={isOpen}
+        onClose={onClose}
+        userId={user?.id ?? ""}
+        classId={classId}
+      />
     </Flex>
   );
 };
