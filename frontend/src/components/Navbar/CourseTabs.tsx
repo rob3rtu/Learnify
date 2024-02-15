@@ -1,15 +1,26 @@
 import { Tab, TabList, Tabs } from "@chakra-ui/react";
 import { colors } from "../../theme";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../Store";
+import { courseFiltersObkect } from "../Course/types";
 
 export const CourseTabs = () => {
-  const [index, setIndex] = useState<number>(0);
+  const dispatch = useDispatch();
+  const filters = useSelector((state: RootState) => state.course.filters);
+
+  const handleChangeFilters = (index: number) => {
+    dispatch({
+      type: "course/setFilters",
+      payload: {
+        section: courseFiltersObkect[index],
+      },
+    });
+  };
+
   return (
     <Tabs
-      index={index}
-      onChange={(i) => {
-        setIndex(i);
-      }}
+      index={courseFiltersObkect.indexOf(filters.section)}
+      onChange={handleChangeFilters}
       variant="solid-rounded"
       size="sm"
     >

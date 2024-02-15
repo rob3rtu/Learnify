@@ -1,15 +1,27 @@
-import { Button, Flex, IconButton, Text } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  IconButton,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { DeleteIcon } from "@chakra-ui/icons";
+import { NewPostModal } from "./NewPostModal";
 
 interface SideBarProps {
   handleDeleteCourse: () => void;
+  classId: string;
 }
 
-export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
+export const SideBar: React.FC<SideBarProps> = ({
+  handleDeleteCourse,
+  classId,
+}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state: RootState) => state.auth.account);
 
   return (
@@ -31,6 +43,7 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
           {sortBy.map((filter) => {
             return (
               <Text
+                key={filter}
                 fontFamily="WorkSans-Regular"
                 fontSize={15}
                 color={colors.white}
@@ -50,6 +63,7 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
           {filterBy.map((filter) => {
             return (
               <Text
+                key={filter}
                 fontFamily="WorkSans-Regular"
                 fontSize={15}
                 color={colors.white}
@@ -72,6 +86,7 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
         _hover={{
           backgroundColor: colors.blue,
         }}
+        onClick={onOpen}
       >
         New post
       </Button>
@@ -89,6 +104,13 @@ export const SideBar: React.FC<SideBarProps> = ({ handleDeleteCourse }) => {
           onClick={handleDeleteCourse}
         />
       )}
+
+      <NewPostModal
+        isOpen={isOpen}
+        onClose={onClose}
+        userId={user?.id ?? ""}
+        classId={classId}
+      />
     </Flex>
   );
 };

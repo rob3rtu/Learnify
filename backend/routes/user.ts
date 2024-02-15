@@ -9,6 +9,28 @@ interface UserDTO {
   role: enum_Users_role;
 }
 
+userRouter.get("/posts", async (req, res) => {
+  const user = req.user;
+
+  try {
+    const posts = await prisma.post.findMany({
+      where: { userId: user?.id },
+      include: {
+        user: true,
+        likes: true,
+        comments: { include: { user: true } },
+      },
+    });
+
+    return res.json({
+      posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 userRouter.put("/update-profile-image", async (req, res) => {
   const user = req.user;
   const imageUrl = req.body.url;

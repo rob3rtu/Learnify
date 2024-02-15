@@ -1,16 +1,16 @@
-import { Flex, Spinner, Text, Image } from "@chakra-ui/react";
-import { colors } from "../../theme";
-import { NavBar } from "../Navbar/NavBar";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store";
-import { apiClient } from "../../utils/apiClient";
+import { Flex, Image, Spinner, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { AnyAction } from "redux";
-import { getCurrentCourse } from "./api";
+import { RootState } from "../../Store";
 import NotFoundSVG from "../../assets/not-found.svg";
-import { SideBar } from "./Sidebar";
+import { colors } from "../../theme";
+import { apiClient } from "../../utils/apiClient";
+import { NavBar } from "../Navbar/NavBar";
 import { Feed } from "./Feed";
+import { SideBar } from "./Sidebar";
+import { getCurrentCourse } from "./api";
 
 export const Course = () => {
   const { id } = useParams();
@@ -82,8 +82,11 @@ export const Course = () => {
           </Flex>
         ) : (
           <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
-            <SideBar handleDeleteCourse={handleDeleteCourse} />
-            <Feed />
+            <SideBar
+              handleDeleteCourse={handleDeleteCourse}
+              classId={course.id}
+            />
+            <Feed posts={course.posts} />
           </Flex>
         )}
       </Flex>

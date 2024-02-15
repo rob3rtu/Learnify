@@ -7,6 +7,7 @@ import userRouter from "./routes/user";
 import authorization from "./middlewares/authorization";
 import courseRouter from "./routes/course";
 import teacherRouter from "./routes/teacher";
+import postRouter from "./routes/post";
 
 require("dotenv").config();
 
@@ -27,6 +28,7 @@ app.use(authorization);
 app.use("/api/user", userRouter);
 app.use("/api/course", courseRouter);
 app.use("/api/teacher", teacherRouter);
+app.use("/api/post", postRouter);
 
 const checkDbConnection = async () => {
   try {

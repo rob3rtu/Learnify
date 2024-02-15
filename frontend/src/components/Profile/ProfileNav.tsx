@@ -61,8 +61,8 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
 
   return (
     <Flex
-      position="absolute"
-      top={0}
+      // position="absolute"
+      // top={0}
       zIndex={999}
       bg={colors.black}
       height="17vh"
