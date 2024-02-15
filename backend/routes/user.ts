@@ -15,7 +15,7 @@ userRouter.get("/posts", async (req, res) => {
   try {
     const posts = await prisma.post.findMany({
       where: { userId: user?.id },
-      include: { user: true },
+      include: { user: true, likes: true },
     });
 
     return res.json({

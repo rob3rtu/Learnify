@@ -39,10 +39,11 @@ export const PostCard: React.FC<PostCardProps> = ({
   const course = useSelector((state: RootState) => state.course.course);
   const [isHover, setisHover] = useState<boolean>(false);
   const [canShowMenu, setCanShowMenu] = useState<boolean>(false);
+  const [localPost, setLocalPost] = useState<PostInterface>(post);
 
   useEffect(() => {
     setCanShowMenu(
-      user?.id === post.userId ||
+      user?.id === localPost.userId ||
         user?.role === "teacher" ||
         user?.role === "admin"
     );
@@ -50,19 +51,19 @@ export const PostCard: React.FC<PostCardProps> = ({
 
   const handleSelectPost = () => {
     window.open(
-      post.resourceUrl.includes("https://")
-        ? post.resourceUrl
-        : "https://" + post.resourceUrl,
+      localPost.resourceUrl.includes("https://")
+        ? localPost.resourceUrl
+        : "https://" + localPost.resourceUrl,
       "_blank"
     );
   };
 
   const handleDelete = async () => {
     apiClient
-      .delete(`post/${post.id}`)
+      .delete(`post/${localPost.id}`)
       .then(async (res) => {
-        if (post.resourceType === "document") {
-          const documentRef = ref(storage, post.resourceUrl);
+        if (localPost.resourceType === "document") {
+          const documentRef = ref(storage, localPost.resourceUrl);
 
           await deleteObject(documentRef);
         }
@@ -71,7 +72,7 @@ export const PostCard: React.FC<PostCardProps> = ({
           type: "course/setCourse",
           payload: {
             ...course,
-            posts: course?.posts.filter((postt) => postt.id !== post.id),
+            posts: course?.posts.filter((postt) => postt.id !== localPost.id),
           },
         });
         toast({
@@ -97,20 +98,9 @@ export const PostCard: React.FC<PostCardProps> = ({
 
   const handleToggleLike = async () => {
     apiClient
-      .post(`post/toggle-like/${post.id}`)
+      .post(`post/toggle-like/${localPost.id}`)
       .then((res) => {
-        dispatch({
-          type: "course/setCourse",
-          payload: {
-            ...course,
-            posts: course?.posts.map((mapPost) => {
-              if (mapPost.id === post.id) {
-                return res.data;
-              }
-              return mapPost;
-            }),
-          },
-        });
+        setLocalPost(res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -142,25 +132,25 @@ export const PostCard: React.FC<PostCardProps> = ({
           <Flex alignItems={"center"} gap={2}>
             {" "}
             <Avatar
-              src={post.user?.profileImage ?? undefined}
+              src={localPost.user?.profileImage ?? undefined}
               fontFamily="WorkSans-Regular"
-              name={post.user?.fullName}
+              name={localPost.user?.fullName}
               size="sm"
               bg={colors.blue}
               onClick={() => {}}
             />
             <Text color={colors.grey} fontFamily={"WorkSans-SemiBold"}>
-              {post.user.fullName}
+              {localPost.user.fullName}
             </Text>
           </Flex>
 
           <Flex alignItems={"center"}>
             <Text fontFamily={"WorkSans-Regular"} color={colors.white}>
-              {post.likes.length}
+              {localPost.likes.length}
             </Text>
             <IconButton
               icon={
-                post.likes
+                localPost.likes
                   .map((like) => like.userId)
                   .includes(user?.id ?? "") ? (
                   <FaHeart fill="red" />
@@ -178,14 +168,14 @@ export const PostCard: React.FC<PostCardProps> = ({
 
         <Flex direction={"column"} alignItems={"flex-start"}>
           <Text color={colors.white} fontFamily={"WorkSans-Bold"} fontSize={20}>
-            {post.title}
+            {localPost.title}
           </Text>
           <Text
             color={colors.grey}
             fontFamily={"WorkSans-Regular"}
             fontSize={15}
           >
-            {post.description}
+            {localPost.description}
           </Text>
         </Flex>
 
@@ -241,7 +231,7 @@ export const PostCard: React.FC<PostCardProps> = ({
           }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          {user?.id === post.userId && (
+          {user?.id === localPost.userId && (
             <IconButton
               icon={<EditIcon />}
               aria-label="edit"
@@ -251,9 +241,9 @@ export const PostCard: React.FC<PostCardProps> = ({
               color={colors.white}
               onClick={() => {
                 openEditModal({
-                  title: post.title,
-                  description: post.description,
-                  postId: post.id,
+                  title: localPost.title,
+                  description: localPost.description,
+                  postId: localPost.id,
                 });
               }}
             />
