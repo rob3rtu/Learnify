@@ -25,12 +25,14 @@ interface PostCardProps {
     description: string;
     postId: string;
   }) => void;
+  openCommentsModal: (val: PostInterface) => void;
   fakeReload?: () => void;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
   post,
   openEditModal,
+  openCommentsModal,
   fakeReload,
 }) => {
   const toast = useToast();
@@ -48,6 +50,10 @@ export const PostCard: React.FC<PostCardProps> = ({
         user?.role === "admin"
     );
   }, []);
+
+  useEffect(() => {
+    setLocalPost(post);
+  }, [post]);
 
   const handleSelectPost = () => {
     window.open(
@@ -67,7 +73,6 @@ export const PostCard: React.FC<PostCardProps> = ({
 
           await deleteObject(documentRef);
         }
-
         dispatch({
           type: "course/setCourse",
           payload: {
@@ -192,9 +197,14 @@ export const PostCard: React.FC<PostCardProps> = ({
             _hover={{
               bgColor: "#1d1d1d",
             }}
+            onClick={() => {
+              openCommentsModal(localPost);
+            }}
           >
             <Text color={colors.grey} fontFamily={"WorkSans-Regular"}>
-              Comments
+              Comments{" "}
+              {localPost.comments.length > 0 &&
+                `(${localPost.comments.length})`}
             </Text>
           </Box>
           <Box

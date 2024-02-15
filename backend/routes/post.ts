@@ -26,7 +26,15 @@ postRouter.post("/new", async (req, res) => {
 
     const updatedClass = await prisma.class.findFirst({
       where: { id: newPost.classId },
-      include: { posts: { include: { user: true, likes: true } } },
+      include: {
+        posts: {
+          include: {
+            user: true,
+            likes: true,
+            comments: { include: { user: true } },
+          },
+        },
+      },
     });
 
     return res.json(updatedClass);
@@ -47,7 +55,15 @@ postRouter.put("/edit/:id", async (req, res) => {
 
     const updatedClass = await prisma.class.findFirst({
       where: { id: updatedPost.classId ?? undefined },
-      include: { posts: { include: { user: true, likes: true } } },
+      include: {
+        posts: {
+          include: {
+            user: true,
+            likes: true,
+            comments: { include: { user: true } },
+          },
+        },
+      },
     });
 
     return res.json(updatedClass);
@@ -80,7 +96,41 @@ postRouter.post("/toggle-like/:id", async (req, res) => {
     //return updated post
     const updatedPost = await prisma.post.findFirst({
       where: { id: postId },
-      include: { user: true, likes: true },
+      include: {
+        user: true,
+        likes: true,
+        comments: { include: { user: true } },
+      },
+    });
+    return res.json(updatedPost);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+postRouter.post("/comment/:id", async (req, res) => {
+  const userId = req.user?.id;
+  const postId = req.params.id;
+  const message = req.body.message;
+
+  try {
+    await prisma.comment.create({
+      data: {
+        userId,
+        postId,
+        message,
+      },
+    });
+
+    //return updated post
+    const updatedPost = await prisma.post.findFirst({
+      where: { id: postId },
+      include: {
+        user: true,
+        likes: true,
+        comments: { include: { user: true } },
+      },
     });
     return res.json(updatedPost);
   } catch (error) {

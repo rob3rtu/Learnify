@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { NewPostModal } from "./NewPostModal";
+import { CommentsModal } from "./CommentsModal";
 
 interface FeedProps {
   posts: PostInterface[];
@@ -26,11 +27,31 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
     | undefined
   >(undefined);
 
+  //used for comments modal
+  const [currentPost, setCurrentPost] = useState<PostInterface | null>(null);
+  const [commentsOpen, setCommentsOpen] = useState<boolean>(false);
+
   useEffect(() => {
     setFilteredPosts(
       posts.filter((post) => post.classSection === filters.section)
     );
   }, [filters, posts]);
+
+  useEffect(() => {
+    if (editValues) {
+      onOpen();
+    }
+  }, [editValues]);
+
+  useEffect(() => {
+    if (currentPost) {
+      setCommentsOpen(true);
+    }
+  }, [currentPost]);
+
+  const openCommentsModal = (post: PostInterface) => {
+    setCurrentPost(post);
+  };
 
   const openEditModal = (initialValues: {
     title: string;
@@ -40,11 +61,10 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
     setEditValues(initialValues);
   };
 
-  useEffect(() => {
-    if (editValues) {
-      onOpen();
-    }
-  }, [editValues]);
+  const handleCloseComments = () => {
+    setCommentsOpen(false);
+    setCurrentPost(null);
+  };
 
   return (
     <Flex
@@ -64,6 +84,13 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         initialValues={editValues}
         fakeReload={fakeReload}
       />
+
+      <CommentsModal
+        isOpen={commentsOpen}
+        onClose={handleCloseComments}
+        post={currentPost}
+      />
+
       {filteredPosts.length === 0 ? (
         <Flex
           flex={1}
@@ -90,6 +117,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
                 key={post.id}
                 post={post}
                 openEditModal={openEditModal}
+                openCommentsModal={openCommentsModal}
                 fakeReload={fakeReload}
               />
             );

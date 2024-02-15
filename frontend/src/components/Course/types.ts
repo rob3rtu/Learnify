@@ -21,12 +21,22 @@ export interface PostInterface {
   classSection: string;
   user: AccountInterface;
   likes: LikeInterface[];
+  comments: CommentInterface[];
 }
 
 interface LikeInterface {
   id: string;
   userId: string;
   postId: string;
+}
+
+interface CommentInterface {
+  id: string;
+  userId: string;
+  postId: string;
+  message: string;
+  createdAt: string;
+  user: AccountInterface;
 }
 
 export interface CourseFilters {
