@@ -9,7 +9,7 @@ import {
   Text,
   useToast,
 } from "@chakra-ui/react";
-import { FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { useEffect, useState } from "react";
@@ -95,6 +95,35 @@ export const PostCard: React.FC<PostCardProps> = ({
       });
   };
 
+  const handleToggleLike = async () => {
+    apiClient
+      .post(`post/toggle-like/${post.id}`)
+      .then((res) => {
+        dispatch({
+          type: "course/setCourse",
+          payload: {
+            ...course,
+            posts: course?.posts.map((mapPost) => {
+              if (mapPost.id === post.id) {
+                return res.data;
+              }
+              return mapPost;
+            }),
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          title: "Error!",
+          description: "Something went wrong",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
+
   return (
     <Flex
       width={"100%"}
@@ -127,13 +156,22 @@ export const PostCard: React.FC<PostCardProps> = ({
 
           <Flex alignItems={"center"}>
             <Text fontFamily={"WorkSans-Regular"} color={colors.white}>
-              0
+              {post.likes.length}
             </Text>
             <IconButton
-              icon={<FaRegHeart />}
+              icon={
+                post.likes
+                  .map((like) => like.userId)
+                  .includes(user?.id ?? "") ? (
+                  <FaHeart fill="red" />
+                ) : (
+                  <FaRegHeart />
+                )
+              }
               aria-label="like"
               variant={"link"}
               size={"lg"}
+              onClick={handleToggleLike}
             />
           </Flex>
         </Flex>

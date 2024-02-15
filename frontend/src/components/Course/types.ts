@@ -20,6 +20,13 @@ export interface PostInterface {
   resourceUrl: string;
   classSection: string;
   user: AccountInterface;
+  likes: LikeInterface[];
+}
+
+interface LikeInterface {
+  id: string;
+  userId: string;
+  postId: string;
 }
 
 export interface CourseFilters {

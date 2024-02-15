@@ -26,7 +26,7 @@ postRouter.post("/new", async (req, res) => {
 
     const updatedClass = await prisma.class.findFirst({
       where: { id: newPost.classId },
-      include: { posts: { include: { user: true } } },
+      include: { posts: { include: { user: true, likes: true } } },
     });
 
     return res.json(updatedClass);
@@ -47,10 +47,42 @@ postRouter.put("/edit/:id", async (req, res) => {
 
     const updatedClass = await prisma.class.findFirst({
       where: { id: updatedPost.classId ?? undefined },
-      include: { posts: { include: { user: true } } },
+      include: { posts: { include: { user: true, likes: true } } },
     });
 
     return res.json(updatedClass);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+postRouter.post("/toggle-like/:id", async (req, res) => {
+  const userId = req.user?.id;
+  const postId = req.params.id;
+
+  try {
+    const like = await prisma.like.findFirst({ where: { postId, userId } });
+
+    if (like === null) {
+      //if there is no like, we create one
+      await prisma.like.create({
+        data: {
+          postId,
+          userId,
+        },
+      });
+    } else {
+      //if the like exists, we delete it
+      await prisma.like.delete({ where: { id: like.id } });
+    }
+
+    //return updated post
+    const updatedPost = await prisma.post.findFirst({
+      where: { id: postId },
+      include: { user: true, likes: true },
+    });
+    return res.json(updatedPost);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
