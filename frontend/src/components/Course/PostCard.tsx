@@ -15,6 +15,8 @@ import { RootState } from "../../Store";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { apiClient } from "../../utils/apiClient";
+import { deleteObject, ref } from "firebase/storage";
+import { storage } from "../../firebase-config";
 
 interface PostCardProps {
   post: PostInterface;
@@ -58,7 +60,13 @@ export const PostCard: React.FC<PostCardProps> = ({
   const handleDelete = async () => {
     apiClient
       .delete(`post/${post.id}`)
-      .then((res) => {
+      .then(async (res) => {
+        if (post.resourceType === "document") {
+          const documentRef = ref(storage, post.resourceUrl);
+
+          await deleteObject(documentRef);
+        }
+
         dispatch({
           type: "course/setCourse",
           payload: {
