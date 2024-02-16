@@ -2,12 +2,15 @@ import {
   Button,
   Flex,
   IconButton,
+  Tag,
+  TagCloseButton,
+  TagLabel,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { NewPostModal } from "./NewPostModal";
@@ -21,8 +24,12 @@ export const SideBar: React.FC<SideBarProps> = ({
   handleDeleteCourse,
   classId,
 }) => {
+  const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state: RootState) => state.auth.account);
+  const sideSorting = useSelector(
+    (state: RootState) => state.course.sideSorting
+  );
 
   return (
     <Flex
@@ -41,12 +48,48 @@ export const SideBar: React.FC<SideBarProps> = ({
         </Text>
         <Flex direction={"column"} alignItems={"flex-start"} gap={1}>
           {sortBy.map((filter) => {
+            const filterKey = filter.toLowerCase().split(" ").join("");
+
+            if (sideSorting.sortBy === filterKey)
+              return (
+                <Tag key={filter} bgColor={colors.blue}>
+                  <TagLabel
+                    fontFamily="WorkSans-Regular"
+                    fontSize={15}
+                    color={colors.white}
+                    cursor={"pointer"}
+                  >
+                    {filter}
+                  </TagLabel>
+                  <TagCloseButton
+                    color={"white"}
+                    onClick={() => {
+                      dispatch({
+                        type: "course/setSideSorting",
+                        payload: {
+                          sortBy: null,
+                        },
+                      });
+                    }}
+                  />
+                </Tag>
+              );
+
             return (
               <Text
                 key={filter}
                 fontFamily="WorkSans-Regular"
                 fontSize={15}
                 color={colors.white}
+                cursor={"pointer"}
+                onClick={() => {
+                  dispatch({
+                    type: "course/setSideSorting",
+                    payload: {
+                      sortBy: filterKey,
+                    },
+                  });
+                }}
               >
                 {filter}
               </Text>

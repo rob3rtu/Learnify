@@ -1,16 +1,22 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { CourseFilters, FullCourseInterface } from "./types";
+import {
+  CourseFilters,
+  FullCourseInterface,
+  SideSortingInterface,
+} from "./types";
 
 type SliceState = {
   loading: boolean;
   course: FullCourseInterface | null;
   filters: CourseFilters;
+  sideSorting: SideSortingInterface;
 };
 
 const initialState = {
   loading: false,
   course: null,
   filters: { section: "materials" },
+  sideSorting: { sortBy: null },
 };
 
 export const courseSlice = createSlice({
@@ -26,6 +32,9 @@ export const courseSlice = createSlice({
     },
     setFilters: (state, action: PayloadAction<CourseFilters>) => {
       state.filters = action.payload;
+    },
+    setSideSorting: (state, action: PayloadAction<SideSortingInterface>) => {
+      state.sideSorting = action.payload;
     },
   },
 });

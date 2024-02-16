@@ -17,6 +17,7 @@ import { motion } from "framer-motion";
 import { apiClient } from "../../utils/apiClient";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../firebase-config";
+import moment from "moment";
 
 interface PostCardProps {
   post: PostInterface;
@@ -146,6 +147,10 @@ export const PostCard: React.FC<PostCardProps> = ({
             />
             <Text color={colors.grey} fontFamily={"WorkSans-SemiBold"}>
               {localPost.user.fullName}
+              {" - "}
+              {moment(localPost.createdAt)
+                .format("DD.MMM.YYYY")
+                .toLocaleString()}
             </Text>
           </Flex>
 
