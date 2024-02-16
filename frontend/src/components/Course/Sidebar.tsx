@@ -30,6 +30,9 @@ export const SideBar: React.FC<SideBarProps> = ({
   const sideSorting = useSelector(
     (state: RootState) => state.course.sideSorting
   );
+  const sideFilters = useSelector(
+    (state: RootState) => state.course.sideFilters
+  );
 
   return (
     <Flex
@@ -54,7 +57,7 @@ export const SideBar: React.FC<SideBarProps> = ({
               return (
                 <Tag key={filter} bgColor={colors.blue}>
                   <TagLabel
-                    fontFamily="WorkSans-Regular"
+                    fontFamily="WorkSans-SemiBold"
                     fontSize={15}
                     color={colors.white}
                     cursor={"pointer"}
@@ -104,12 +107,48 @@ export const SideBar: React.FC<SideBarProps> = ({
         </Text>
         <Flex direction={"column"} alignItems={"flex-start"} gap={1}>
           {filterBy.map((filter) => {
+            const filterKey = filter.toLowerCase().split(" ").join("");
+
+            if (sideFilters.filterBy === filterKey)
+              return (
+                <Tag key={filter} bgColor={colors.blue}>
+                  <TagLabel
+                    fontFamily="WorkSans-SemiBold"
+                    fontSize={15}
+                    color={colors.white}
+                    cursor={"pointer"}
+                  >
+                    {filter}
+                  </TagLabel>
+                  <TagCloseButton
+                    color={"white"}
+                    onClick={() => {
+                      dispatch({
+                        type: "course/setSideFilters",
+                        payload: {
+                          sortBy: null,
+                        },
+                      });
+                    }}
+                  />
+                </Tag>
+              );
+
             return (
               <Text
                 key={filter}
                 fontFamily="WorkSans-Regular"
                 fontSize={15}
                 color={colors.white}
+                cursor={"pointer"}
+                onClick={() => {
+                  dispatch({
+                    type: "course/setSideFilters",
+                    payload: {
+                      filterBy: filterKey,
+                    },
+                  });
+                }}
               >
                 {filter}
               </Text>

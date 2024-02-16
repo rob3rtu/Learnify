@@ -15,12 +15,16 @@ interface FeedProps {
 }
 
 export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
+  const user = useSelector((state: RootState) => state.auth.account);
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [filteredPosts, setFilteredPosts] = useState<PostInterface[]>(posts);
   const filters = useSelector((state: RootState) => state.course.filters);
   const sideSorting = useSelector(
     (state: RootState) => state.course.sideSorting
+  );
+  const sideFilters = useSelector(
+    (state: RootState) => state.course.sideFilters
   );
 
   const [editValues, setEditValues] = useState<
@@ -39,7 +43,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   useEffect(() => {
     switch (sideSorting.sortBy) {
       case "newest":
-        const sortedNew = [...posts].sort((a, b) => {
+        const sortedNew = [...filteredPosts].sort((a, b) => {
           const aDate = new Date(a.createdAt);
           const bDate = new Date(b.createdAt);
 
@@ -49,7 +53,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         break;
 
       case "oldest":
-        const sortedOld = [...posts].sort((a, b) => {
+        const sortedOld = [...filteredPosts].sort((a, b) => {
           const aDate = new Date(a.createdAt);
           const bDate = new Date(b.createdAt);
 
@@ -59,14 +63,14 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         break;
 
       case "leastlikes":
-        const sortedLeastLikes = [...posts].sort((a, b) => {
+        const sortedLeastLikes = [...filteredPosts].sort((a, b) => {
           return a.likes.length - b.likes.length;
         });
         setFilteredPosts(sortedLeastLikes);
         break;
 
       case "mostlikes":
-        const sortedMostLikes = [...posts].sort((a, b) => {
+        const sortedMostLikes = [...filteredPosts].sort((a, b) => {
           return b.likes.length - a.likes.length;
         });
         setFilteredPosts(sortedMostLikes);
@@ -78,11 +82,42 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         );
         break;
     }
-  }, [sideSorting]);
+
+    switch (sideFilters.filterBy) {
+      case "postsi'veliked":
+        setFilteredPosts(
+          posts
+            .filter((post) => post.classSection === filters.section)
+            .filter((post) => {
+              return post.likes
+                .map((like) => like.userId)
+                .includes(user?.id ?? "");
+            })
+        );
+        break;
+
+      case "myposts":
+        setFilteredPosts(
+          posts
+            .filter((post) => post.classSection === filters.section)
+            .filter((post) => {
+              return post.userId === user?.id;
+            })
+        );
+        break;
+
+      default:
+        setFilteredPosts(
+          posts.filter((post) => post.classSection === filters.section)
+        );
+        break;
+    }
+  }, [sideSorting, sideFilters, filteredPosts]);
 
   useEffect(() => {
     return () => {
       dispatch({ type: "course/setSideSorting", payload: { sortBy: null } });
+      dispatch({ type: "course/setSideFilters", payload: { filterBy: null } });
     };
   }, []);
 
@@ -124,7 +159,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   return (
     <Flex
       direction={"column"}
-      // height={"83vh"}
+      maxH={"83vh"}
       width={"80vw"}
       flex={1}
       overflowY={"scroll"}

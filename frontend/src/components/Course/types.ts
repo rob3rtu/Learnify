@@ -57,3 +57,7 @@ export const courseFiltersObkect = [
 export interface SideSortingInterface {
   sortBy: "newest" | "oldest" | "mostlikes" | "leastlikes" | null;
 }
+
+export interface SideFiltersInterface {
+  filterBy: "myposts" | "postsi'veliked" | null;
+}
