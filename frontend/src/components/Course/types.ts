@@ -22,6 +22,7 @@ export interface PostInterface {
   user: AccountInterface;
   likes: LikeInterface[];
   comments: CommentInterface[];
+  createdAt: string;
 }
 
 interface LikeInterface {
@@ -50,3 +51,13 @@ export const courseFiltersObkect = [
   "laboratory",
   "forum",
 ];
+
+//filters from the sidebar
+
+export interface SideSortingInterface {
+  sortBy: "newest" | "oldest" | "mostlikes" | "leastlikes" | null;
+}
+
+export interface SideFiltersInterface {
+  filterBy: "myposts" | "postsi'veliked" | null;
+}

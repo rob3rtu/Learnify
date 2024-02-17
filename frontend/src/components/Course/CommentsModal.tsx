@@ -136,7 +136,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                         </Text>
                         <Text fontFamily={"WorkSans-SemiBold"}>
                           {moment(comment.createdAt)
-                            .format("hh:mm MMM-YYYY")
+                            .format("hh:mm DD.MMM.YYYY")
                             .toLocaleString()}
                         </Text>
                       </Flex>
