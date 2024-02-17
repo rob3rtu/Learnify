@@ -41,52 +41,57 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   const [commentsOpen, setCommentsOpen] = useState<boolean>(false);
 
   useEffect(() => {
+    let sorted;
     switch (sideSorting.sortBy) {
       case "newest":
-        const sortedNew = [...filteredPosts].sort((a, b) => {
+        sorted = [
+          ...posts.filter((post) => post.classSection === filters.section),
+        ].sort((a, b) => {
           const aDate = new Date(a.createdAt);
           const bDate = new Date(b.createdAt);
 
           return aDate > bDate ? -1 : 1;
         });
-        setFilteredPosts(sortedNew);
         break;
 
       case "oldest":
-        const sortedOld = [...filteredPosts].sort((a, b) => {
+        sorted = [
+          ...posts.filter((post) => post.classSection === filters.section),
+        ].sort((a, b) => {
           const aDate = new Date(a.createdAt);
           const bDate = new Date(b.createdAt);
 
           return aDate < bDate ? -1 : 1;
         });
-        setFilteredPosts(sortedOld);
         break;
 
       case "leastlikes":
-        const sortedLeastLikes = [...filteredPosts].sort((a, b) => {
+        sorted = [
+          ...posts.filter((post) => post.classSection === filters.section),
+        ].sort((a, b) => {
           return a.likes.length - b.likes.length;
         });
-        setFilteredPosts(sortedLeastLikes);
+
         break;
 
       case "mostlikes":
-        const sortedMostLikes = [...filteredPosts].sort((a, b) => {
+        sorted = [
+          ...posts.filter((post) => post.classSection === filters.section),
+        ].sort((a, b) => {
           return b.likes.length - a.likes.length;
         });
-        setFilteredPosts(sortedMostLikes);
+
         break;
 
       default:
-        setFilteredPosts(
-          posts.filter((post) => post.classSection === filters.section)
-        );
+        sorted = posts.filter((post) => post.classSection === filters.section);
         break;
     }
 
     switch (sideFilters.filterBy) {
       case "postsi'veliked":
         setFilteredPosts(
-          posts
+          sorted
             .filter((post) => post.classSection === filters.section)
             .filter((post) => {
               return post.likes
@@ -98,7 +103,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
 
       case "myposts":
         setFilteredPosts(
-          posts
+          sorted
             .filter((post) => post.classSection === filters.section)
             .filter((post) => {
               return post.userId === user?.id;
@@ -107,9 +112,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         break;
 
       default:
-        setFilteredPosts(
-          posts.filter((post) => post.classSection === filters.section)
-        );
+        setFilteredPosts(sorted);
         break;
     }
   }, [sideSorting, sideFilters, filteredPosts]);
