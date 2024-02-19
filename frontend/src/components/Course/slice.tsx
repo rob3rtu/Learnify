@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import {
   CourseFilters,
+  ForumInterface,
   FullCourseInterface,
   SideFiltersInterface,
   SideSortingInterface,
@@ -12,6 +13,7 @@ type SliceState = {
   filters: CourseFilters;
   sideSorting: SideSortingInterface;
   sideFilters: SideFiltersInterface;
+  forum: ForumInterface | null;
 };
 
 const initialState = {
@@ -20,6 +22,7 @@ const initialState = {
   filters: { section: "materials" },
   sideSorting: { sortBy: null },
   sideFilters: { filterBy: null },
+  forum: null,
 };
 
 export const courseSlice = createSlice({
@@ -41,6 +44,9 @@ export const courseSlice = createSlice({
     },
     setSideFilters: (state, action: PayloadAction<SideFiltersInterface>) => {
       state.sideFilters = action.payload;
+    },
+    setForum: (state, action: PayloadAction<ForumInterface | null>) => {
+      state.forum = action.payload;
     },
   },
 });

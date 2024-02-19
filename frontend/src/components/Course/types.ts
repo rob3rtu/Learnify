@@ -61,3 +61,20 @@ export interface SideSortingInterface {
 export interface SideFiltersInterface {
   filterBy: "myposts" | "postsi'veliked" | null;
 }
+
+///forum
+
+export interface ForumInterface {
+  id: string;
+  classId: string;
+  messages: MessageInterface[];
+}
+
+interface MessageInterface {
+  id: string;
+  userId: string;
+  forumId: string;
+  message: string;
+  createdAt: string;
+  user: AccountInterface;
+}

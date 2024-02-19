@@ -115,7 +115,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         setFilteredPosts(sorted);
         break;
     }
-  }, [sideSorting, sideFilters, filteredPosts]);
+  }, [sideSorting, sideFilters, posts]);
 
   useEffect(() => {
     return () => {
@@ -124,11 +124,11 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
     };
   }, []);
 
-  useEffect(() => {
-    setFilteredPosts(
-      posts.filter((post) => post.classSection === filters.section)
-    );
-  }, [filters, posts]);
+  // useEffect(() => {
+  //   setFilteredPosts(
+  //     posts.filter((post) => post.classSection === filters.section)
+  //   );
+  // }, [filters, posts]);
 
   useEffect(() => {
     if (editValues) {
