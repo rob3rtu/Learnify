@@ -115,7 +115,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         setFilteredPosts(sorted);
         break;
     }
-  }, [sideSorting, sideFilters, posts]);
+  }, [sideSorting, sideFilters, posts, filters]);
 
   useEffect(() => {
     return () => {

@@ -13,11 +13,13 @@ interface ForumProps {
 
 export const Forum: React.FC<ForumProps> = ({ courseId }) => {
   const dispatch = useDispatch();
-  const forum = useSelector((state: RootState) => state.course.forum);
-  const loading = useSelector((state: RootState) => state.course.loading);
+  const forum = useSelector((state: RootState) => state.forum.forum);
+  const loading = useSelector((state: RootState) => state.forum.loading);
 
   useEffect(() => {
     dispatch(getForum(courseId) as unknown as AnyAction);
+    console.log("forum page");
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
