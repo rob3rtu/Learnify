@@ -34,7 +34,9 @@ forumRouter.post("/new", async (req, res) => {
 
     const forum = await prisma.forum.findFirst({
       where: { id: createdMessage.forumId ?? "" },
-      include: { messages: { include: { user: true } } },
+      include: {
+        messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+      },
     });
 
     return res.json(forum);

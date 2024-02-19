@@ -42,78 +42,87 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
 
   useEffect(() => {
     let sorted;
-    switch (sideSorting.sortBy) {
-      case "newest":
-        sorted = [
-          ...posts.filter((post) => post.classSection === filters.section),
-        ].sort((a, b) => {
-          const aDate = new Date(a.createdAt);
-          const bDate = new Date(b.createdAt);
 
-          return aDate > bDate ? -1 : 1;
-        });
-        break;
+    if (fakeReload === undefined) {
+      //on course page
+      switch (sideSorting.sortBy) {
+        case "newest":
+          sorted = [
+            ...posts.filter((post) => post.classSection === filters.section),
+          ].sort((a, b) => {
+            const aDate = new Date(a.createdAt);
+            const bDate = new Date(b.createdAt);
 
-      case "oldest":
-        sorted = [
-          ...posts.filter((post) => post.classSection === filters.section),
-        ].sort((a, b) => {
-          const aDate = new Date(a.createdAt);
-          const bDate = new Date(b.createdAt);
+            return aDate > bDate ? -1 : 1;
+          });
+          break;
 
-          return aDate < bDate ? -1 : 1;
-        });
-        break;
+        case "oldest":
+          sorted = [
+            ...posts.filter((post) => post.classSection === filters.section),
+          ].sort((a, b) => {
+            const aDate = new Date(a.createdAt);
+            const bDate = new Date(b.createdAt);
 
-      case "leastlikes":
-        sorted = [
-          ...posts.filter((post) => post.classSection === filters.section),
-        ].sort((a, b) => {
-          return a.likes.length - b.likes.length;
-        });
+            return aDate < bDate ? -1 : 1;
+          });
+          break;
 
-        break;
+        case "leastlikes":
+          sorted = [
+            ...posts.filter((post) => post.classSection === filters.section),
+          ].sort((a, b) => {
+            return a.likes.length - b.likes.length;
+          });
 
-      case "mostlikes":
-        sorted = [
-          ...posts.filter((post) => post.classSection === filters.section),
-        ].sort((a, b) => {
-          return b.likes.length - a.likes.length;
-        });
+          break;
 
-        break;
+        case "mostlikes":
+          sorted = [
+            ...posts.filter((post) => post.classSection === filters.section),
+          ].sort((a, b) => {
+            return b.likes.length - a.likes.length;
+          });
 
-      default:
-        sorted = posts.filter((post) => post.classSection === filters.section);
-        break;
-    }
+          break;
 
-    switch (sideFilters.filterBy) {
-      case "postsi'veliked":
-        setFilteredPosts(
-          sorted
-            .filter((post) => post.classSection === filters.section)
-            .filter((post) => {
-              return post.likes
-                .map((like) => like.userId)
-                .includes(user?.id ?? "");
-            })
-        );
-        break;
+        default:
+          sorted = posts.filter(
+            (post) => post.classSection === filters.section
+          );
+          break;
+      }
 
-      case "myposts":
-        setFilteredPosts(
-          sorted
-            .filter((post) => post.classSection === filters.section)
-            .filter((post) => {
-              return post.userId === user?.id;
-            })
-        );
-        break;
+      switch (sideFilters.filterBy) {
+        case "postsi'veliked":
+          setFilteredPosts(
+            sorted
+              .filter((post) => post.classSection === filters.section)
+              .filter((post) => {
+                return post.likes
+                  .map((like) => like.userId)
+                  .includes(user?.id ?? "");
+              })
+          );
+          break;
 
-      default:
-        setFilteredPosts(sorted);
-        break;
+        case "myposts":
+          setFilteredPosts(
+            sorted
+              .filter((post) => post.classSection === filters.section)
+              .filter((post) => {
+                return post.userId === user?.id;
+              })
+          );
+          break;
+
+        default:
+          setFilteredPosts(sorted);
+          break;
+      }
+    } else {
+      //on profile page
+      setFilteredPosts(posts);
     }
   }, [sideSorting, sideFilters, posts, filters]);
 
@@ -123,12 +132,6 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
       dispatch({ type: "course/setSideFilters", payload: { filterBy: null } });
     };
   }, []);
-
-  // useEffect(() => {
-  //   setFilteredPosts(
-  //     posts.filter((post) => post.classSection === filters.section)
-  //   );
-  // }, [filters, posts]);
 
   useEffect(() => {
     if (editValues) {
