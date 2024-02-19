@@ -78,3 +78,18 @@ interface MessageInterface {
   createdAt: string;
   user: AccountInterface;
 }
+
+//teachers modal
+
+export interface CourseTeacherInterface {
+  id: string;
+  classId: string;
+  teacherId: string;
+  teacher: GenericTeacherInterface;
+}
+
+export interface GenericTeacherInterface {
+  id: string;
+  userId: string;
+  user: AccountInterface;
+}

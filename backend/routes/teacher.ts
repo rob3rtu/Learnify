@@ -12,9 +12,7 @@ teacherRouter.get("/all", async (req, res) => {
       },
     });
 
-    res.json({
-      teachers,
-    });
+    res.json(teachers);
   } catch (error) {
     console.log(error);
     res.sendStatus(500);

@@ -1,9 +1,9 @@
 export interface AccountInterface {
+  id: string;
   email: string;
   fullName: string;
   role: string;
   profileImage: string | null;
-  id: string;
 }
 
 export interface TeacherInterface {
