@@ -64,8 +64,6 @@ export const TeachersModal: React.FC<TeachersModalProps> = ({
           duration: 5000,
           isClosable: true,
         });
-
-        // setIsOpen(false);
       })
       .finally(() => {
         setLoading(false);

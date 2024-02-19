@@ -13,6 +13,11 @@ interface CourseDTO {
   domain: enum_Classes_domain;
 }
 
+interface NewTeacherDTO {
+  classId: string;
+  teacherId: string;
+}
+
 courseRouter.get("/all", async (req, res) => {
   const courses = await prisma.class.findMany();
 
@@ -82,6 +87,19 @@ courseRouter.get("/teachers/:id", async (req, res) => {
     });
 
     return res.json(teachers);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
+courseRouter.post("teachers/new", async (req, res) => {
+  const newTeacher = req.body as NewTeacherDTO;
+
+  try {
+    await prisma.classTeachers.create({ data: newTeacher });
+
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
