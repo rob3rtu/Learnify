@@ -11,6 +11,7 @@ import { NavBar } from "../Navbar/NavBar";
 import { Feed } from "./Feed";
 import { SideBar } from "./Sidebar";
 import { getCurrentCourse } from "./api";
+import { Forum } from "./Forum";
 
 export const Course = () => {
   const { id } = useParams();
@@ -19,6 +20,7 @@ export const Course = () => {
   const courses = useSelector((state: RootState) => state.home.courses);
   const loading = useSelector((state: RootState) => state.course.loading);
   const course = useSelector((state: RootState) => state.course.course);
+  const filters = useSelector((state: RootState) => state.course.filters);
 
   const handleDeleteCourse = async () => {
     try {
@@ -80,6 +82,8 @@ export const Course = () => {
               Course not found...
             </Text>
           </Flex>
+        ) : filters.section === "forum" ? (
+          <Forum courseId={course.id} />
         ) : (
           <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
             <SideBar

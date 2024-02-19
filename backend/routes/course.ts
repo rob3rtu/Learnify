@@ -51,9 +51,15 @@ courseRouter.post("/new", async (req, res) => {
   const course = req.body.course as CourseDTO;
 
   try {
-    await prisma.class.create({ data: course });
+    const createdCourse = await prisma.class.create({ data: course });
 
     const newCourses = await prisma.class.findMany();
+
+    await prisma.forum.create({
+      data: {
+        classId: createdCourse.id,
+      },
+    });
 
     return res.json({ courses: newCourses });
   } catch (error) {
