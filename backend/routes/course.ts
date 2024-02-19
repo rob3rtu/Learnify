@@ -68,6 +68,26 @@ courseRouter.post("/new", async (req, res) => {
   }
 });
 
+courseRouter.get("/teachers/:id", async (req, res) => {
+  const classId = req.params.id;
+
+  try {
+    const teachers = await prisma.classTeachers.findMany({
+      where: {
+        classId,
+      },
+      include: {
+        teacher: { include: { user: true } },
+      },
+    });
+
+    return res.json(teachers);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 courseRouter.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
 

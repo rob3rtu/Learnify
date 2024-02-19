@@ -1,7 +1,6 @@
 import {
   Button,
   Flex,
-  IconButton,
   Tag,
   TagCloseButton,
   TagLabel,
@@ -12,8 +11,11 @@ import { colors } from "../../theme";
 import { filterBy, sortBy } from "./data";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
-import { DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { NewPostModal } from "./NewPostModal";
+import { IoIosPeople } from "react-icons/io";
+import { useState } from "react";
+import { TeachersModal } from "./TeachersModal";
 
 interface SideBarProps {
   handleDeleteCourse: () => void;
@@ -33,6 +35,7 @@ export const SideBar: React.FC<SideBarProps> = ({
   const sideFilters = useSelector(
     (state: RootState) => state.course.sideFilters
   );
+  const [teachersOpen, setTeachersOpen] = useState<boolean>(false);
 
   return (
     <Flex
@@ -157,40 +160,80 @@ export const SideBar: React.FC<SideBarProps> = ({
         </Flex>
       </Flex>
 
-      <Button
+      <Flex
         position={"absolute"}
-        bottom={5}
-        left={"23%"}
-        bgColor={colors.blue}
-        color={colors.white}
-        fontFamily={"WorkSans-Medium"}
-        px={10}
-        _hover={{
-          backgroundColor: colors.blue,
-        }}
-        onClick={onOpen}
+        bottom={0}
+        alignSelf={"center"}
+        width={"100%"}
+        direction={"column"}
+        alignItems={"center"}
+        justify={"center"}
+        pb={5}
+        gap={5}
       >
-        New post
-      </Button>
+        <Button
+          variant={"outline"}
+          color={colors.blue}
+          borderColor={colors.blue}
+          fontFamily={"WorkSans-Medium"}
+          width={"80%"}
+          _hover={{
+            backgroundColor: colors.black,
+          }}
+          rightIcon={<AddIcon />}
+          onClick={onOpen}
+        >
+          New post
+        </Button>
 
-      {user?.role === "admin" && (
-        <IconButton
-          position={"absolute"}
-          bottom={8}
-          right={2}
-          variant="link"
-          colorScheme="red"
-          aria-label="delete"
-          fontSize="20px"
-          icon={<DeleteIcon />}
-          onClick={handleDeleteCourse}
-        />
-      )}
+        {(user?.role === "admin" || user?.role === "teacher") && (
+          <Button
+            variant="outline"
+            color={"white"}
+            borderColor={"white"}
+            _hover={{
+              backgroundColor: colors.black,
+            }}
+            aria-label="manage teachers"
+            fontFamily={"WorkSans-Medium"}
+            width={"80%"}
+            rightIcon={<IoIosPeople />}
+            onClick={() => {
+              setTeachersOpen(true);
+            }}
+          >
+            Manage teachers
+          </Button>
+        )}
+
+        {user?.role === "admin" && (
+          <Button
+            variant="outline"
+            colorScheme={"red"}
+            _hover={{
+              backgroundColor: colors.black,
+            }}
+            aria-label="delete"
+            fontFamily={"WorkSans-Medium"}
+            width={"80%"}
+            rightIcon={<DeleteIcon />}
+            onClick={handleDeleteCourse}
+          >
+            Delete course
+          </Button>
+        )}
+      </Flex>
 
       <NewPostModal
         isOpen={isOpen}
         onClose={onClose}
         userId={user?.id ?? ""}
+        classId={classId}
+      />
+
+      <TeachersModal
+        isOpen={teachersOpen}
+        setIsOpen={setTeachersOpen}
         classId={classId}
       />
     </Flex>
