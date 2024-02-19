@@ -106,7 +106,19 @@ export const PostCard: React.FC<PostCardProps> = ({
     apiClient
       .post(`post/toggle-like/${localPost.id}`)
       .then((res) => {
-        setLocalPost(res.data);
+        const newPost = res.data;
+
+        dispatch({
+          type: "course/setCourse",
+          payload: {
+            ...course,
+            posts: course?.posts.map((post) => {
+              if (post.id === newPost.id) return newPost;
+
+              return post;
+            }),
+          },
+        });
       })
       .catch((err) => {
         console.log(err);
