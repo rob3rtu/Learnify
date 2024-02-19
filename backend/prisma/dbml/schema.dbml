@@ -140,13 +140,13 @@ Ref: Comment.postId > Post.id [delete: Cascade]
 
 Ref: Comment.userId > User.id [delete: No Action]
 
-Ref: Forum.classId - Class.id [delete: No Action]
+Ref: Forum.classId - Class.id [delete: Cascade]
 
 Ref: Like.postId > Post.id [delete: Cascade]
 
 Ref: Like.userId > User.id [delete: No Action]
 
-Ref: Message.forumId > Forum.id [delete: No Action]
+Ref: Message.forumId > Forum.id [delete: Cascade]
 
 Ref: Message.userId > User.id [delete: No Action]
 
