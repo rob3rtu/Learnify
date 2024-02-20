@@ -121,12 +121,21 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
           break;
       }
     } else {
-      //on profile page
-      setFilteredPosts(posts);
+      //on profile page, forum === all posts
+      if (filters.section === "forum") setFilteredPosts(posts);
+      else
+        setFilteredPosts(
+          posts.filter((post) => post.classSection === filters.section)
+        );
     }
   }, [sideSorting, sideFilters, posts, filters]);
 
   useEffect(() => {
+    dispatch({
+      type: "course/setFilters",
+      payload: { section: "materials" },
+    });
+
     return () => {
       dispatch({ type: "course/setSideSorting", payload: { sortBy: null } });
       dispatch({ type: "course/setSideFilters", payload: { filterBy: null } });

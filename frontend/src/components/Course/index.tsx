@@ -36,6 +36,10 @@ export const Course = () => {
   };
 
   useEffect(() => {
+    dispatch({
+      type: "course/setFilters",
+      payload: { section: "materials" },
+    });
     dispatch(getCurrentCourse(id ?? "") as unknown as AnyAction);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
