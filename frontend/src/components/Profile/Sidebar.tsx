@@ -1,9 +1,10 @@
-import { Button, Flex, Image } from "@chakra-ui/react";
+import { Button, Flex, Image, Select } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import ProfileSVG from "../../assets/profile.svg";
 import { Logout } from "../../assets/customChakraIcons/Logout";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { courseFiltersObkect } from "../Course/types";
 
 export const Sidebar = () => {
   const dispatch = useDispatch();
@@ -24,8 +25,30 @@ export const Sidebar = () => {
       borderColor={colors.darkerGrey}
       p={10}
       position={"relative"}
+      alignItems={"center"}
     >
-      <Image src={ProfileSVG} position="absolute" left={0} top="20vh" />
+      <Select
+        variant={"outline"}
+        color={colors.white}
+        onChange={(e) => {
+          dispatch({
+            type: "course/setFilters",
+            payload: { section: e.target.value },
+          });
+        }}
+      >
+        {courseFiltersObkect.map((section) => {
+          return (
+            <option key={section} value={section}>
+              {section === "forum"
+                ? "All"
+                : section[0].toUpperCase() + section.slice(1)}
+            </option>
+          );
+        })}
+      </Select>
+
+      <Image src={ProfileSVG} position="absolute" left={0} bottom="20vh" />
       <Button
         position="absolute"
         bottom={5}
