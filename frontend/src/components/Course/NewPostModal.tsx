@@ -15,6 +15,9 @@ import {
   Divider,
   AbsoluteCenter,
   useToast,
+  Tabs,
+  TabList,
+  Tab,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { apiClient } from "../../utils/apiClient";
@@ -22,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebase-config";
 import { RootState } from "../../Store";
+import { newPostSections } from "./data";
 
 interface NewPostModalProps {
   isOpen: boolean;
@@ -58,6 +62,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
     link: "",
     file: null,
   });
+  const [newPostSectionId, setNewPostSectionId] = useState<number>(0);
 
   useEffect(() => {
     if (initialValues) {
@@ -137,7 +142,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
         .post("post/new", {
           classId,
           userId,
-          classSection: "materials",
+          classSection: newPostSections[newPostSectionId].toLowerCase(),
           title: newPostFields.title,
           description: newPostFields.description,
           resourceType: newPostFields.link === "" ? "document" : "link",
@@ -207,7 +212,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
           <Textarea
             placeholder="Short description(optional)"
             minH={100}
-            maxH={300}
+            maxH={200}
             value={newPostFields.description}
             onChange={(e) => {
               setNewPostFields({
@@ -254,6 +259,22 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
               />
             </Flex>
           )}
+
+          {!initialValues &&
+            (user?.role === "teacher" || user?.role === "admin") && (
+              <Tabs
+                mt={10}
+                onChange={(index) => {
+                  setNewPostSectionId(index);
+                }}
+              >
+                <TabList>
+                  {newPostSections.map((section) => (
+                    <Tab key={section}>{section}</Tab>
+                  ))}
+                </TabList>
+              </Tabs>
+            )}
         </ModalBody>
 
         <ModalFooter>
