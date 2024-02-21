@@ -1,22 +1,23 @@
 import { Avatar, Flex, Stack, Text, useToast } from "@chakra-ui/react";
 import { colors } from "../../theme";
-import { AccountInterface } from "../Login/types";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useRef } from "react";
 import { storage } from "../../firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { apiClient } from "../../utils/apiClient";
+import { RootState } from "../../Store";
 
-interface ProfileNavInterface {
-  user: AccountInterface | null;
+interface ProfileNavProps {
+  isNotOnProfile?: boolean;
 }
 
-export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
+export const ProfileNav: React.FC<ProfileNavProps> = ({ isNotOnProfile }) => {
   const toast = useToast();
   const nav = useNavigate();
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const user = useSelector((state: RootState) => state.auth.account);
 
   const handleSelectImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
@@ -100,7 +101,8 @@ export const ProfileNav: React.FC<ProfileNavInterface> = ({ user }) => {
             size="md"
             bg={colors.blue}
             onClick={() => {
-              fileInputRef.current?.click();
+              if (isNotOnProfile) nav("/profile");
+              else fileInputRef.current?.click();
             }}
           ></Avatar>
           <input

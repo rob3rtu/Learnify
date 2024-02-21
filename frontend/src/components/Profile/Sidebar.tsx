@@ -2,13 +2,15 @@ import { Button, Flex, Image, Select } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import ProfileSVG from "../../assets/profile.svg";
 import { Logout } from "../../assets/customChakraIcons/Logout";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { courseFiltersObkect } from "../Course/types";
+import { RootState } from "../../Store";
 
 export const Sidebar = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const user = useSelector((state: RootState) => state.auth.account);
 
   const handleLogOut = () => {
     localStorage.removeItem("learnifyToken");
@@ -47,6 +49,18 @@ export const Sidebar = () => {
           );
         })}
       </Select>
+
+      {user?.role === "admin" && (
+        <Button
+          variant={"link"}
+          color={"white"}
+          onClick={() => {
+            nav("/users");
+          }}
+        >
+          Manage users
+        </Button>
+      )}
 
       <Image src={ProfileSVG} position="absolute" left={0} bottom="20vh" />
       <Button

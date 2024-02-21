@@ -13,6 +13,7 @@ import { RootState } from "./Store";
 import { Course } from "./components/Course";
 import { getUserData } from "./components/Login/api";
 import { AnyAction } from "redux";
+import { Users } from "./components/Users";
 
 function App() {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/course/:id" element={<Course />} />
+          {user.role === "admin" && <Route path="/users" element={<Users />} />}
           <Route path="*" element={<NotFound />} />
         </Routes>
       ) : (

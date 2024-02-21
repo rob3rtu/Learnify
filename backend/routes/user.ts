@@ -73,12 +73,24 @@ userRouter.post("/new", async (req, res) => {
   }
 });
 
+userRouter.get("/all", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+
+    return res.json(users);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 userRouter.delete("/delete/:id", async (req, res) => {
   try {
     await prisma.user.delete({ where: { id: req.params.id } });
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
-    res.sendStatus(500);
+    return res.sendStatus(500);
   }
 });
 
