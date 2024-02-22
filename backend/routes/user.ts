@@ -47,6 +47,25 @@ userRouter.put("/update-profile-image", async (req, res) => {
   }
 });
 
+userRouter.put("/change-role/:role", async (req, res) => {
+  const user = req.user;
+  const newRole = (req.params.role as enum_Users_role) ?? user?.role;
+
+  try {
+    await prisma.user.update({
+      where: { id: user?.id },
+      data: { role: newRole },
+    });
+
+    const newUsersArray = await prisma.user.findMany();
+
+    return res.json(newUsersArray);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 userRouter.post("/new", async (req, res) => {
   const user = req.body.user as UserDTO;
 
