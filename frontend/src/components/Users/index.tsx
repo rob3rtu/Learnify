@@ -1,16 +1,19 @@
 import {
-  Button,
   Flex,
   IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Select,
   Spinner,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Tfoot,
   Th,
   Thead,
+  Text,
   Tr,
   useToast,
 } from "@chakra-ui/react";
@@ -19,7 +22,7 @@ import { AccountInterface } from "../Login/types";
 import { apiClient } from "../../utils/apiClient";
 import { colors } from "../../theme";
 import { ProfileNav } from "../Profile/ProfileNav";
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon, EditIcon, SearchIcon } from "@chakra-ui/icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
 
@@ -27,8 +30,13 @@ export const Users = () => {
   const toast = useToast();
   const currentUser = useSelector((state: RootState) => state.auth.account);
   const [users, setUsers] = useState<AccountInterface[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<AccountInterface[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [filterBy, setFilterBy] = useState<string>("all");
   const [loading, setLoading] = useState<boolean>(false);
   const [fakeReload, setFakeReload] = useState<boolean>(false);
+
+  const roles = ["admin", "teacher", "student", "all"];
 
   useEffect(() => {
     setLoading(true);
@@ -51,6 +59,21 @@ export const Users = () => {
         setLoading(false);
       });
   }, [fakeReload]);
+
+  useEffect(() => {
+    setFilteredUsers(
+      users
+        .filter((user) => {
+          return filterBy === "all" ? true : user.role === filterBy;
+        })
+        .filter((user) => {
+          return search === ""
+            ? true
+            : user.fullName.toLowerCase().includes(search) ||
+                user.email.toLowerCase().includes(search);
+        })
+    );
+  }, [users, search, filterBy]);
 
   const handleDeleteUser = async (id: string) => {
     apiClient
@@ -99,6 +122,56 @@ export const Users = () => {
       minH="100vh"
     >
       <ProfileNav isNotOnProfile />
+
+      <Flex
+        width={"100%"}
+        alignItems={"center"}
+        justify={"space-between"}
+        p={10}
+      >
+        <InputGroup>
+          <InputLeftElement pointerEvents={"none"}>
+            <SearchIcon color={"white"} />
+          </InputLeftElement>
+          <Input
+            width={"50%"}
+            placeholder="Type user name/email"
+            color={"white"}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+          />
+        </InputGroup>
+        <Flex
+          width={"100%"}
+          gap={5}
+          justify={"flex-end"}
+          alignItems={"baseline"}
+        >
+          <Text fontFamily={"WorkSans-Medium"} color={"white"}>
+            Filter by role:{" "}
+          </Text>
+          <Select
+            variant={"flushed"}
+            width={"15%"}
+            color={"white"}
+            value={filterBy}
+            onChange={(e) => {
+              setFilterBy(e.target.value);
+            }}
+          >
+            {roles.map((role) => {
+              return (
+                <option key={role} value={role}>
+                  {role}
+                </option>
+              );
+            })}
+          </Select>
+        </Flex>
+      </Flex>
+
       <Flex
         width={"100vw"}
         height={"83vh"}
@@ -120,7 +193,7 @@ export const Users = () => {
               </Tr>
             </Thead>
             <Tbody>
-              {users.map((user, index) => {
+              {filteredUsers.map((user, index) => {
                 return (
                   <Tr key={user.id}>
                     <Td color={colors.blue}>{index + 1}</Td>
@@ -155,6 +228,15 @@ export const Users = () => {
                   </Tr>
                 );
               })}
+              {filteredUsers.length === 0 && (
+                <Tr>
+                  <Td color={colors.blue}>404</Td>
+                  <Td>User not found</Td>
+                  <Td></Td>
+                  <Td>ghost</Td>
+                  <Td></Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>
