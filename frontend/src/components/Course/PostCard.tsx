@@ -119,6 +119,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             }),
           },
         });
+        fakeReload?.();
       })
       .catch((err) => {
         console.log(err);

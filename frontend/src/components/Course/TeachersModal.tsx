@@ -103,6 +103,7 @@ export const TeachersModal: React.FC<TeachersModalProps> = ({
               {classTeachers.map((teacher) => {
                 return (
                   <Flex
+                    key={teacher.id}
                     width={"100%"}
                     alignItems={"center"}
                     justify={"space-between"}

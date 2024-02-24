@@ -131,10 +131,10 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   }, [sideSorting, sideFilters, posts, filters]);
 
   useEffect(() => {
-    dispatch({
-      type: "course/setFilters",
-      payload: { section: "materials" },
-    });
+    // dispatch({
+    //   type: "course/setFilters",
+    //   payload: { section: "materials" },
+    // });
 
     return () => {
       dispatch({ type: "course/setSideSorting", payload: { sortBy: null } });
@@ -194,6 +194,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         isOpen={commentsOpen}
         onClose={handleCloseComments}
         post={currentPost}
+        fakeReload={fakeReload}
       />
 
       {filteredPosts.length === 0 ? (

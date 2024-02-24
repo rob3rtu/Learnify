@@ -11,6 +11,7 @@ export const Sidebar = () => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   const user = useSelector((state: RootState) => state.auth.account);
+  const filters = useSelector((state: RootState) => state.course.filters);
 
   const handleLogOut = () => {
     localStorage.removeItem("learnifyToken");
@@ -30,6 +31,7 @@ export const Sidebar = () => {
       alignItems={"center"}
     >
       <Select
+        value={filters.section}
         variant={"outline"}
         color={colors.white}
         onChange={(e) => {

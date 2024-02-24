@@ -26,12 +26,14 @@ interface CommentsModalProps {
   post: PostInterface | null;
   isOpen: boolean;
   onClose: () => void;
+  fakeReload?: () => void;
 }
 
 export const CommentsModal: React.FC<CommentsModalProps> = ({
   post,
   isOpen,
   onClose,
+  fakeReload,
 }) => {
   const dispatch = useDispatch();
   const toast = useToast();
@@ -64,6 +66,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             }),
           },
         });
+        fakeReload?.();
       })
       .catch((err) => {
         console.log(err);
