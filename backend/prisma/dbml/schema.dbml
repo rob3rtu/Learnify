@@ -132,9 +132,9 @@ Enum enum_Users_role {
   student
 }
 
-Ref: ClassTeachers.classId > Class.id [delete: No Action]
+Ref: ClassTeachers.classId > Class.id [delete: Cascade]
 
-Ref: ClassTeachers.teacherId > Teacher.id [delete: No Action]
+Ref: ClassTeachers.teacherId > Teacher.id [delete: Cascade]
 
 Ref: Comment.postId > Post.id [delete: Cascade]
 

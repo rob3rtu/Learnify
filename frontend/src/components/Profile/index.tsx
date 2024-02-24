@@ -1,7 +1,5 @@
 import { Flex, Spinner, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../Store";
 import { colors } from "../../theme";
 import { apiClient } from "../../utils/apiClient";
 import { Feed } from "../Course/Feed";
@@ -11,7 +9,6 @@ import { Sidebar } from "./Sidebar";
 
 export const Profile = () => {
   const toast = useToast();
-  const account = useSelector((state: RootState) => state.auth.account);
   const [loading, setLoading] = useState<boolean>(false);
   const [posts, setPosts] = useState<PostInterface[]>([]);
   const [fakeReload, setFakeReload] = useState<boolean>(false);
@@ -58,7 +55,7 @@ export const Profile = () => {
       bg={colors.black}
       minH="100vh"
     >
-      <ProfileNav user={account} />
+      <ProfileNav />
 
       <Flex width={"100vw"} height={"83vh"} direction={"row"} flex={1}>
         <Sidebar />
