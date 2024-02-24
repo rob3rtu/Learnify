@@ -31,6 +31,24 @@ userRouter.get("/posts", async (req, res) => {
   }
 });
 
+userRouter.get("/:id", async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const userDetails = await prisma.user.findFirst({
+      where: { id: userId },
+      include: {
+        posts: { include: { user: true, likes: true, comments: true } },
+      },
+    });
+
+    return res.json(userDetails);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+});
+
 userRouter.put("/update-profile-image", async (req, res) => {
   const user = req.user;
   const imageUrl = req.body.url;

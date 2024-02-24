@@ -7,12 +7,17 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
 import { apiClient } from "../../utils/apiClient";
 import { RootState } from "../../Store";
+import { AccountInterface } from "../Login/types";
 
 interface ProfileNavProps {
   isNotOnProfile?: boolean;
+  otherUser?: AccountInterface | null;
 }
 
-export const ProfileNav: React.FC<ProfileNavProps> = ({ isNotOnProfile }) => {
+export const ProfileNav: React.FC<ProfileNavProps> = ({
+  isNotOnProfile,
+  otherUser,
+}) => {
   const toast = useToast();
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -94,15 +99,23 @@ export const ProfileNav: React.FC<ProfileNavProps> = ({ isNotOnProfile }) => {
         </Text>
         <Stack spacing={4} align="center">
           <Avatar
-            src={user?.profileImage ?? undefined}
+            src={
+              otherUser
+                ? otherUser?.profileImage ?? undefined
+                : user?.profileImage ?? undefined
+            }
             fontFamily="WorkSans-Regular"
             cursor="pointer"
-            name={user?.fullName ?? user?.email.split("@")[0]}
+            name={
+              otherUser
+                ? otherUser.fullName
+                : user?.fullName ?? user?.email.split("@")[0]
+            }
             size="md"
             bg={colors.blue}
             onClick={() => {
               if (isNotOnProfile) nav("/profile");
-              else fileInputRef.current?.click();
+              else if (!otherUser) fileInputRef.current?.click();
             }}
           ></Avatar>
           <input
@@ -121,10 +134,12 @@ export const ProfileNav: React.FC<ProfileNavProps> = ({ isNotOnProfile }) => {
         alignItems="center"
       >
         <Text fontFamily="WorkSans-Bold" color="white" fontSize={30}>
-          {user?.fullName ?? user?.email.split("@")[0]}
+          {otherUser
+            ? otherUser.fullName
+            : user?.fullName ?? user?.email.split("@")[0]}
         </Text>
         <Text fontFamily="WorkSans-Regular" color={colors.white} fontSize={20}>
-          {user?.role}
+          {otherUser ? otherUser.role : user?.role}
         </Text>
       </Flex>
     </Flex>

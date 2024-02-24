@@ -14,6 +14,7 @@ import { Course } from "./components/Course";
 import { getUserData } from "./components/Login/api";
 import { AnyAction } from "redux";
 import { Users } from "./components/Users";
+import { GenericProfile } from "./components/Profile/GenericProfile";
 
 function App() {
   const dispatch = useDispatch();
@@ -50,6 +51,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<GenericProfile />} />
           <Route path="/course/:id" element={<Course />} />
           {user.role === "admin" && <Route path="/users" element={<Users />} />}
           <Route path="*" element={<NotFound />} />
