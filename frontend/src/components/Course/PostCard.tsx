@@ -18,6 +18,7 @@ import { apiClient } from "../../utils/apiClient";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../firebase-config";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
   post: PostInterface;
@@ -36,6 +37,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   openCommentsModal,
   fakeReload,
 }) => {
+  const nav = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.account);
@@ -148,7 +150,14 @@ export const PostCard: React.FC<PostCardProps> = ({
     >
       <Flex width={"100%"} p={5} pb={0} direction={"column"} gap={3}>
         <Flex justifyContent={"space-between"} width={"100%"}>
-          <Flex alignItems={"center"} gap={2}>
+          <Flex
+            alignItems={"center"}
+            gap={2}
+            cursor={"pointer"}
+            onClick={() => {
+              nav(`/profile/${localPost.user.id}`);
+            }}
+          >
             {" "}
             <Avatar
               src={localPost.user?.profileImage ?? undefined}
@@ -156,7 +165,6 @@ export const PostCard: React.FC<PostCardProps> = ({
               name={localPost.user?.fullName}
               size="sm"
               bg={colors.blue}
-              onClick={() => {}}
             />
             <Text color={colors.grey} fontFamily={"WorkSans-SemiBold"}>
               {localPost.user.fullName}
