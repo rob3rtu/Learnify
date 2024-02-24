@@ -10,12 +10,12 @@ import {
   TableContainer,
   Tbody,
   Td,
-  Tfoot,
   Th,
   Thead,
   Text,
   Tr,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { AccountInterface } from "../Login/types";
@@ -25,6 +25,7 @@ import { ProfileNav } from "../Profile/ProfileNav";
 import { DeleteIcon, EditIcon, SearchIcon } from "@chakra-ui/icons";
 import { useSelector } from "react-redux";
 import { RootState } from "../../Store";
+import { ChangeRoleModal } from "./ChangeRoleModal";
 
 export const Users = () => {
   const toast = useToast();
@@ -35,8 +36,16 @@ export const Users = () => {
   const [filterBy, setFilterBy] = useState<string>("all");
   const [loading, setLoading] = useState<boolean>(false);
   const [fakeReload, setFakeReload] = useState<boolean>(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedUser, setSelectedUser] = useState<AccountInterface | null>(
+    null
+  );
 
   const roles = ["admin", "teacher", "student", "all"];
+
+  useEffect(() => {
+    if (selectedUser !== null) onOpen();
+  }, [selectedUser]);
 
   useEffect(() => {
     setLoading(true);
@@ -74,6 +83,15 @@ export const Users = () => {
         })
     );
   }, [users, search, filterBy]);
+
+  const handleOnClose = (newUsers?: AccountInterface[]) => {
+    if (newUsers) {
+      setUsers(newUsers);
+    }
+
+    onClose();
+    setSelectedUser(null);
+  };
 
   const handleDeleteUser = async (id: string) => {
     apiClient
@@ -210,6 +228,9 @@ export const Users = () => {
                             size={"sm"}
                             p={2}
                             color={colors.white}
+                            onClick={() => {
+                              setSelectedUser(user);
+                            }}
                           />
                           <IconButton
                             icon={<DeleteIcon />}
@@ -240,6 +261,15 @@ export const Users = () => {
             </Tbody>
           </Table>
         </TableContainer>
+
+        <ChangeRoleModal
+          isOpen={isOpen}
+          onClose={handleOnClose}
+          selectedUser={selectedUser}
+          availableRoles={roles.filter(
+            (role) => role !== "all" && role !== selectedUser?.role
+          )}
+        />
       </Flex>
     </Flex>
   );

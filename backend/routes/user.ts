@@ -47,15 +47,26 @@ userRouter.put("/update-profile-image", async (req, res) => {
   }
 });
 
-userRouter.put("/change-role/:role", async (req, res) => {
-  const user = req.user;
-  const newRole = (req.params.role as enum_Users_role) ?? user?.role;
+userRouter.put("/change-role/:role/:userId", async (req, res) => {
+  const newRole = req.params.role as enum_Users_role;
 
   try {
+    const oldUser = await prisma.user.findFirst({
+      where: { id: req.params.userId },
+    });
+
     await prisma.user.update({
-      where: { id: user?.id },
+      where: { id: req.params.userId },
       data: { role: newRole },
     });
+
+    if (oldUser?.role === "teacher") {
+      await prisma.teacher.delete({ where: { userId: oldUser.id } });
+    }
+
+    if (newRole === "teacher") {
+      await prisma.teacher.create({ data: { userId: oldUser?.id } });
+    }
 
     const newUsersArray = await prisma.user.findMany();
 
