@@ -20,6 +20,8 @@ import { Select } from "chakra-react-select";
 import { CourseTeacherInterface, GenericTeacherInterface } from "./types";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { colors } from "../../theme";
+import { useSelector } from "react-redux";
+import { RootState } from "../../Store";
 
 interface TeachersModalProps {
   isOpen: boolean;
@@ -39,6 +41,7 @@ export const TeachersModal: React.FC<TeachersModalProps> = ({
   setIsOpen,
   classId,
 }) => {
+  const user = useSelector((state: RootState) => state.auth.account);
   const toast = useToast();
   const [loading, setLoading] = useState<boolean>(false);
   const [classTeachers, setClassTeachers] = useState<CourseTeacherInterface[]>(
@@ -114,37 +117,40 @@ export const TeachersModal: React.FC<TeachersModalProps> = ({
                       {teacher.teacher.user.email}
                     </Text>
 
-                    <IconButton
-                      variant="link"
-                      fill={colors.grey}
-                      aria-label="delete"
-                      icon={<DeleteIcon />}
-                      onClick={async () => {
-                        await apiClient
-                          .delete(`course/teachers/delete/${teacher.id}`)
-                          .then((res) => {
-                            setFakeReload(!fakeReload);
-                            toast({
-                              title: "Success!",
-                              description: "Teacher deleted from class.",
-                              status: "success",
-                              duration: 5000,
-                              isClosable: true,
-                            });
-                          })
-                          .catch((err) => {
-                            console.log(err);
-                            toast({
-                              title: "Error!",
-                              description:
-                                "Could not delete teacher from class.",
-                              status: "error",
-                              duration: 5000,
-                              isClosable: true,
-                            });
-                          });
-                      }}
-                    />
+                    {(user?.role === "admin" || user?.role === "teacher") &&
+                      user.id !== teacher.teacher.user.id && (
+                        <IconButton
+                          variant="link"
+                          fill={colors.grey}
+                          aria-label="delete"
+                          icon={<DeleteIcon />}
+                          onClick={async () => {
+                            await apiClient
+                              .delete(`course/teachers/delete/${teacher.id}`)
+                              .then((res) => {
+                                setFakeReload(!fakeReload);
+                                toast({
+                                  title: "Success!",
+                                  description: "Teacher deleted from class.",
+                                  status: "success",
+                                  duration: 5000,
+                                  isClosable: true,
+                                });
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                                toast({
+                                  title: "Error!",
+                                  description:
+                                    "Could not delete teacher from class.",
+                                  status: "error",
+                                  duration: 5000,
+                                  isClosable: true,
+                                });
+                              });
+                          }}
+                        />
+                      )}
                   </Flex>
                 );
               })}
@@ -153,7 +159,7 @@ export const TeachersModal: React.FC<TeachersModalProps> = ({
 
           <Box height={10} />
 
-          {!loading && (
+          {!loading && (user?.role === "admin" || user?.role === "teacher") && (
             <Flex direction={"column"} alignItems={"flex-start"} gap={2}>
               <Text fontFamily={"WorkSans-SemiBold"} fontSize={20}>
                 Add teachers

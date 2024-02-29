@@ -86,6 +86,7 @@ export interface CourseTeacherInterface {
   classId: string;
   teacherId: string;
   teacher: GenericTeacherInterface;
+  user: AccountInterface;
 }
 
 export interface GenericTeacherInterface {

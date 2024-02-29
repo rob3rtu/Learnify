@@ -186,25 +186,23 @@ export const SideBar: React.FC<SideBarProps> = ({
           New post
         </Button>
 
-        {(user?.role === "admin" || user?.role === "teacher") && (
-          <Button
-            variant="outline"
-            color={"white"}
-            borderColor={"white"}
-            _hover={{
-              backgroundColor: colors.black,
-            }}
-            aria-label="manage teachers"
-            fontFamily={"WorkSans-Medium"}
-            width={"80%"}
-            rightIcon={<IoIosPeople />}
-            onClick={() => {
-              setTeachersOpen(true);
-            }}
-          >
-            Manage teachers
-          </Button>
-        )}
+        <Button
+          variant="outline"
+          color={"white"}
+          borderColor={"white"}
+          _hover={{
+            backgroundColor: colors.black,
+          }}
+          aria-label="teachers"
+          fontFamily={"WorkSans-Medium"}
+          width={"80%"}
+          rightIcon={<IoIosPeople />}
+          onClick={() => {
+            setTeachersOpen(true);
+          }}
+        >
+          {user?.role === "student" ? "See teachers" : "Manage teachers"}
+        </Button>
 
         {user?.role === "admin" && (
           <Button
