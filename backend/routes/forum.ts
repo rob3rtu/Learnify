@@ -9,6 +9,7 @@ interface NewMessageDTo {
   message: string;
 }
 
+//get forum
 forumRouter.get("/:id", async (req, res) => {
   const classId = req.params.id;
 
@@ -27,6 +28,7 @@ forumRouter.get("/:id", async (req, res) => {
   }
 });
 
+//post new message to forum
 forumRouter.post("/new", async (req, res) => {
   const newMessage = req.body as NewMessageDTo;
   try {

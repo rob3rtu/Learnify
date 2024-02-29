@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { enum_Classes_domain } from "@prisma/client";
 import express from "express";
+import rolePermission from "../middlewares/rolePermission";
 
 const courseRouter = express.Router();
 const prisma = new PrismaClient();
@@ -18,14 +19,30 @@ interface NewTeacherDTO {
   teacherId: string;
 }
 
+//get all courses
 courseRouter.get("/all", async (req, res) => {
+  const user = req.user;
+
   const courses = await prisma.class.findMany();
 
-  res.json({
-    courses,
+  if (user?.role !== "teacher")
+    return res.json({
+      courses,
+    });
+
+  //if is a teacher get him only his classes
+  const teacher = await prisma.teacher.findFirst({
+    where: { userId: user.id },
+    include: { classTeachers: true },
+  });
+
+  const hisClassesIds = teacher?.classTeachers.map((record) => record.classId);
+  return res.json({
+    courses: courses.filter((course) => hisClassesIds?.includes(course.id)),
   });
 });
 
+//get course by id
 courseRouter.get("/:id", async (req, res) => {
   try {
     const course = await prisma.class.findFirst({
@@ -52,27 +69,34 @@ courseRouter.get("/:id", async (req, res) => {
   }
 });
 
-courseRouter.post("/new", async (req, res) => {
-  const course = req.body.course as CourseDTO;
+//create new course
+courseRouter.post(
+  "/new",
+  rolePermission(["admin"]),
 
-  try {
-    const createdCourse = await prisma.class.create({ data: course });
+  async (req, res) => {
+    const course = req.body.course as CourseDTO;
 
-    const newCourses = await prisma.class.findMany();
+    try {
+      const createdCourse = await prisma.class.create({ data: course });
 
-    await prisma.forum.create({
-      data: {
-        classId: createdCourse.id,
-      },
-    });
+      const newCourses = await prisma.class.findMany();
 
-    return res.json({ courses: newCourses });
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
+      await prisma.forum.create({
+        data: {
+          classId: createdCourse.id,
+        },
+      });
+
+      return res.json({ courses: newCourses });
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
   }
-});
+);
 
+//get class teachers
 courseRouter.get("/teachers/:id", async (req, res) => {
   const classId = req.params.id;
 
@@ -105,42 +129,57 @@ courseRouter.get("/teachers/:id", async (req, res) => {
   }
 });
 
-courseRouter.post("/teachers/new", async (req, res) => {
-  const newTeacher = req.body as NewTeacherDTO;
+//add teacher to class
+courseRouter.post(
+  "/teachers/new",
+  rolePermission(["teacher", "admin"]),
+  async (req, res) => {
+    const newTeacher = req.body as NewTeacherDTO;
 
-  try {
-    await prisma.classTeachers.create({ data: newTeacher });
+    try {
+      await prisma.classTeachers.create({ data: newTeacher });
 
-    return res.sendStatus(200);
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
+      return res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
   }
-});
+);
 
-courseRouter.delete("/teachers/delete/:id", async (req, res) => {
-  const recordId = req.params.id;
+//delete teacher from class
+courseRouter.delete(
+  "/teachers/delete/:id",
+  rolePermission(["teacher", "admin"]),
+  async (req, res) => {
+    const recordId = req.params.id;
 
-  try {
-    await prisma.classTeachers.delete({ where: { id: recordId } });
+    try {
+      await prisma.classTeachers.delete({ where: { id: recordId } });
 
-    return res.sendStatus(200);
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
+      return res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
   }
-});
+);
 
-courseRouter.delete("/delete/:id", async (req, res) => {
-  const id = req.params.id;
+//delete class
+courseRouter.delete(
+  "/delete/:id",
+  rolePermission(["admin"]),
+  async (req, res) => {
+    const id = req.params.id;
 
-  try {
-    await prisma.class.delete({ where: { id } });
-    return res.sendStatus(200);
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
+    try {
+      await prisma.class.delete({ where: { id } });
+      return res.sendStatus(200);
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
   }
-});
+);
 
 export default courseRouter;

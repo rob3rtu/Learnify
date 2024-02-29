@@ -18,6 +18,7 @@ interface PostDTO {
   classSection: enum_Class_section;
 }
 
+//create new post
 postRouter.post("/new", async (req, res) => {
   const newPost = req.body as PostDTO;
 
@@ -44,6 +45,7 @@ postRouter.post("/new", async (req, res) => {
   }
 });
 
+//edit post
 postRouter.put("/edit/:id", async (req, res) => {
   const newData = req.body;
 
@@ -73,6 +75,7 @@ postRouter.put("/edit/:id", async (req, res) => {
   }
 });
 
+//like/dislike a post
 postRouter.post("/toggle-like/:id", async (req, res) => {
   const userId = req.user?.id;
   const postId = req.params.id;
@@ -109,6 +112,7 @@ postRouter.post("/toggle-like/:id", async (req, res) => {
   }
 });
 
+//add comment to post
 postRouter.post("/comment/:id", async (req, res) => {
   const userId = req.user?.id;
   const postId = req.params.id;
