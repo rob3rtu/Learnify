@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { decode } from "jsonwebtoken";
+import { JwtPayload, decode } from "jsonwebtoken";
 
 //check if there is a token in the auth header and if it belongs to an existing user
 const authorization = async (
@@ -16,6 +16,13 @@ const authorization = async (
 
   try {
     const user = decode(token ?? "");
+    const currentTime = new Date();
+
+    //token expired
+    //@ts-ignore
+    if (user?.exp < currentTime.getTime() / 1000) {
+      return res.sendStatus(401);
+    }
 
     if (user === null || user === undefined) {
       return res.sendStatus(404);
