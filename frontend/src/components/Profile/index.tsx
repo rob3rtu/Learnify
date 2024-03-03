@@ -11,10 +11,12 @@ export const Profile = () => {
   const toast = useToast();
   const [loading, setLoading] = useState<boolean>(false);
   const [posts, setPosts] = useState<PostInterface[]>([]);
-  const [fakeReload, setFakeReload] = useState<boolean>(false);
+  const [fakeReload, setFakeReload] = useState<number>(0);
 
   useEffect(() => {
-    setLoading(true);
+    if (fakeReload === 0) {
+      setLoading(true);
+    }
     apiClient
       .get("user/posts")
       .then((res) => {
@@ -62,7 +64,7 @@ export const Profile = () => {
         <Feed
           posts={posts}
           fakeReload={() => {
-            setFakeReload(!fakeReload);
+            setFakeReload(fakeReload + 1);
           }}
         />
       </Flex>
