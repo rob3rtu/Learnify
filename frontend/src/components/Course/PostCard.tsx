@@ -76,13 +76,15 @@ export const PostCard: React.FC<PostCardProps> = ({
 
           await deleteObject(documentRef);
         }
-        dispatch({
-          type: "course/setCourse",
-          payload: {
-            ...course,
-            posts: course?.posts.filter((postt) => postt.id !== localPost.id),
-          },
-        });
+        if (course) {
+          dispatch({
+            type: "course/setCourse",
+            payload: {
+              ...course,
+              posts: course?.posts.filter((postt) => postt.id !== localPost.id),
+            },
+          });
+        }
         toast({
           title: "Success!",
           description: "Post deleted",
@@ -110,17 +112,19 @@ export const PostCard: React.FC<PostCardProps> = ({
       .then((res) => {
         const newPost = res.data;
 
-        dispatch({
-          type: "course/setCourse",
-          payload: {
-            ...course,
-            posts: course?.posts.map((post) => {
-              if (post.id === newPost.id) return newPost;
+        if (course) {
+          dispatch({
+            type: "course/setCourse",
+            payload: {
+              ...course,
+              posts: course?.posts.map((post) => {
+                if (post.id === newPost.id) return newPost;
 
-              return post;
-            }),
-          },
-        });
+                return post;
+              }),
+            },
+          });
+        }
         fakeReload?.();
       })
       .catch((err) => {
