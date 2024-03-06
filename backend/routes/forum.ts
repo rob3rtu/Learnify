@@ -16,7 +16,9 @@ forumRouter.get("/:id", async (req, res) => {
   try {
     const forum = await prisma.forum.findFirst({
       where: { classId },
-      include: { messages: { include: { user: true } } },
+      include: {
+        messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+      },
     });
 
     if (forum === null) return res.sendStatus(404);
