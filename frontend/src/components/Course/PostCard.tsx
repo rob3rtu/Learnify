@@ -201,16 +201,36 @@ export const PostCard: React.FC<PostCardProps> = ({
           </Flex>
         </Flex>
 
-        <Flex direction={"column"} alignItems={"flex-start"}>
-          <Text color={colors.white} fontFamily={"WorkSans-Bold"} fontSize={20}>
-            {localPost.title}
-          </Text>
+        <Flex alignItems={"center"} justify={"space-between"}>
+          <Flex direction={"column"} alignItems={"flex-start"}>
+            <Text
+              color={colors.white}
+              fontFamily={"WorkSans-Bold"}
+              fontSize={20}
+            >
+              {localPost.title}
+            </Text>
+            <Text
+              color={colors.grey}
+              fontFamily={"WorkSans-Regular"}
+              fontSize={15}
+            >
+              {localPost.description}
+            </Text>
+          </Flex>
+
           <Text
             color={colors.grey}
+            fontWeight={700}
             fontFamily={"WorkSans-Regular"}
             fontSize={15}
+            maxW={"50%"}
+            overflow={"clip"}
+            noOfLines={1}
           >
-            {localPost.description}
+            {localPost.resourceType === "link"
+              ? localPost.resourceUrl
+              : localPost.resourceUrl.split(/%2F|\?/)[1]}
           </Text>
         </Flex>
 
