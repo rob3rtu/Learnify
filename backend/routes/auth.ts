@@ -15,27 +15,44 @@ const loginHtml = (redirectUrl: string) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
   </head>
-  <body
-    style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 20px;
-      background-color: white;
-    "
-  >
-    <img
-      src="https://firebasestorage.googleapis.com/v0/b/licenta-fmi.appspot.com/o/diverse%2Flogo.svg?alt=media&token=04bb5d1f-6433-4170-a2d0-a3241ea4e8e1"
-    />
-    <p style="margin-top: 40px; margin-bottom: 100px">
-      Welcome! Now you can safely follow this
-      <span><a href="${redirectUrl}">link</a></span> to enter the app.
-    </p>
-    <img
-      src="https://firebasestorage.googleapis.com/v0/b/licenta-fmi.appspot.com/o/diverse%2Fbottom.svg?alt=media&token=56bd25dc-a504-484d-bf14-89fa6da634d5"
-    />
+  <body style="background-color: white">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center" style="padding-top: 20px">
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/licenta-fmi.appspot.com/o/diverse%2Flogo.png?alt=media&token=6fe3f1c4-1c28-40a7-880b-06aa2be6fdff"
+            alt="logo"
+            title="logo"
+            style="display: block"
+            width="362"
+            height="88"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding-top: 20px">
+          <p style="margin-top: 40px; margin-bottom: 100px; font-size: 20px">
+            Welcome! Now you can safely follow this
+            <span><a href="${redirectUrl}">link</a></span> to enter the app.
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="padding-top: 20px">
+          <img
+            src="https://firebasestorage.googleapis.com/v0/b/licenta-fmi.appspot.com/o/diverse%2Fbottom.png?alt=media&token=1baffc8d-10ac-4bf7-8e16-3ac13b0c0198"
+            alt="bottom"
+            title="bottom"
+            style="display: block"
+            width="199"
+            height="110"
+          />
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
+
 `;
 };
 
