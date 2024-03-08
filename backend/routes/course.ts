@@ -49,6 +49,7 @@ courseRouter.get("/:id", async (req, res) => {
       where: { id: req.params.id },
       include: {
         posts: {
+          orderBy: { createdAt: "desc" },
           include: {
             user: true,
             likes: true,

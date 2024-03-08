@@ -29,6 +29,7 @@ postRouter.post("/new", async (req, res) => {
       where: { id: newPost.classId },
       include: {
         posts: {
+          orderBy: { createdAt: "desc" },
           include: {
             user: true,
             likes: true,
@@ -59,6 +60,7 @@ postRouter.put("/edit/:id", async (req, res) => {
       where: { id: updatedPost.classId ?? undefined },
       include: {
         posts: {
+          orderBy: { createdAt: "desc" },
           include: {
             user: true,
             likes: true,
