@@ -104,7 +104,9 @@ authRouter.post("/login/:email", async (req, res) => {
       to: email,
       from: process.env.SENDGRID_EMAIL ?? "",
       subject: "Log in to LERNIFY",
-      html: loginHtml(`http://localhost:3000/confirm-email?token=${token}`),
+      html: loginHtml(
+        `https://learnify-frontend-tau.vercel.app/confirm-email?token=${token}`
+      ),
     });
   } catch (error) {
     return res.status(500).json({ error: "Email not sent." });
