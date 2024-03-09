@@ -2,9 +2,10 @@
   "name": "backend-licenta",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "dev": "nodemon --files index.ts"
+    "dev": "nodemon --files index.ts",
+    "start": "tsc && node dist/index.js"
   },
   "keywords": [],
   "author": "",
