@@ -16,11 +16,7 @@ const prisma = new PrismaClient();
 
 const port = 3001;
 const app = express();
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
