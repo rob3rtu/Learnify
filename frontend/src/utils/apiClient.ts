@@ -1,7 +1,9 @@
 import axios from "axios";
 
-// const BASE_URL = "http://localhost:3001/api/";
-const BASE_URL = "https://learnify-backend-ij3e.onrender.com/api/";
+const BASE_URL = process.env.BASE_URL;
+
+// Production BASE_URL
+// const BASE_URL = "https://learnify-backend-ij3e.onrender.com/api/";
 
 export const apiClient = axios.create({
   baseURL: BASE_URL,
