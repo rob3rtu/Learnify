@@ -105,7 +105,7 @@ authRouter.post("/login/:email", async (req, res) => {
       from: process.env.SENDGRID_EMAIL ?? "",
       subject: "Log in to LERNIFY",
       html: loginHtml(
-        `https://learnify-fmi.vercel.app/confirm-email?token=${token}`
+        `${process.env.FRONTEND_HOST}/confirm-email?token=${token}`
       ),
     });
   } catch (error) {
