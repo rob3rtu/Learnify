@@ -2,6 +2,7 @@ import express from "express";
 import { PrismaClient, enum_Users_role } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { decode, sign } from "jsonwebtoken";
+import axios from "axios";
 const emailValidator = require("deep-email-validator");
 
 const authRouter = express.Router();
@@ -67,7 +68,6 @@ authRouter.get("/verify-token/:token", async (req, res) => {
 
   //@ts-ignore
   const fullUser = await prisma.user.findFirst({ where: { id: user.id } });
-  console.log(fullUser?.email + " entered the app");
 
   res.json(fullUser);
 });
@@ -76,9 +76,19 @@ authRouter.post("/login/:email", async (req, res) => {
   const email = req.params.email;
 
   //check email for spam
-  const emailCheck = await emailValidator.validate(email);
+  const emailCheck = await axios.post(
+    "https://api.apyhub.com/validate/email/dns",
+    { email },
+    {
+      headers: {
+        "apy-token":
+          "APY0GqbBBd0d1vh6VSgwEw0OPp1s1H0556pLxRxy3pQaRZHEAVWBndaZ1nik2UkS60",
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
-  if (!emailCheck.valid) {
+  if (!emailCheck.data.data) {
     return res.status(400).json({ error: "Invalid email address." });
   }
 
