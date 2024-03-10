@@ -2,6 +2,7 @@ import express from "express";
 import { PrismaClient, enum_Users_role } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { decode, sign } from "jsonwebtoken";
+const emailValidator = require("deep-email-validator");
 
 const authRouter = express.Router();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
@@ -73,6 +74,13 @@ authRouter.get("/verify-token/:token", async (req, res) => {
 authRouter.post("/login/:email", async (req, res) => {
   const email = req.params.email;
 
+  //check email for spam
+  const emailCheck = await emailValidator.validate(email);
+
+  if (!emailCheck.valid) {
+    return res.status(400).json({ error: "Invalid email address." });
+  }
+
   let user = await prisma.user.findFirst({ where: { email } });
 
   //if there is no user, create one with this email
@@ -112,7 +120,7 @@ authRouter.post("/login/:email", async (req, res) => {
     return res.status(500).json({ error: "Email not sent." });
   }
 
-  res.sendStatus(200);
+  return res.sendStatus(200);
 });
 
 export default authRouter;

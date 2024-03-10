@@ -5,6 +5,7 @@ import {
   IconButton,
   Image,
   Input,
+  Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -17,6 +18,7 @@ export const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [checkEmail, setCheckEmail] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const handleEmailLogin = async () => {
@@ -31,6 +33,7 @@ export const Login = () => {
       });
     } else {
       try {
+        setLoading(true);
         await apiClient.post(`auth/login/${email}`);
         setCheckEmail(true);
       } catch (err: any) {
@@ -43,6 +46,7 @@ export const Login = () => {
           isClosable: true,
         });
       }
+      setLoading(false);
     }
   };
 
@@ -124,6 +128,8 @@ export const Login = () => {
             onClick={handleEmailLogin}
           />
         </Flex>
+
+        {loading && <Spinner size={"md"} color="white" />}
       </Flex>
 
       <Box
