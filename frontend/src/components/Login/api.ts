@@ -14,8 +14,13 @@ export const getUserData = createAsyncThunk(
 
       thunkApi.dispatch({
         type: "login/setAccount",
-        payload: resp.data,
+        payload: resp.data.fullUser,
       });
+
+      if (resp.data.token) {
+        localStorage.setItem("learnifyToken", resp.data.token);
+      }
+
       thunkApi.dispatch({
         type: "login/setLoading",
         payload: false,

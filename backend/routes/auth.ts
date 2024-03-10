@@ -67,9 +67,39 @@ authRouter.get("/verify-token/:token", async (req, res) => {
   }
 
   //@ts-ignore
-  const fullUser = await prisma.user.findFirst({ where: { id: user.id } });
+  if (user.id) {
+    //@ts-ignore
+    const fullUser = await prisma.user.findFirst({ where: { id: user.id } });
+    return res.json({ fullUser });
+  } else {
+    try {
+      const fullUser = await prisma.user.create({
+        data: {
+          //@ts-ignore
+          email: user.email,
+          //@ts-ignore
+          fullName: user.email.split("@")[0],
+          role: enum_Users_role.student,
+        },
+      });
 
-  res.json(fullUser);
+      const token = sign(
+        {
+          id: fullUser.id,
+          fullName: fullUser.fullName,
+          email: fullUser.email,
+          role: fullUser.role,
+          profileImage: fullUser.profileImage,
+        },
+        process.env.JWT_KEY ?? "",
+        { expiresIn: "1h" }
+      );
+
+      return res.json({ fullUser, token });
+    } catch (error) {
+      return res.status(500);
+    }
+  }
 });
 
 authRouter.post("/login/:email", async (req, res) => {
@@ -94,27 +124,19 @@ authRouter.post("/login/:email", async (req, res) => {
 
   let user = await prisma.user.findFirst({ where: { email } });
 
-  //if there is no user, create one with this email
-  //maybe change this behaviour in the future
-  if (user === null) {
-    user = await prisma.user.create({
-      data: {
-        email,
-        fullName: email.split("@")[0],
-        role: enum_Users_role.student,
-      },
-    });
-  }
-
   try {
     const token = sign(
-      {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        profileImage: user.profileImage,
-      },
+      user === null
+        ? {
+            email,
+          }
+        : {
+            id: user.id,
+            fullName: user.fullName,
+            email: user.email,
+            role: user.role,
+            profileImage: user.profileImage,
+          },
       process.env.JWT_KEY ?? "",
       { expiresIn: "1h" }
     );
