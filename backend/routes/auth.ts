@@ -67,6 +67,7 @@ authRouter.get("/verify-token/:token", async (req, res) => {
 
   //@ts-ignore
   const fullUser = await prisma.user.findFirst({ where: { id: user.id } });
+  console.log(fullUser?.email + " entered the app");
 
   res.json(fullUser);
 });
