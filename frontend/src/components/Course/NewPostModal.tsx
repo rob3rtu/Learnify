@@ -26,6 +26,7 @@ import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../firebase-config";
 import { RootState } from "../../Store";
 import { newPostSections } from "./data";
+import { colors } from "../../theme";
 
 interface NewPostModalProps {
   isOpen: boolean;
@@ -198,6 +199,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
               variant={"flushed"}
               placeholder="Enter title"
               value={newPostFields.title}
+              maxLength={100}
               onChange={(e) => {
                 setNewPostFields({
                   ...newPostFields,
@@ -214,6 +216,7 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
             minH={100}
             maxH={200}
             value={newPostFields.description}
+            maxLength={100}
             onChange={(e) => {
               setNewPostFields({
                 ...newPostFields,
@@ -221,6 +224,13 @@ export const NewPostModal: React.FC<NewPostModalProps> = ({
               });
             }}
           />
+
+          <Flex alignItems={"center"} justify={"flex-end"} width={"100%"}>
+            <Text
+              fontFamily={"WorkSans-Regular"}
+              color={colors.grey}
+            >{`${newPostFields.description.length}/100`}</Text>
+          </Flex>
 
           <Box height={10} />
 
