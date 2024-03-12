@@ -34,6 +34,7 @@ export const Sidebar = () => {
         value={filters.section}
         variant={"outline"}
         color={colors.white}
+        backgroundColor={colors.black}
         onChange={(e) => {
           dispatch({
             type: "course/setFilters",
