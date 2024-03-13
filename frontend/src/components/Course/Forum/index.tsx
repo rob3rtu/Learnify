@@ -117,48 +117,59 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
           {forum.messages.map((message) => {
             return (
               <Flex
-                key={message.id}
-                gap={2}
+                width={"100%"}
                 alignItems={"center"}
-                bgColor={colors.grey}
-                borderRadius={10}
-                w={"fit-content"}
-                px={3}
+                justifyContent={
+                  user?.id === message.user.id ? "flex-end" : "flex-start"
+                }
               >
-                <Avatar
-                  src={message.user?.profileImage ?? undefined}
-                  fontFamily="WorkSans-Regular"
-                  cursor="pointer"
-                  name={
-                    message.user?.fullName ?? message.user?.email.split("@")[0]
-                  }
-                  size="sm"
-                  bg={colors.blue}
-                />
                 <Flex
-                  direction={"column"}
-                  gap={3}
-                  alignItems={"flex-start"}
-                  p={2}
+                  key={message.id}
+                  gap={2}
+                  alignItems={"center"}
+                  bgColor={
+                    user?.id === message.user.id ? colors.blue : colors.white
+                  }
+                  borderRadius={10}
+                  w={"fit-content"}
+                  px={3}
                 >
+                  <Avatar
+                    src={message.user?.profileImage ?? undefined}
+                    fontFamily="WorkSans-Regular"
+                    cursor="pointer"
+                    name={
+                      message.user?.fullName ??
+                      message.user?.email.split("@")[0]
+                    }
+                    size="sm"
+                    bg={colors.blue}
+                  />
                   <Flex
-                    width={"100%"}
-                    justify={"space-between"}
-                    gap={10}
-                    fontSize={12}
+                    direction={"column"}
+                    gap={3}
+                    alignItems={"flex-start"}
+                    p={2}
                   >
-                    <Text fontFamily={"WorkSans-SemiBold"}>
-                      {message.user.fullName}
-                    </Text>
-                    <Text fontFamily={"WorkSans-SemiBold"}>
-                      {moment(message.createdAt)
-                        .format("hh:mm DD.MMM.YYYY")
-                        .toLocaleString()}
+                    <Flex
+                      width={"100%"}
+                      justify={"space-between"}
+                      gap={10}
+                      fontSize={12}
+                    >
+                      <Text fontFamily={"WorkSans-SemiBold"}>
+                        {message.user.fullName}
+                      </Text>
+                      <Text fontFamily={"WorkSans-SemiBold"}>
+                        {moment(message.createdAt)
+                          .format("hh:mm DD.MMM.YYYY")
+                          .toLocaleString()}
+                      </Text>
+                    </Flex>
+                    <Text fontFamily={"WorkSansRegular"} fontSize={17}>
+                      {message.message}
                     </Text>
                   </Flex>
-                  <Text fontFamily={"WorkSansRegular"} fontSize={17}>
-                    {message.message}
-                  </Text>
                 </Flex>
               </Flex>
             );
@@ -182,7 +193,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
       >
         <Input
           width={"100%"}
-          maxLength={255}
+          maxLength={250}
           placeholder="Ask any question..."
           color={colors.white}
           value={message}
