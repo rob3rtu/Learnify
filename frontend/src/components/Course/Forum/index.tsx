@@ -162,11 +162,11 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
                       </Text>
                       <Text fontFamily={"WorkSans-SemiBold"}>
                         {moment(message.createdAt)
-                          .format("hh:mm DD.MMM.YYYY")
+                          .format("HH:mm DD.MM.YYYY")
                           .toLocaleString()}
                       </Text>
                     </Flex>
-                    <Text fontFamily={"WorkSansRegular"} fontSize={17}>
+                    <Text fontFamily={"WorkSans-Medium"} fontSize={16}>
                       {message.message}
                     </Text>
                   </Flex>

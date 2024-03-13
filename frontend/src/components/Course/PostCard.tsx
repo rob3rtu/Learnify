@@ -174,7 +174,7 @@ export const PostCard: React.FC<PostCardProps> = ({
               {localPost.user.fullName}
               {" - "}
               {moment(localPost.createdAt)
-                .format("DD.MMM.YYYY")
+                .format("DD.MM.YYYY")
                 .toLocaleString()}
             </Text>
           </Flex>
