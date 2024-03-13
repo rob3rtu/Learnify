@@ -16,6 +16,7 @@ import { getForum } from "../api";
 import NotFoundSVG from "../../../assets/not-found.svg";
 import { apiClient } from "../../../utils/apiClient";
 import moment from "moment";
+import { socket } from "./socket";
 
 interface ForumProps {
   courseId: string;
@@ -28,6 +29,10 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
   const user = useSelector((state: RootState) => state.auth.account);
   const loading = useSelector((state: RootState) => state.forum.loading);
   const [message, setMessage] = useState<string>("");
+
+  useEffect(() => {
+    socket.on("connection", () => {});
+  }, []);
 
   useEffect(() => {
     dispatch(getForum(courseId) as unknown as AnyAction);
@@ -117,6 +122,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
           {forum.messages.map((message) => {
             return (
               <Flex
+                key={message.id}
                 width={"100%"}
                 alignItems={"center"}
                 justifyContent={
