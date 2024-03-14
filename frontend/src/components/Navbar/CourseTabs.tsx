@@ -25,7 +25,7 @@ export const CourseTabs = () => {
       size="sm"
     >
       <TabList>
-        {["Materials", "Courses", "Seminars", "Laboratory", "Forum"].map(
+        {["Materials", "Courses", "Seminars", "Laboratory", "Chat"].map(
           (tab) => (
             <Tab
               key={tab}

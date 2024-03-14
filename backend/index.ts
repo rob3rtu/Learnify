@@ -9,6 +9,8 @@ import courseRouter from "./routes/course";
 import teacherRouter from "./routes/teacher";
 import postRouter from "./routes/post";
 import forumRouter from "./routes/forum";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
 require("dotenv").config();
 
@@ -41,7 +43,33 @@ const checkDbConnection = async () => {
   }
 };
 
-app.listen(port, async () => {
+const expressServer = createServer(app);
+const io = new Server(expressServer, { cors: { origin: "*" } });
+
+expressServer.listen(port, async () => {
   console.log(`App running on port ${port}`);
   await checkDbConnection();
+});
+
+io.listen(3002);
+
+io.on("connection", (socket) => {
+  socket.on("send-message", async (message) => {
+    try {
+      const createdMessage = await prisma.message.create({ data: message });
+
+      const forum = await prisma.forum.findFirst({
+        where: { id: createdMessage.forumId ?? "" },
+        include: {
+          messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+        },
+      });
+
+      socket.broadcast.emit("message-response", forum);
+      socket.emit("message-response", forum);
+    } catch (error) {
+      console.log(error);
+      // return res.sendStatus(500);
+    }
+  });
 });
