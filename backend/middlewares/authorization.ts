@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { JwtPayload, decode } from "jsonwebtoken";
+import { decode } from "jsonwebtoken";
 
 //check if there is a token in the auth header and if it belongs to an existing user
 const authorization = async (

@@ -54,8 +54,6 @@ expressServer.listen(port, async () => {
 io.listen(3002);
 
 io.on("connection", (socket) => {
-  console.log(socket.id);
-
   socket.on("send-message", async (message) => {
     try {
       const createdMessage = await prisma.message.create({ data: message });
@@ -68,6 +66,7 @@ io.on("connection", (socket) => {
       });
 
       socket.broadcast.emit("message-response", forum);
+      socket.emit("message-response", forum);
     } catch (error) {
       console.log(error);
       // return res.sendStatus(500);

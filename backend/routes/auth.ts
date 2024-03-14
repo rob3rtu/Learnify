@@ -3,7 +3,6 @@ import { PrismaClient, enum_Users_role } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { decode, sign } from "jsonwebtoken";
 import axios from "axios";
-const emailValidator = require("deep-email-validator");
 
 const authRouter = express.Router();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
