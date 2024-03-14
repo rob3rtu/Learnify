@@ -51,7 +51,7 @@ expressServer.listen(port, async () => {
   await checkDbConnection();
 });
 
-io.listen(3002);
+// io.listen(3002);
 
 io.on("connection", (socket) => {
   socket.on("send-message", async (message) => {
