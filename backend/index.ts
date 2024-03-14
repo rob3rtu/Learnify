@@ -55,4 +55,22 @@ io.listen(3002);
 
 io.on("connection", (socket) => {
   console.log(socket.id);
+
+  socket.on("send-message", async (message) => {
+    try {
+      const createdMessage = await prisma.message.create({ data: message });
+
+      const forum = await prisma.forum.findFirst({
+        where: { id: createdMessage.forumId ?? "" },
+        include: {
+          messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+        },
+      });
+
+      socket.broadcast.emit("message-response", forum);
+    } catch (error) {
+      console.log(error);
+      // return res.sendStatus(500);
+    }
+  });
 });

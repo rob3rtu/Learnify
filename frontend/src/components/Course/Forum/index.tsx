@@ -34,32 +34,41 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
     socket.on("connection", () => {});
   }, []);
 
+  socket.on("message-response", (newForum: any) => {
+    dispatch({ type: "forum/setForum", payload: newForum });
+  });
+
   useEffect(() => {
     dispatch(getForum(courseId) as unknown as AnyAction);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlSubmitMessage = async () => {
-    await apiClient
-      .post("forum/new", {
-        forumId: forum?.id,
-        userId: user?.id,
-        message: message,
-      })
-      .then((res) => {
-        dispatch({ type: "forum/setForum", payload: res.data });
-        setMessage("");
-      })
-      .catch((err) => {
-        console.log(err);
-        toast({
-          title: "Error!",
-          description: "Could not send message.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-      });
+    // await apiClient
+    //   .post("forum/new", {
+    //     forumId: forum?.id,
+    //     userId: user?.id,
+    //     message: message,
+    //   })
+    //   .then((res) => {
+    socket.emit("send-message", {
+      forumId: forum?.id,
+      userId: user?.id,
+      message: message,
+    });
+
+    setMessage("");
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    //   toast({
+    //     title: "Error!",
+    //     description: "Could not send message.",
+    //     status: "error",
+    //     duration: 5000,
+    //     isClosable: true,
+    //   });
+    // });
   };
 
   if (loading)
