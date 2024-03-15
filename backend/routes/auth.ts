@@ -104,26 +104,26 @@ authRouter.get("/verify-token/:token", async (req, res) => {
 authRouter.post("/login/:email", async (req, res) => {
   const email = req.params.email;
 
-  //check email for spam
-  const emailCheck = await axios.post(
-    "https://api.apyhub.com/validate/email/dns",
-    { email },
-    {
-      headers: {
-        "apy-token":
-          "APY0GqbBBd0d1vh6VSgwEw0OPp1s1H0556pLxRxy3pQaRZHEAVWBndaZ1nik2UkS60",
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  if (!emailCheck.data.data) {
-    return res.status(400).json({ error: "Invalid email address." });
-  }
-
-  let user = await prisma.user.findFirst({ where: { email } });
-
   try {
+    //check email for spam
+    const emailCheck = await axios.post(
+      "https://api.apyhub.com/validate/email/dns",
+      { email },
+      {
+        headers: {
+          "apy-token":
+            "APY0GqbBBd0d1vh6VSgwEw0OPp1s1H0556pLxRxy3pQaRZHEAVWBndaZ1nik2UkS60",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!emailCheck.data.data) {
+      return res.status(400).json({ error: "Invalid email address." });
+    }
+
+    let user = await prisma.user.findFirst({ where: { email } });
+
     const token = sign(
       user === null
         ? {
