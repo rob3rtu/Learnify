@@ -14,7 +14,7 @@ generator dbml {
 
 datasource db {
   provider   = "postgresql"
-  url        = "postgres://learnifydb_user:CvfyrIhsWk4YCGpzUWfw3cIm4ZcgZfrt@dpg-cnm1q3ol5elc73cbci5g-a.frankfurt-postgres.render.com/learnifydb"
+  url        = env("DATABASE_URL")
   extensions = [uuidOssp(map: "uuid-ossp", schema: "public")]
 }
 
