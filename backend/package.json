@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon --files index.ts",
     "build": "npm install && npx prisma migrate deploy",
-    "start": "tsc && node dist/index.js"
+    "start": "tsc && node dist/index.js",
+    "start:dev": "tsc && node dist/index.js"
   },
   "keywords": [],
   "author": "",
