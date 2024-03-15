@@ -46,13 +46,6 @@ const checkDbConnection = async () => {
 const expressServer = createServer(app);
 const io = new Server(expressServer, { cors: { origin: "*" } });
 
-expressServer.listen(port, async () => {
-  console.log(`App running on port ${port}`);
-  await checkDbConnection();
-});
-
-// io.listen(3002);
-
 io.on("connection", (socket) => {
   socket.on("send-message", async (message) => {
     try {
@@ -73,3 +66,10 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+expressServer.listen(port, async () => {
+  console.log(`App running on port ${port}`);
+  await checkDbConnection();
+});
+
+// io.listen(3002);

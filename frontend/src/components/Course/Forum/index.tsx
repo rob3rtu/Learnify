@@ -6,10 +6,11 @@ import {
   Image,
   useToast,
   Avatar,
+  Box,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../Store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { colors } from "../../../theme";
 import { AnyAction } from "redux";
 import { getForum } from "../api";
@@ -30,8 +31,12 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
   const loading = useSelector((state: RootState) => state.forum.loading);
   const [message, setMessage] = useState<string>("");
 
+  const forumBottomRef = useRef<null | HTMLDivElement>(null);
+
   useEffect(() => {
+    dispatch(getForum(courseId) as unknown as AnyAction);
     socket.on("connection", () => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   socket.on("message-response", (newForum: any) => {
@@ -39,9 +44,8 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
   });
 
   useEffect(() => {
-    dispatch(getForum(courseId) as unknown as AnyAction);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    forumBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [forum]);
 
   const handlSubmitMessage = async () => {
     // await apiClient
@@ -128,6 +132,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
         </Text>
       ) : (
         <>
+          <Box ref={forumBottomRef} />
           {forum.messages.map((message) => {
             return (
               <Flex
