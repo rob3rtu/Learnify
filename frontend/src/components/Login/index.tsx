@@ -111,6 +111,9 @@ export const Login = () => {
             color={colors.white}
             value={email}
             borderColor={error ? "red" : ""}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleEmailLogin();
+            }}
             onChange={(e) => {
               if (e.target.value !== "") {
                 setError(false);

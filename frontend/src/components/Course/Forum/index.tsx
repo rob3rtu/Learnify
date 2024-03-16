@@ -163,7 +163,6 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
                       message.user?.email.split("@")[0]
                     }
                     size="sm"
-                    bg={colors.blue}
                   />
                   <Flex
                     direction={"column"}
