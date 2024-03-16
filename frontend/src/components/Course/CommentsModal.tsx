@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   Flex,
   Text,
   Input,
@@ -13,6 +11,8 @@ import {
   ModalOverlay,
   useToast,
   Avatar,
+  InputGroup,
+  InputRightAddon,
 } from "@chakra-ui/react";
 import { PostInterface } from "./types";
 import { useEffect, useState } from "react";
@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { colors } from "../../theme";
 import moment from "moment";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
 interface CommentsModalProps {
   post: PostInterface | null;
@@ -87,15 +88,25 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
       size={"3xl"}
       motionPreset="slideInTop"
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader fontSize={25}>{localPost?.title}</ModalHeader>
-        <ModalCloseButton />
+      <ModalOverlay
+        bg="whiteAlpha.300"
+        backdropFilter="auto"
+        backdropBlur={"sm"}
+      />
+      <ModalContent bgColor={colors.black}>
+        <ModalHeader fontSize={25} color={colors.white}>
+          {localPost?.title}
+        </ModalHeader>
+        <ModalCloseButton color={colors.white} />
         <ModalBody>
           <Flex h={400} overflowY={"scroll"} direction={"column"} gap={5}>
             {localPost?.comments.length === 0 ? (
               <Flex alignItems={"center"} justify={"center"} flex={1}>
-                <Text fontFamily={"WorkSans-SemiBold"} fontSize={20}>
+                <Text
+                  fontFamily={"WorkSans-SemiBold"}
+                  fontSize={20}
+                  color={colors.white}
+                >
                   There are no comments yet
                 </Text>
               </Flex>
@@ -106,7 +117,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                     key={comment.id}
                     gap={2}
                     alignItems={"center"}
-                    bgColor={colors.grey}
+                    bgColor={colors.white}
                     borderRadius={10}
                     w={"fit-content"}
                     px={3}
@@ -120,7 +131,6 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                         comment.user?.email.split("@")[0]
                       }
                       size="sm"
-                      bg={colors.blue}
                     />
                     <Flex
                       direction={"column"}
@@ -164,14 +174,34 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             }}
             style={{ width: "100%" }}
           >
-            <Input
-              width={"100%"}
-              placeholder="Say something"
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-              }}
-            />
+            <InputGroup>
+              <Input
+                width={"100%"}
+                borderRadius={10}
+                maxLength={250}
+                placeholder="Say something"
+                value={message}
+                color={"white"}
+                _placeholder={{
+                  color: "white",
+                  opacity: 0.4,
+                }}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                }}
+              />
+              <InputRightAddon
+                bgColor={"transparent"}
+                cursor={"pointer"}
+                onClick={() => {
+                  if (message !== "") {
+                    handleSubmitMessage();
+                  }
+                }}
+              >
+                <ChevronRightIcon color={"white"} />
+              </InputRightAddon>
+            </InputGroup>
           </form>
         </ModalFooter>
       </ModalContent>

@@ -1,13 +1,14 @@
 import { Avatar, Flex, Stack, Text, useToast } from "@chakra-ui/react";
 import { colors } from "../../theme";
 import { useNavigate } from "react-router-dom";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { storage } from "../../firebase-config";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
 import { apiClient } from "../../utils/apiClient";
 import { RootState } from "../../Store";
 import { AccountInterface } from "../Login/types";
+import { EditIcon } from "@chakra-ui/icons";
 
 interface ProfileNavProps {
   isNotOnProfile?: boolean;
@@ -23,6 +24,7 @@ export const ProfileNav: React.FC<ProfileNavProps> = ({
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const user = useSelector((state: RootState) => state.auth.account);
+  const [showEdit, setShowEdit] = useState(false);
 
   const handleSelectImage = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.item(0);
@@ -97,8 +99,15 @@ export const ProfileNav: React.FC<ProfileNavProps> = ({
         >
           LEARNIFY
         </Text>
-        <Stack spacing={4} align="center">
+        <Stack align="center" justify={"center"}>
           <Avatar
+            onMouseEnter={() => {
+              setShowEdit(true);
+            }}
+            onMouseLeave={() => {
+              setShowEdit(false);
+            }}
+            overflow={"hidden"}
             src={
               otherUser
                 ? otherUser?.profileImage ?? undefined
@@ -117,7 +126,18 @@ export const ProfileNav: React.FC<ProfileNavProps> = ({
               if (isNotOnProfile) nav("/profile");
               else if (!otherUser) fileInputRef.current?.click();
             }}
-          ></Avatar>
+          >
+            <Flex
+              display={showEdit ? "flex" : "none"}
+              alignItems={"center"}
+              justify={"center"}
+              bgColor={"rgba(0, 0, 0, 0.4)"}
+              position={"absolute"}
+              padding={10}
+            >
+              <EditIcon color={"white"} />
+            </Flex>
+          </Avatar>
           <input
             type="file"
             accept="image/*"

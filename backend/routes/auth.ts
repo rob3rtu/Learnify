@@ -121,9 +121,13 @@ authRouter.post("/login/:email", async (req, res) => {
     if (!emailCheck.data.data) {
       return res.status(400).json({ error: "Invalid email address." });
     }
+  } catch (err) {
+    return res.status(400).json({ error: "Invalid email address." });
+  }
 
-    let user = await prisma.user.findFirst({ where: { email } });
+  let user = await prisma.user.findFirst({ where: { email } });
 
+  try {
     const token = sign(
       user === null
         ? {

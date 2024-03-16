@@ -7,7 +7,7 @@ import { ConfirmEmail } from "./components/Login/ConfirmEmail";
 import { NotFound } from "./components/NotFound";
 import { colors } from "./theme";
 import { Profile } from "./components/Profile";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./Store";
 import { Course } from "./components/Course";
