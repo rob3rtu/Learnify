@@ -18,7 +18,7 @@ export const Profile = () => {
       setLoading(true);
     }
     apiClient
-      .get("user/posts")
+      .post("user/posts", { section: "materials" })
       .then((res) => {
         setPosts(res.data.posts);
       })
