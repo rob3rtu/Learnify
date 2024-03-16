@@ -22,7 +22,6 @@ interface NewTeacherDTO {
 interface PaginationBody {
   section: "materials" | "courses" | "seminars" | "laboratory" | "forum";
   skip?: number;
-  take?: number;
   sortBy?: "newest" | "oldest" | "mostlikes" | "leastlikes";
   filterBy?: "myposts" | "postsi'veliked";
 }

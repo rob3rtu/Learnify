@@ -10,9 +10,15 @@ interface UserDTO {
   role: enum_Users_role;
 }
 
+interface PaginationBody {
+  section: "materials" | "courses" | "seminars" | "laboratory" | "forum";
+  skip?: number;
+}
+
 //get user's posts
-userRouter.get("/posts", async (req, res) => {
+userRouter.post("/posts", async (req, res) => {
   const user = req.user;
+  const body = req.body as PaginationBody;
 
   try {
     const posts = await prisma.post.findMany({
@@ -25,9 +31,29 @@ userRouter.get("/posts", async (req, res) => {
       },
     });
 
-    return res.json({
-      posts,
-    });
+    let postsBySection;
+
+    switch (body.section) {
+      case "materials":
+      case "courses":
+      case "seminars":
+      case "laboratory":
+        postsBySection = posts.filter(
+          (post) => post.classSection === body.section
+        );
+        break;
+
+      default:
+        postsBySection = posts;
+        break;
+    }
+
+    let paginatedPosts = postsBySection.slice(
+      body.skip ?? 0,
+      body.skip ? body.skip + 10 : 10
+    );
+
+    return res.json({ posts: paginatedPosts });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

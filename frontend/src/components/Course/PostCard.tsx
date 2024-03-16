@@ -158,9 +158,9 @@ export const PostCard: React.FC<PostCardProps> = ({
             alignItems={"center"}
             gap={2}
             cursor={"pointer"}
-            onClick={() => {
-              nav(`/profile/${localPost.user.id}`);
-            }}
+            // onClick={() => {
+            //   nav(`/profile/${localPost.user.id}`);
+            // }}
           >
             {" "}
             <Avatar

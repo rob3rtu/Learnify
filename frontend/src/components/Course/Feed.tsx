@@ -57,32 +57,55 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
 
   useEffect(() => {
     setLoading(true);
-    apiClient
-      .post(`course/${course?.id}`, {
-        section: filters.section,
-        sortBy: sideSorting.sortBy,
-        filterBy: sideFilters.filterBy,
-      })
-      .then((res) => {
-        dispatch({
-          type: "course/setCourse",
-          payload: res.data,
-        });
+    if (fakeReload === undefined) {
+      apiClient
+        .post(`course/${course?.id}`, {
+          section: filters.section,
+          sortBy: sideSorting.sortBy,
+          filterBy: sideFilters.filterBy,
+        })
+        .then((res) => {
+          dispatch({
+            type: "course/setCourse",
+            payload: res.data,
+          });
 
-        setCanSkip(res.data.posts.length === 10);
-      })
-      .catch((err) => {
-        toast({
-          title: "Error!",
-          description: "Something went wrong.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
+          setCanSkip(res.data.posts.length === 10);
+          setSkip(10);
+        })
+        .catch((err) => {
+          toast({
+            title: "Error!",
+            description: "Something went wrong.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
         });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    } else {
+      apiClient
+        .post("user/posts", { section: filters.section })
+        .then((res) => {
+          setFilteredPosts(res.data.posts);
+          setCanSkip(res.data.posts.length === 10);
+          setSkip(10);
+        })
+        .catch((err) => {
+          toast({
+            title: "Error!",
+            description: "Could not get posts.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   }, [sideSorting, sideFilters, filters]);
 
   useEffect(() => {
@@ -95,7 +118,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
     //   payload: { section: "materials" },
     // });
 
-    setCanSkip(course?.posts.length === 10);
+    setCanSkip(filteredPosts.length === 10);
 
     return () => {
       dispatch({ type: "course/setSideSorting", payload: { sortBy: null } });
@@ -134,37 +157,58 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
 
   const handleFetchMorePosts = async () => {
     setLoadingSkip(true);
-    apiClient
-      .post(`course/${course?.id}`, {
-        section: filters.section,
-        sortBy: sideSorting.sortBy,
-        filterBy: sideFilters.filterBy,
-        skip,
-      })
-      .then((res) => {
-        dispatch({
-          type: "course/setCourse",
-          payload: {
-            ...course,
-            posts: [...(course?.posts ?? []), ...res.data.posts],
-          },
-        });
+    if (fakeReload === undefined)
+      apiClient
+        .post(`course/${course?.id}`, {
+          section: filters.section,
+          sortBy: sideSorting.sortBy,
+          filterBy: sideFilters.filterBy,
+          skip,
+        })
+        .then((res) => {
+          dispatch({
+            type: "course/setCourse",
+            payload: {
+              ...course,
+              posts: [...(course?.posts ?? []), ...res.data.posts],
+            },
+          });
 
-        setCanSkip(res.data.posts.length === 10);
-        setSkip(skip + 10);
-      })
-      .catch((err) => {
-        toast({
-          title: "Error!",
-          description: "Something went wrong.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
+          setCanSkip(res.data.posts.length === 10);
+          setSkip(skip + 10);
+        })
+        .catch((err) => {
+          toast({
+            title: "Error!",
+            description: "Something went wrong.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoadingSkip(false);
         });
-      })
-      .finally(() => {
-        setLoadingSkip(false);
-      });
+    else
+      apiClient
+        .post("user/posts", { section: filters.section, skip })
+        .then((res) => {
+          setFilteredPosts([...filteredPosts, ...res.data.posts]);
+          setCanSkip(res.data.posts.length === 10);
+          setSkip(skip + 10);
+        })
+        .catch((err) => {
+          toast({
+            title: "Error!",
+            description: "Could not get posts.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoadingSkip(false);
+        });
   };
 
   return (
