@@ -14,7 +14,9 @@ export const getCurrentCourse = createAsyncThunk(
         payload: null,
       });
 
-      const resp = await apiClient.get(`course/${id}`);
+      const resp = await apiClient.post(`course/${id}`, {
+        section: "materials",
+      });
 
       thunkApi.dispatch({
         type: "course/setCourse",

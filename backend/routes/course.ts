@@ -19,6 +19,14 @@ interface NewTeacherDTO {
   teacherId: string;
 }
 
+interface PaginationBody {
+  section: "materials" | "courses" | "seminars" | "laboratory" | "forum";
+  skip?: number;
+  take?: number;
+  sortBy?: "newest" | "oldest" | "mostlikes" | "leastlikes";
+  filterBy?: "myposts" | "postsi'veliked";
+}
+
 //get all courses
 courseRouter.get("/all", async (req, res) => {
   const user = req.user;
@@ -43,7 +51,10 @@ courseRouter.get("/all", async (req, res) => {
 });
 
 //get course by id
-courseRouter.get("/:id", async (req, res) => {
+courseRouter.post("/:id", async (req, res) => {
+  const body = req.body as PaginationBody;
+  const user = req.user;
+
   try {
     const course = await prisma.class.findFirst({
       where: { id: req.params.id },
@@ -63,7 +74,87 @@ courseRouter.get("/:id", async (req, res) => {
       return res.sendStatus(404);
     }
 
-    return res.json(course);
+    const posts = course.posts;
+    let postsBySection, filteredPosts, sortedPosts, paginatedPosts;
+
+    switch (body.section) {
+      case "materials":
+      case "courses":
+      case "seminars":
+      case "laboratory":
+        postsBySection = posts.filter(
+          (post) => post.classSection === body.section
+        );
+        break;
+
+      default:
+        postsBySection = posts;
+        break;
+    }
+
+    switch (body.filterBy) {
+      case "myposts":
+        filteredPosts = postsBySection.filter(
+          (post) => post.userId === user?.id
+        );
+        break;
+
+      case "postsi'veliked":
+        filteredPosts = postsBySection.filter((post) => {
+          return post.likes.map((like) => like.userId).includes(user?.id ?? "");
+        });
+        break;
+
+      default:
+        filteredPosts = postsBySection;
+        break;
+    }
+
+    switch (body.sortBy) {
+      case "newest":
+        sortedPosts = filteredPosts.sort((a, b) => {
+          const aDate = new Date(a.createdAt);
+          const bDate = new Date(b.createdAt);
+
+          return aDate > bDate ? -1 : 1;
+        });
+        break;
+
+      case "oldest":
+        sortedPosts = filteredPosts.sort((a, b) => {
+          const aDate = new Date(a.createdAt);
+          const bDate = new Date(b.createdAt);
+
+          return aDate < bDate ? -1 : 1;
+        });
+        break;
+
+      case "mostlikes":
+        sortedPosts = filteredPosts.sort((a, b) => {
+          return b.likes.length - a.likes.length;
+        });
+        break;
+
+      case "leastlikes":
+        sortedPosts = filteredPosts.sort((a, b) => {
+          return a.likes.length - b.likes.length;
+        });
+
+        break;
+
+      default:
+        sortedPosts = filteredPosts;
+        break;
+    }
+
+    paginatedPosts = sortedPosts.slice(
+      body.skip ?? 0,
+      body.skip ? body.skip + 10 : 10
+    );
+
+    if (body.skip) return res.json({ posts: paginatedPosts });
+
+    return res.json({ ...course, posts: paginatedPosts });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);

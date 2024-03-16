@@ -1,4 +1,12 @@
-import { Flex, Image, Text, useDisclosure } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Image,
+  Spinner,
+  Text,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { PostInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { colors } from "../../theme";
@@ -8,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { NewPostModal } from "./NewPostModal";
 import { CommentsModal } from "./CommentsModal";
+import { apiClient } from "../../utils/apiClient";
 
 interface FeedProps {
   posts: PostInterface[];
@@ -15,7 +24,9 @@ interface FeedProps {
 }
 
 export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
+  const toast = useToast();
   const user = useSelector((state: RootState) => state.auth.account);
+  const course = useSelector((state: RootState) => state.course.course);
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [filteredPosts, setFilteredPosts] = useState<PostInterface[]>(posts);
@@ -26,6 +37,10 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   const sideFilters = useSelector(
     (state: RootState) => state.course.sideFilters
   );
+  const [loading, setLoading] = useState(false);
+  const [skip, setSkip] = useState(10);
+  const [canSkip, setCanSkip] = useState(true);
+  const [loadingSkip, setLoadingSkip] = useState(false);
 
   const [editValues, setEditValues] = useState<
     | {
@@ -41,100 +56,46 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   const [commentsOpen, setCommentsOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    let sorted;
+    setLoading(true);
+    apiClient
+      .post(`course/${course?.id}`, {
+        section: filters.section,
+        sortBy: sideSorting.sortBy,
+        filterBy: sideFilters.filterBy,
+      })
+      .then((res) => {
+        dispatch({
+          type: "course/setCourse",
+          payload: res.data,
+        });
 
-    if (fakeReload === undefined) {
-      //on course page
-      switch (sideSorting.sortBy) {
-        case "newest":
-          sorted = [
-            ...posts.filter((post) => post.classSection === filters.section),
-          ].sort((a, b) => {
-            const aDate = new Date(a.createdAt);
-            const bDate = new Date(b.createdAt);
+        setCanSkip(res.data.posts.length === 10);
+      })
+      .catch((err) => {
+        toast({
+          title: "Error!",
+          description: "Something went wrong.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [sideSorting, sideFilters, filters]);
 
-            return aDate > bDate ? -1 : 1;
-          });
-          break;
-
-        case "oldest":
-          sorted = [
-            ...posts.filter((post) => post.classSection === filters.section),
-          ].sort((a, b) => {
-            const aDate = new Date(a.createdAt);
-            const bDate = new Date(b.createdAt);
-
-            return aDate < bDate ? -1 : 1;
-          });
-          break;
-
-        case "leastlikes":
-          sorted = [
-            ...posts.filter((post) => post.classSection === filters.section),
-          ].sort((a, b) => {
-            return a.likes.length - b.likes.length;
-          });
-
-          break;
-
-        case "mostlikes":
-          sorted = [
-            ...posts.filter((post) => post.classSection === filters.section),
-          ].sort((a, b) => {
-            return b.likes.length - a.likes.length;
-          });
-
-          break;
-
-        default:
-          sorted = posts.filter(
-            (post) => post.classSection === filters.section
-          );
-          break;
-      }
-
-      switch (sideFilters.filterBy) {
-        case "postsi'veliked":
-          setFilteredPosts(
-            sorted
-              .filter((post) => post.classSection === filters.section)
-              .filter((post) => {
-                return post.likes
-                  .map((like) => like.userId)
-                  .includes(user?.id ?? "");
-              })
-          );
-          break;
-
-        case "myposts":
-          setFilteredPosts(
-            sorted
-              .filter((post) => post.classSection === filters.section)
-              .filter((post) => {
-                return post.userId === user?.id;
-              })
-          );
-          break;
-
-        default:
-          setFilteredPosts(sorted);
-          break;
-      }
-    } else {
-      //on profile page, forum === all posts
-      if (filters.section === "forum") setFilteredPosts(posts);
-      else
-        setFilteredPosts(
-          posts.filter((post) => post.classSection === filters.section)
-        );
-    }
-  }, [sideSorting, sideFilters, posts, filters]);
+  useEffect(() => {
+    setFilteredPosts(course?.posts ?? []);
+  }, [course]);
 
   useEffect(() => {
     // dispatch({
     //   type: "course/setFilters",
     //   payload: { section: "materials" },
     // });
+
+    setCanSkip(course?.posts.length === 10);
 
     return () => {
       dispatch({ type: "course/setSideSorting", payload: { sortBy: null } });
@@ -171,6 +132,41 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
     setCurrentPost(null);
   };
 
+  const handleFetchMorePosts = async () => {
+    setLoadingSkip(true);
+    apiClient
+      .post(`course/${course?.id}`, {
+        section: filters.section,
+        sortBy: sideSorting.sortBy,
+        filterBy: sideFilters.filterBy,
+        skip,
+      })
+      .then((res) => {
+        dispatch({
+          type: "course/setCourse",
+          payload: {
+            ...course,
+            posts: [...(course?.posts ?? []), ...res.data.posts],
+          },
+        });
+
+        setCanSkip(res.data.posts.length === 10);
+        setSkip(skip + 10);
+      })
+      .catch((err) => {
+        toast({
+          title: "Error!",
+          description: "Something went wrong.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .finally(() => {
+        setLoadingSkip(false);
+      });
+  };
+
   return (
     <Flex
       direction={"column"}
@@ -197,7 +193,11 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         fakeReload={fakeReload}
       />
 
-      {filteredPosts.length === 0 ? (
+      {loading ? (
+        <Flex flex={1} width="100%" align="center" justify="center">
+          <Spinner color="white" />
+        </Flex>
+      ) : filteredPosts.length === 0 ? (
         <Flex
           flex={1}
           width="100%"
@@ -228,6 +228,25 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
               />
             );
           })}
+          {loadingSkip ? (
+            <Flex alignItems={"center"} justify={"center"} w={"100%"}>
+              <Spinner color="white" />
+            </Flex>
+          ) : (
+            canSkip && (
+              <Flex alignItems={"center"} justify={"center"} w={"100%"}>
+                <Button
+                  variant={"link"}
+                  color={"white"}
+                  opacity={0.7}
+                  fontFamily={"WorkSans-Medium"}
+                  onClick={handleFetchMorePosts}
+                >
+                  load more
+                </Button>
+              </Flex>
+            )
+          )}
         </>
       )}
     </Flex>
