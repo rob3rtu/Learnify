@@ -49,6 +49,33 @@ courseRouter.get("/all", async (req, res) => {
   });
 });
 
+//create new course
+courseRouter.post(
+  "/new",
+  rolePermission(["admin"]),
+
+  async (req, res) => {
+    const course = req.body.course as CourseDTO;
+
+    try {
+      const createdCourse = await prisma.class.create({ data: course });
+
+      const newCourses = await prisma.class.findMany();
+
+      await prisma.forum.create({
+        data: {
+          classId: createdCourse.id,
+        },
+      });
+
+      return res.json({ courses: newCourses });
+    } catch (error) {
+      console.log(error);
+      return res.sendStatus(500);
+    }
+  }
+);
+
 //get course by id
 courseRouter.post("/:id", async (req, res) => {
   const body = req.body as PaginationBody;
@@ -159,33 +186,6 @@ courseRouter.post("/:id", async (req, res) => {
     return res.sendStatus(500);
   }
 });
-
-//create new course
-courseRouter.post(
-  "/new",
-  rolePermission(["admin"]),
-
-  async (req, res) => {
-    const course = req.body.course as CourseDTO;
-
-    try {
-      const createdCourse = await prisma.class.create({ data: course });
-
-      const newCourses = await prisma.class.findMany();
-
-      await prisma.forum.create({
-        data: {
-          classId: createdCourse.id,
-        },
-      });
-
-      return res.json({ courses: newCourses });
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
-    }
-  }
-);
 
 //get class teachers
 courseRouter.get("/teachers/:id", async (req, res) => {
