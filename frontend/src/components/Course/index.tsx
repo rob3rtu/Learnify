@@ -29,6 +29,10 @@ export const Course = () => {
         type: "home/setCourses",
         payload: courses.filter((course) => course.id !== id),
       });
+      dispatch({
+        type: "course/setCourse",
+        payload: null,
+      });
       nav("/");
     } catch (error) {
       console.log(error);
