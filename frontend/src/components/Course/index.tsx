@@ -1,4 +1,4 @@
-import { Flex, Image, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Image, Spinner, Text, useToast } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,8 +12,11 @@ import { Feed } from "./Feed";
 import { SideBar } from "./Sidebar";
 import { getCurrentCourse } from "./api";
 import { Forum } from "./Forum";
+import { deleteObject, ref } from "firebase/storage";
+import { storage } from "../../firebase-config";
 
 export const Course = () => {
+  const toast = useToast();
   const { id } = useParams();
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -29,13 +32,36 @@ export const Course = () => {
         type: "home/setCourses",
         payload: courses.filter((course) => course.id !== id),
       });
+
+      //delete course's posts
+      course?.posts.forEach(async (post) => {
+        if (post.resourceType === "document") {
+          const documentRef = ref(storage, post.resourceUrl);
+
+          await deleteObject(documentRef);
+        }
+      });
+
       dispatch({
         type: "course/setCourse",
         payload: null,
       });
       nav("/");
+      toast({
+        title: "Success!",
+        description: "Course deleted successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Error!",
+        description: "Could not delete course.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
