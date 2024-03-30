@@ -73,13 +73,13 @@ export const ProfileNav: React.FC<ProfileNavProps> = ({
       // top={0}
       zIndex={999}
       bg={colors.black}
-      height="17vh"
-      width="100vw"
+      width="100%"
       borderBottomColor={colors.white}
       borderBottomWidth={1}
       direction="column"
       alignItems="center"
       padding={5}
+      paddingBottom={10}
     >
       <Flex
         direction="row"

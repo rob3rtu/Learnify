@@ -13,8 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { FiltersInterface, semesterObject, yearsObject } from "./types";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../Store";
+import { useDispatch } from "react-redux";
 import { apiClient } from "../../utils/apiClient";
 
 interface CreateCourseModalProps {
@@ -29,7 +28,6 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
   onClose,
 }) => {
   const dispatch = useDispatch();
-  const courses = useSelector((state: RootState) => state.home.courses);
   const [courseName, setCourseName] = useState<string>("");
   const [shortName, setShortName] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -53,7 +51,11 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
 
     try {
       const res = await apiClient.post("course/new", {
-        course: { shortName, longName: courseName, ...filters },
+        course: {
+          shortName: shortName === "" ? "???" : shortName,
+          longName: courseName,
+          ...filters,
+        },
       });
 
       dispatch({
@@ -86,6 +88,7 @@ export const CreateCourseModal: React.FC<CreateCourseModalProps> = ({
               setShortName(generateAbbreviation(e.target.value));
             }}
             placeholder="Course name"
+            maxLength={100}
           />
           <Box h={5} />
           <Text>Abbreviation: {shortName}</Text>

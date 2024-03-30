@@ -17,7 +17,7 @@ forumRouter.get("/:id", async (req, res) => {
     const forum = await prisma.forum.findFirst({
       where: { classId },
       include: {
-        messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+        messages: { include: { user: true }, orderBy: { createdAt: "asc" } },
       },
     });
 
@@ -39,7 +39,7 @@ forumRouter.post("/new", async (req, res) => {
     const forum = await prisma.forum.findFirst({
       where: { id: createdMessage.forumId ?? "" },
       include: {
-        messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+        messages: { include: { user: true }, orderBy: { createdAt: "asc" } },
       },
     });
 

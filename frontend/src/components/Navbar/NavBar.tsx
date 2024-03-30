@@ -21,12 +21,12 @@ export const NavBar: React.FC<NavBarProps> = ({ courseName }) => {
       top={0}
       zIndex={999}
       bg={colors.darkerGrey}
-      height="17vh"
-      width="100vw"
+      width="100%"
       borderRadius="0 0 30px 30px"
       direction="column"
       alignItems="center"
       padding={5}
+      paddingBottom={2}
     >
       <Flex
         direction="row"
@@ -77,11 +77,12 @@ export const NavBar: React.FC<NavBarProps> = ({ courseName }) => {
         </Flex>
       ) : (
         <Flex
-          direction="row"
+          direction={["column", null, "row"]}
           alignItems="center"
           justifyContent="space-between"
           width="100%"
           padding="15px 20px 5px 20px"
+          gap={5}
         >
           {courseName ? (
             <>

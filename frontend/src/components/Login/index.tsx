@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import LoginSVG from "../../assets/login.svg";
+import EmailSent from "../../assets/email-sent.svg";
 import { colors } from "../../theme";
 import { apiClient } from "../../utils/apiClient";
 
@@ -58,7 +59,9 @@ export const Login = () => {
         justifyContent="center"
         bg={colors.black}
         height="100vh"
+        gap={10}
       >
+        <Image src={EmailSent} maxH={"20vh"} />
         <Text
           style={{
             fontFamily: "WorkSans-Bold",
@@ -142,12 +145,7 @@ export const Login = () => {
         position="absolute"
         bottom={0}
       />
-      <Image
-        src={LoginSVG}
-        width={["80vw", "60vw", "50vw"]}
-        position="absolute"
-        bottom={0}
-      />
+      <Image src={LoginSVG} maxH={"30vh"} position="absolute" bottom={0} />
     </Flex>
   );
 };
