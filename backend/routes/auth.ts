@@ -2,7 +2,6 @@ import express from "express";
 import { PrismaClient, enum_Users_role } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { decode, sign } from "jsonwebtoken";
-import axios from "axios";
 
 const authRouter = express.Router();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
@@ -104,24 +103,11 @@ authRouter.get("/verify-token/:token", async (req, res) => {
 authRouter.post("/login/:email", async (req, res) => {
   const email = req.params.email;
 
-  try {
-    //check email for spam
-    const emailCheck = await axios.post(
-      "https://api.apyhub.com/validate/email/dns",
-      { email },
-      {
-        headers: {
-          "apy-token":
-            "APY0GqbBBd0d1vh6VSgwEw0OPp1s1H0556pLxRxy3pQaRZHEAVWBndaZ1nik2UkS60",
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!emailCheck.data.data) {
-      return res.status(400).json({ error: "Invalid email address." });
-    }
-  } catch (err) {
+  if (
+    !email.match(
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    )
+  ) {
     return res.status(400).json({ error: "Invalid email address." });
   }
 
