@@ -1,19 +1,17 @@
 import {
-  Button,
   Card,
   CardBody,
-  CardFooter,
   CardHeader,
   Flex,
   Heading,
   Icon,
   Text,
 } from "@chakra-ui/react";
-import { CourseInterface } from "./types";
-import { colors } from "../../theme";
 import { useState } from "react";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { colors } from "../../theme";
+import { CourseInterface } from "./types";
 
 interface CourseCardProps {
   course: CourseInterface;
@@ -32,9 +30,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   return (
     <Card
       bg={colors.black}
-      height={300}
+      height={250}
       borderRadius={17}
       style={{ transition: "box-shadow 0.3s ease-in-out" }}
+      overflow={"hidden"}
       boxShadow={
         isHover
           ? "0px 0px 29px 2px #0099FC"
@@ -98,7 +97,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               {course.longName}
             </Text>
           </CardBody>
-          <CardFooter paddingBottom={10}>
+          {/* <CardFooter paddingBottom={10}>
             <Button
               style={{ transition: "background-color 0.3s ease-in-out" }}
               bg={isHover ? colors.blue : colors.darkerGrey}
@@ -111,7 +110,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             >
               EXPLORE
             </Button>
-          </CardFooter>
+          </CardFooter> */}
         </>
       )}
     </Card>

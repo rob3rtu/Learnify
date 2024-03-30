@@ -7,6 +7,7 @@ import {
   Flex,
   IconButton,
   Text,
+  Tooltip,
   useToast,
 } from "@chakra-ui/react";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
@@ -18,7 +19,6 @@ import { apiClient } from "../../utils/apiClient";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../firebase-config";
 import moment from "moment";
-import { useNavigate } from "react-router-dom";
 
 interface PostCardProps {
   post: PostInterface;
@@ -37,7 +37,6 @@ export const PostCard: React.FC<PostCardProps> = ({
   openCommentsModal,
   fakeReload,
 }) => {
-  const nav = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.account);
@@ -152,7 +151,14 @@ export const PostCard: React.FC<PostCardProps> = ({
         setisHover(false);
       }}
     >
-      <Flex width={"100%"} p={5} pb={0} direction={"column"} gap={3}>
+      <Flex
+        width={"100%"}
+        p={5}
+        pb={0}
+        direction={"column"}
+        gap={3}
+        overflow={"clip"}
+      >
         <Flex justifyContent={"space-between"} width={"100%"}>
           <Flex
             alignItems={"center"}
@@ -201,7 +207,12 @@ export const PostCard: React.FC<PostCardProps> = ({
           </Flex>
         </Flex>
 
-        <Flex alignItems={"center"} justify={"space-between"}>
+        <Flex
+          alignItems={"flex-start"}
+          justify={"space-between"}
+          direction={"column"}
+          gap={5}
+        >
           <Flex direction={"column"} alignItems={"flex-start"}>
             <Text
               color={colors.white}
@@ -219,19 +230,27 @@ export const PostCard: React.FC<PostCardProps> = ({
             </Text>
           </Flex>
 
-          <Text
-            color={colors.grey}
-            fontWeight={700}
-            fontFamily={"WorkSans-Regular"}
-            fontSize={15}
-            maxW={"50%"}
-            overflow={"clip"}
-            noOfLines={1}
+          <Tooltip
+            label={
+              localPost.resourceType === "link"
+                ? localPost.resourceUrl
+                : localPost.resourceUrl.split(/%2F|\?/)[1]
+            }
           >
-            {localPost.resourceType === "link"
-              ? localPost.resourceUrl
-              : localPost.resourceUrl.split(/%2F|\?/)[1]}
-          </Text>
+            <Text
+              color={colors.grey}
+              fontWeight={600}
+              fontFamily={"WorkSans-Regular"}
+              fontSize={15}
+              overflow={"clip"}
+              w={"100%"}
+              noOfLines={1}
+            >
+              {localPost.resourceType === "link"
+                ? localPost.resourceUrl
+                : localPost.resourceUrl.split(/%2F|\?/)[1]}
+            </Text>
+          </Tooltip>
         </Flex>
 
         <Flex

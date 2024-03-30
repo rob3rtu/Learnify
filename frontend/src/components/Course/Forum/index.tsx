@@ -4,7 +4,6 @@ import {
   Spinner,
   Text,
   Image,
-  useToast,
   Avatar,
   Box,
 } from "@chakra-ui/react";
@@ -15,7 +14,6 @@ import { colors } from "../../../theme";
 import { AnyAction } from "redux";
 import { getForum } from "../api";
 import NotFoundSVG from "../../../assets/not-found.svg";
-import { apiClient } from "../../../utils/apiClient";
 import moment from "moment";
 import { socket } from "./socket";
 
@@ -25,7 +23,6 @@ interface ForumProps {
 
 export const Forum: React.FC<ForumProps> = ({ courseId }) => {
   const dispatch = useDispatch();
-  const toast = useToast();
   const forum = useSelector((state: RootState) => state.forum.forum);
   const user = useSelector((state: RootState) => state.auth.account);
   const loading = useSelector((state: RootState) => state.forum.loading);
@@ -111,8 +108,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
 
   return (
     <Flex
-      direction={"column-reverse"}
-      maxH={"74vh"}
+      direction={"column"}
       width={"100%"}
       flex={1}
       overflowY={"scroll"}
@@ -132,7 +128,6 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
         </Text>
       ) : (
         <>
-          <Box ref={forumBottomRef} />
           {forum.messages.map((message) => {
             return (
               <Flex
@@ -151,7 +146,9 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
                     user?.id === message.user.id ? colors.blue : colors.white
                   }
                   borderRadius={10}
-                  w={"fit-content"}
+                  borderTopRightRadius={user?.id === message.user.id ? 0 : 10}
+                  borderTopLeftRadius={user?.id !== message.user.id ? 0 : 10}
+                  maxW={"80%"}
                   px={3}
                 >
                   <Avatar
@@ -193,6 +190,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
               </Flex>
             );
           })}
+          <Box ref={forumBottomRef} />
         </>
       )}
 
@@ -204,14 +202,15 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
           }
         }}
         style={{
-          width: "90%",
-          position: "absolute",
-          bottom: 5,
-          alignSelf: "center",
+          width: "100%",
+          position: "fixed",
+          bottom: 0,
+          backgroundColor: colors.black,
+          padding: 10,
         }}
       >
         <Input
-          width={"100%"}
+          width={"90%"}
           maxLength={250}
           placeholder="Ask any question..."
           color={colors.white}

@@ -73,7 +73,7 @@ export const Home = () => {
             width="100vw"
             padding={20}
             spacing={20}
-            templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
+            templateColumns="repeat(auto-fill, minmax(250px, 1fr))"
           >
             {filteredCourses.map((course: CourseInterface) => (
               <CourseCard key={course.id} course={course} />

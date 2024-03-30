@@ -14,7 +14,7 @@ import { RootState } from "../../Store";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { NewPostModal } from "./NewPostModal";
 import { IoIosPeople } from "react-icons/io";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TeachersModal } from "./TeachersModal";
 
 interface SideBarProps {
@@ -36,6 +36,33 @@ export const SideBar: React.FC<SideBarProps> = ({
     (state: RootState) => state.course.sideFilters
   );
   const [teachersOpen, setTeachersOpen] = useState<boolean>(false);
+  const [buttonsTexts, setButtonsTexts] = useState<{
+    newPost: string;
+    teschers: string;
+    delete: string;
+  }>({ newPost: "New post", teschers: "Teachers", delete: "Delete" });
+
+  useEffect(() => {
+    function handleWindowsResize() {
+      if (window.innerWidth < 670) {
+        setButtonsTexts({
+          newPost: "",
+          teschers: "",
+          delete: "",
+        });
+      } else {
+        setButtonsTexts({
+          newPost: "New post",
+          teschers: "Teachers",
+          delete: "Delete",
+        });
+      }
+    }
+
+    window.addEventListener("resize", handleWindowsResize);
+
+    return () => window.removeEventListener("resize", handleWindowsResize);
+  }, []);
 
   return (
     <Flex
@@ -183,7 +210,7 @@ export const SideBar: React.FC<SideBarProps> = ({
           rightIcon={<AddIcon />}
           onClick={onOpen}
         >
-          New post
+          {buttonsTexts.newPost}
         </Button>
 
         <Button
@@ -201,7 +228,7 @@ export const SideBar: React.FC<SideBarProps> = ({
             setTeachersOpen(true);
           }}
         >
-          {user?.role === "student" ? "See teachers" : "Manage teachers"}
+          {buttonsTexts.teschers}
         </Button>
 
         {user?.role === "admin" && (
@@ -217,7 +244,7 @@ export const SideBar: React.FC<SideBarProps> = ({
             rightIcon={<DeleteIcon />}
             onClick={handleDeleteCourse}
           >
-            Delete course
+            {buttonsTexts.delete}
           </Button>
         )}
       </Flex>

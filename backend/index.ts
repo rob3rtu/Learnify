@@ -54,7 +54,7 @@ io.on("connection", (socket) => {
       const forum = await prisma.forum.findFirst({
         where: { id: createdMessage.forumId ?? "" },
         include: {
-          messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+          messages: { include: { user: true }, orderBy: { createdAt: "asc" } },
         },
       });
 
