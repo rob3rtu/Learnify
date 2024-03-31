@@ -13,9 +13,11 @@ import {
   Avatar,
   InputGroup,
   InputRightAddon,
+  Box,
+  Spinner,
 } from "@chakra-ui/react";
 import { PostInterface } from "./types";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { apiClient } from "../../utils/apiClient";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
@@ -41,6 +43,9 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
   const course = useSelector((state: RootState) => state.course.course);
   const [localPost, setLocalPost] = useState<PostInterface | null>(post);
   const [message, setMessage] = useState<string>("");
+  const [loadingSendMessage, setLoadingSendMessage] = useState(false);
+
+  const commentsBottomRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     if (post) {
@@ -48,7 +53,18 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
     }
   }, [post]);
 
+  useEffect(() => {
+    commentsBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [localPost]);
+
+  useLayoutEffect(() => {
+    if (isOpen && commentsBottomRef.current) {
+      commentsBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isOpen]);
+
   const handleSubmitMessage = async () => {
+    setLoadingSendMessage(true);
     apiClient
       .post(`post/comment/${post?.id}`, { message })
       .then((res) => {
@@ -78,6 +94,9 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
           duration: 5000,
           isClosable: true,
         });
+      })
+      .finally(() => {
+        setLoadingSendMessage(false);
       });
   };
 
@@ -87,6 +106,8 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
       onClose={onClose}
       size={"3xl"}
       motionPreset="slideInTop"
+      scrollBehavior="inside"
+      initialFocusRef={commentsBottomRef}
     >
       <ModalOverlay
         bg="whiteAlpha.300"
@@ -98,8 +119,8 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
           {localPost?.title}
         </ModalHeader>
         <ModalCloseButton color={colors.white} />
-        <ModalBody>
-          <Flex h={400} overflowY={"scroll"} direction={"column"} gap={5}>
+        <ModalBody minH={300}>
+          <Flex flex={1} overflowY={"scroll"} direction={"column"} gap={5}>
             {localPost?.comments.length === 0 ? (
               <Flex alignItems={"center"} justify={"center"} flex={1}>
                 <Text
@@ -111,55 +132,59 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                 </Text>
               </Flex>
             ) : (
-              localPost?.comments.map((comment) => {
-                return (
-                  <Flex
-                    key={comment.id}
-                    gap={2}
-                    alignItems={"center"}
-                    bgColor={colors.white}
-                    borderRadius={10}
-                    w={"fit-content"}
-                    px={3}
-                  >
-                    <Avatar
-                      src={comment.user?.profileImage ?? undefined}
-                      fontFamily="WorkSans-Regular"
-                      cursor="pointer"
-                      name={
-                        comment.user?.fullName ??
-                        comment.user?.email.split("@")[0]
-                      }
-                      size="sm"
-                    />
+              <>
+                {localPost?.comments.map((comment) => {
+                  return (
                     <Flex
-                      direction={"column"}
-                      gap={3}
-                      alignItems={"flex-start"}
-                      p={2}
+                      key={comment.id}
+                      gap={2}
+                      alignItems={"center"}
+                      bgColor={colors.white}
+                      borderRadius={10}
+                      w={"fit-content"}
+                      px={3}
                     >
+                      <Avatar
+                        src={comment.user?.profileImage ?? undefined}
+                        fontFamily="WorkSans-Regular"
+                        cursor="pointer"
+                        name={
+                          comment.user?.fullName ??
+                          comment.user?.email.split("@")[0]
+                        }
+                        size="sm"
+                      />
                       <Flex
-                        width={"100%"}
-                        justify={"space-between"}
-                        gap={10}
-                        fontSize={12}
+                        direction={"column"}
+                        gap={3}
+                        alignItems={"flex-start"}
+                        p={2}
                       >
-                        <Text fontFamily={"WorkSans-SemiBold"}>
-                          {comment.user.fullName}
-                        </Text>
-                        <Text fontFamily={"WorkSans-SemiBold"}>
-                          {moment(comment.createdAt)
-                            .format("HH:mm DD.MM.YYYY")
-                            .toLocaleString()}
+                        <Flex
+                          width={"100%"}
+                          justify={"space-between"}
+                          gap={10}
+                          fontSize={12}
+                        >
+                          <Text fontFamily={"WorkSans-SemiBold"}>
+                            {comment.user.fullName}
+                          </Text>
+                          <Text fontFamily={"WorkSans-SemiBold"}>
+                            {moment(comment.createdAt)
+                              .format("HH:mm DD.MM.YYYY")
+                              .toLocaleString()}
+                          </Text>
+                        </Flex>
+                        <Text fontFamily={"WorkSansRegular"} fontSize={17}>
+                          {comment.message}
                         </Text>
                       </Flex>
-                      <Text fontFamily={"WorkSansRegular"} fontSize={17}>
-                        {comment.message}
-                      </Text>
                     </Flex>
-                  </Flex>
-                );
-              })
+                  );
+                })}
+
+                <Box tabIndex={-1} ref={commentsBottomRef} />
+              </>
             )}
           </Flex>
         </ModalBody>
@@ -199,7 +224,11 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                   }
                 }}
               >
-                <ChevronRightIcon color={"white"} />
+                {loadingSendMessage ? (
+                  <Spinner size={"sm"} color={"white"} />
+                ) : (
+                  <ChevronRightIcon color={"white"} />
+                )}
               </InputRightAddon>
             </InputGroup>
           </form>

@@ -13,6 +13,7 @@ interface UserDTO {
 interface PaginationBody {
   section: "materials" | "courses" | "seminars" | "laboratory" | "forum";
   skip?: number;
+  search?: string;
 }
 
 //get user's posts
@@ -31,7 +32,7 @@ userRouter.post("/posts", async (req, res) => {
       },
     });
 
-    let postsBySection;
+    let postsBySection, searchedPosts;
 
     switch (body.section) {
       case "materials":
@@ -48,7 +49,13 @@ userRouter.post("/posts", async (req, res) => {
         break;
     }
 
-    let paginatedPosts = postsBySection.slice(
+    if (body.search) {
+      searchedPosts = postsBySection.filter((post) =>
+        post.title?.toLowerCase().includes(body.search?.toLowerCase() ?? "")
+      );
+    } else searchedPosts = postsBySection;
+
+    let paginatedPosts = searchedPosts.slice(
       body.skip ?? 0,
       body.skip ? body.skip + 10 : 10
     );

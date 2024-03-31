@@ -24,6 +24,7 @@ interface PaginationBody {
   skip?: number;
   sortBy?: "newest" | "oldest" | "mostlikes" | "leastlikes";
   filterBy?: "myposts" | "postsi'veliked";
+  search?: string;
 }
 
 //get all courses
@@ -101,7 +102,11 @@ courseRouter.post("/:id", async (req, res) => {
     }
 
     const posts = course.posts;
-    let postsBySection, filteredPosts, sortedPosts, paginatedPosts;
+    let postsBySection,
+      filteredPosts,
+      searchedPosts,
+      sortedPosts,
+      paginatedPosts;
 
     switch (body.section) {
       case "materials":
@@ -136,9 +141,15 @@ courseRouter.post("/:id", async (req, res) => {
         break;
     }
 
+    if (body.search) {
+      searchedPosts = filteredPosts.filter((post) =>
+        post.title?.toLowerCase().includes(body.search?.toLowerCase() ?? "")
+      );
+    } else searchedPosts = filteredPosts;
+
     switch (body.sortBy) {
       case "newest":
-        sortedPosts = filteredPosts.sort((a, b) => {
+        sortedPosts = searchedPosts.sort((a, b) => {
           const aDate = new Date(a.createdAt);
           const bDate = new Date(b.createdAt);
 
@@ -147,7 +158,7 @@ courseRouter.post("/:id", async (req, res) => {
         break;
 
       case "oldest":
-        sortedPosts = filteredPosts.sort((a, b) => {
+        sortedPosts = searchedPosts.sort((a, b) => {
           const aDate = new Date(a.createdAt);
           const bDate = new Date(b.createdAt);
 
@@ -156,20 +167,20 @@ courseRouter.post("/:id", async (req, res) => {
         break;
 
       case "mostlikes":
-        sortedPosts = filteredPosts.sort((a, b) => {
+        sortedPosts = searchedPosts.sort((a, b) => {
           return b.likes.length - a.likes.length;
         });
         break;
 
       case "leastlikes":
-        sortedPosts = filteredPosts.sort((a, b) => {
+        sortedPosts = searchedPosts.sort((a, b) => {
           return a.likes.length - b.likes.length;
         });
 
         break;
 
       default:
-        sortedPosts = filteredPosts;
+        sortedPosts = searchedPosts;
         break;
     }
 
