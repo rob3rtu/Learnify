@@ -6,6 +6,7 @@ import {
   Box,
   Flex,
   IconButton,
+  Spinner,
   Text,
   Tooltip,
   useToast,
@@ -44,6 +45,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   const [isHover, setisHover] = useState<boolean>(false);
   const [canShowMenu, setCanShowMenu] = useState<boolean>(false);
   const [localPost, setLocalPost] = useState<PostInterface>(post);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   useEffect(() => {
     setCanShowMenu(
@@ -67,6 +69,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   };
 
   const handleDelete = async () => {
+    setLoadingDelete(true);
     apiClient
       .delete(`post/${localPost.id}`)
       .then(async (res) => {
@@ -102,6 +105,9 @@ export const PostCard: React.FC<PostCardProps> = ({
           duration: 5000,
           isClosable: true,
         });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
       });
   };
 
@@ -327,15 +333,19 @@ export const PostCard: React.FC<PostCardProps> = ({
               }}
             />
           )}
-          <IconButton
-            icon={<DeleteIcon />}
-            aria-label="delete"
-            variant={"link"}
-            size={"lg"}
-            p={2}
-            color={colors.white}
-            onClick={handleDelete}
-          />
+          {loadingDelete ? (
+            <Spinner color="white" />
+          ) : (
+            <IconButton
+              icon={<DeleteIcon />}
+              aria-label="delete"
+              variant={"link"}
+              size={"lg"}
+              p={2}
+              color={colors.white}
+              onClick={handleDelete}
+            />
+          )}
         </motion.div>
       )}
     </Flex>
