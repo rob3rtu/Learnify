@@ -2,6 +2,9 @@ import {
   Button,
   Flex,
   Image,
+  Input,
+  InputGroup,
+  InputLeftElement,
   Spinner,
   Text,
   useDisclosure,
@@ -11,12 +14,13 @@ import { PostInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { colors } from "../../theme";
 import { PostCard } from "./PostCard";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { NewPostModal } from "./NewPostModal";
 import { CommentsModal } from "./CommentsModal";
 import { apiClient } from "../../utils/apiClient";
+import { SearchIcon } from "@chakra-ui/icons";
 
 interface FeedProps {
   posts: PostInterface[];
@@ -25,7 +29,6 @@ interface FeedProps {
 
 export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   const toast = useToast();
-  const user = useSelector((state: RootState) => state.auth.account);
   const course = useSelector((state: RootState) => state.course.course);
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -41,6 +44,8 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   const [skip, setSkip] = useState(10);
   const [canSkip, setCanSkip] = useState(true);
   const [loadingSkip, setLoadingSkip] = useState(false);
+  const [search, setSearch] = useState<string>("");
+  const [refetchFeed, setRefetchFeed] = useState(false);
 
   const [editValues, setEditValues] = useState<
     | {
@@ -63,6 +68,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
           section: filters.section,
           sortBy: sideSorting.sortBy,
           filterBy: sideFilters.filterBy,
+          search,
         })
         .then((res) => {
           dispatch({
@@ -87,7 +93,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         });
     } else {
       apiClient
-        .post("user/posts", { section: filters.section })
+        .post("user/posts", { section: filters.section, search })
         .then((res) => {
           setFilteredPosts(res.data.posts);
           setCanSkip(res.data.posts.length === 10);
@@ -106,7 +112,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
           setLoading(false);
         });
     }
-  }, [sideSorting, sideFilters, filters]);
+  }, [sideSorting, sideFilters, filters, refetchFeed]);
 
   useEffect(() => {
     setFilteredPosts(course?.posts ?? []);
@@ -211,6 +217,24 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         });
   };
 
+  //used to optimize the search functionality over pagination
+  //executes the function `callback` after `time` ms
+  const debounce = (callback: () => void, time: number) => {
+    let timerId: any;
+    return () => {
+      clearTimeout(timerId);
+      timerId = setTimeout(callback, time);
+    };
+  };
+
+  //need for useCallback because of the way React works
+  const debounceSearch = useCallback(
+    debounce(() => {
+      setRefetchFeed((prev) => !prev);
+    }, 500),
+    []
+  );
+
   return (
     <Flex
       direction={"column"}
@@ -237,6 +261,22 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         fakeReload={fakeReload}
       />
 
+      <InputGroup>
+        <InputLeftElement pointerEvents={"none"}>
+          <SearchIcon color={"white"} />
+        </InputLeftElement>
+        <Input
+          width={"50%"}
+          placeholder="Search by name"
+          color={"white"}
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            debounceSearch();
+          }}
+        />
+      </InputGroup>
+
       {loading ? (
         <Flex flex={1} width="100%" align="center" justify="center">
           <Spinner color="white" />
@@ -256,7 +296,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
             fontSize={20}
             color={colors.white}
           >
-            There are no posts yet.
+            There are no posts.
           </Text>
         </Flex>
       ) : (
