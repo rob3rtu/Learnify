@@ -6,6 +6,7 @@ import {
   Image,
   Avatar,
   Box,
+  IconButton,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../Store";
@@ -16,6 +17,7 @@ import { getForum } from "../api";
 import NotFoundSVG from "../../../assets/not-found.svg";
 import moment from "moment";
 import { socket } from "./socket";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 interface ForumProps {
   courseId: string;
@@ -29,10 +31,23 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
   const [message, setMessage] = useState<string>("");
 
   const forumBottomRef = useRef<null | HTMLDivElement>(null);
+  const forumTopRef = useRef<null | HTMLDivElement>(null);
+  const [showGoDown, setShowGoDown] = useState(false);
 
   useEffect(() => {
+    const handleShowGoDown = () => {
+      const bottomElement = forumBottomRef.current?.getBoundingClientRect();
+      setShowGoDown((bottomElement?.bottom ?? 0) > window.innerHeight);
+    };
+    window.addEventListener("scroll", handleShowGoDown);
+
     dispatch(getForum(courseId) as unknown as AnyAction);
     socket.on("connection", () => {});
+
+    return () => {
+      window.removeEventListener("scroll", handleShowGoDown);
+    };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -108,6 +123,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
 
   return (
     <Flex
+      id="forumArea"
       direction={"column"}
       width={"100%"}
       flex={1}
@@ -128,6 +144,7 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
         </Text>
       ) : (
         <>
+          <Box ref={forumTopRef} />
           {forum.messages.map((message) => {
             return (
               <Flex
@@ -190,10 +207,26 @@ export const Forum: React.FC<ForumProps> = ({ courseId }) => {
               </Flex>
             );
           })}
+
           <Box ref={forumBottomRef} />
         </>
       )}
-
+      <IconButton
+        alignSelf={"center"}
+        display={showGoDown ? "flex" : "none"}
+        position={"fixed"}
+        bottom={20}
+        isRound={true}
+        variant="solid"
+        bgColor={colors.blue}
+        aria-label="go down"
+        fontSize="40px"
+        size={"lg"}
+        icon={<ChevronDownIcon color={"whhite"} />}
+        onClick={() => {
+          forumBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        }}
+      />
       <form
         onSubmit={(e) => {
           e.preventDefault();

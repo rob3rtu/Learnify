@@ -1,6 +1,9 @@
 import {
+  Box,
   Button,
   Flex,
+  Icon,
+  IconButton,
   Image,
   Input,
   InputGroup,
@@ -14,13 +17,13 @@ import { PostInterface } from "./types";
 import SadSVG from "../../assets/sad.svg";
 import { colors } from "../../theme";
 import { PostCard } from "./PostCard";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../Store";
 import { NewPostModal } from "./NewPostModal";
 import { CommentsModal } from "./CommentsModal";
 import { apiClient } from "../../utils/apiClient";
-import { SearchIcon } from "@chakra-ui/icons";
+import { ChevronUpIcon, SearchIcon } from "@chakra-ui/icons";
 
 interface FeedProps {
   posts: PostInterface[];
@@ -46,6 +49,8 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
   const [loadingSkip, setLoadingSkip] = useState(false);
   const [search, setSearch] = useState<string>("");
   const [refetchFeed, setRefetchFeed] = useState(false);
+  const searchRef = useRef<null | HTMLInputElement>(null);
+  const [showGoUp, setShowGoUp] = useState(false);
 
   const [editValues, setEditValues] = useState<
     | {
@@ -126,7 +131,22 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
 
     setCanSkip(filteredPosts.length === 10);
 
+    const handleShowGoUp = () => {
+      const searchElement = searchRef.current?.getBoundingClientRect();
+
+      setShowGoUp((searchElement?.top ?? 0) < 0);
+    };
+
+    document
+      ?.getElementById("feedArea")
+      ?.addEventListener("scroll", handleShowGoUp);
+
+    handleShowGoUp();
+
     return () => {
+      document
+        .getElementById("feedArea")
+        ?.removeEventListener("scroll", handleShowGoUp);
       dispatch({ type: "course/setSideSorting", payload: { sortBy: null } });
       dispatch({ type: "course/setSideFilters", payload: { filterBy: null } });
     };
@@ -237,6 +257,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
 
   return (
     <Flex
+      id="feedArea"
       direction={"column"}
       maxH={"83vh"}
       width={"80vw"}
@@ -261,7 +282,7 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
         fakeReload={fakeReload}
       />
 
-      <InputGroup>
+      <InputGroup ref={searchRef}>
         <InputLeftElement pointerEvents={"none"}>
           <SearchIcon color={"white"} />
         </InputLeftElement>
@@ -331,6 +352,26 @@ export const Feed: React.FC<FeedProps> = ({ posts, fakeReload }) => {
               </Flex>
             )
           )}
+
+          <Box height={5} />
+          <IconButton
+            display={showGoUp ? "flex" : "none"}
+            position={"absolute"}
+            bottom={5}
+            right={10}
+            isRound={true}
+            variant="solid"
+            bgColor={colors.blue}
+            aria-label="go up"
+            fontSize="40px"
+            size={"lg"}
+            icon={<ChevronUpIcon color={"whhite"} />}
+            onClick={() => {
+              document
+                .getElementById("feedArea")
+                ?.scroll({ top: 0, behavior: "smooth" });
+            }}
+          />
         </>
       )}
     </Flex>
