@@ -39,7 +39,9 @@ postRouter.post("/new", async (req, res) => {
       },
     });
 
-    return res.json(updatedClass);
+    const firstPosts = updatedClass?.posts.slice(0, 10);
+
+    return res.json({ ...updatedClass, posts: firstPosts });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
@@ -70,7 +72,9 @@ postRouter.put("/edit/:id", async (req, res) => {
       },
     });
 
-    return res.json(updatedClass);
+    const firstPosts = updatedClass?.posts.slice(0, 10);
+
+    return res.json({ ...updatedClass, posts: firstPosts });
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
