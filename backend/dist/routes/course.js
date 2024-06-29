@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -71,43 +82,9 @@ courseRouter.get("/all", function (req, res) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
-//get course by id
-courseRouter.get("/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var course, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, prisma.class.findFirst({
-                        where: { id: req.params.id },
-                        include: {
-                            posts: {
-                                orderBy: { createdAt: "desc" },
-                                include: {
-                                    user: true,
-                                    likes: true,
-                                    comments: { include: { user: true } },
-                                },
-                            },
-                        },
-                    })];
-            case 1:
-                course = _a.sent();
-                if (course === null) {
-                    return [2 /*return*/, res.sendStatus(404)];
-                }
-                return [2 /*return*/, res.json(course)];
-            case 2:
-                error_1 = _a.sent();
-                console.log(error_1);
-                return [2 /*return*/, res.sendStatus(500)];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
 //create new course
 courseRouter.post("/new", (0, rolePermission_1.default)(["admin"]), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var course, createdCourse, newCourses, error_2;
+    var course, createdCourse, newCourses, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -130,10 +107,113 @@ courseRouter.post("/new", (0, rolePermission_1.default)(["admin"]), function (re
                 _a.sent();
                 return [2 /*return*/, res.json({ courses: newCourses })];
             case 5:
-                error_2 = _a.sent();
-                console.log(error_2);
+                error_1 = _a.sent();
+                console.log(error_1);
                 return [2 /*return*/, res.sendStatus(500)];
             case 6: return [2 /*return*/];
+        }
+    });
+}); });
+//get course by id
+courseRouter.post("/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var body, user, course, posts, postsBySection, filteredPosts, searchedPosts, sortedPosts, paginatedPosts, error_2;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                body = req.body;
+                user = req.user;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, prisma.class.findFirst({
+                        where: { id: req.params.id },
+                        include: {
+                            posts: {
+                                orderBy: { createdAt: "desc" },
+                                include: {
+                                    user: true,
+                                    likes: true,
+                                    comments: { include: { user: true } },
+                                },
+                            },
+                        },
+                    })];
+            case 2:
+                course = _b.sent();
+                if (course === null) {
+                    return [2 /*return*/, res.sendStatus(404)];
+                }
+                posts = course.posts;
+                postsBySection = void 0, filteredPosts = void 0, searchedPosts = void 0, sortedPosts = void 0, paginatedPosts = void 0;
+                switch (body.section) {
+                    case "materials":
+                    case "courses":
+                    case "seminars":
+                    case "laboratory":
+                        postsBySection = posts.filter(function (post) { return post.classSection === body.section; });
+                        break;
+                    default:
+                        postsBySection = posts;
+                        break;
+                }
+                switch (body.filterBy) {
+                    case "myposts":
+                        filteredPosts = postsBySection.filter(function (post) { return post.userId === (user === null || user === void 0 ? void 0 : user.id); });
+                        break;
+                    case "postsi'veliked":
+                        filteredPosts = postsBySection.filter(function (post) {
+                            var _a;
+                            return post.likes.map(function (like) { return like.userId; }).includes((_a = user === null || user === void 0 ? void 0 : user.id) !== null && _a !== void 0 ? _a : "");
+                        });
+                        break;
+                    default:
+                        filteredPosts = postsBySection;
+                        break;
+                }
+                if (body.search) {
+                    searchedPosts = filteredPosts.filter(function (post) { var _a, _b, _c; return (_a = post.title) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes((_c = (_b = body.search) === null || _b === void 0 ? void 0 : _b.toLowerCase()) !== null && _c !== void 0 ? _c : ""); });
+                }
+                else
+                    searchedPosts = filteredPosts;
+                switch (body.sortBy) {
+                    case "newest":
+                        sortedPosts = searchedPosts.sort(function (a, b) {
+                            var aDate = new Date(a.createdAt);
+                            var bDate = new Date(b.createdAt);
+                            return aDate > bDate ? -1 : 1;
+                        });
+                        break;
+                    case "oldest":
+                        sortedPosts = searchedPosts.sort(function (a, b) {
+                            var aDate = new Date(a.createdAt);
+                            var bDate = new Date(b.createdAt);
+                            return aDate < bDate ? -1 : 1;
+                        });
+                        break;
+                    case "mostlikes":
+                        sortedPosts = searchedPosts.sort(function (a, b) {
+                            return b.likes.length - a.likes.length;
+                        });
+                        break;
+                    case "leastlikes":
+                        sortedPosts = searchedPosts.sort(function (a, b) {
+                            return a.likes.length - b.likes.length;
+                        });
+                        break;
+                    default:
+                        sortedPosts = searchedPosts;
+                        break;
+                }
+                paginatedPosts = sortedPosts.slice((_a = body.skip) !== null && _a !== void 0 ? _a : 0, body.skip ? body.skip + 10 : 10);
+                if (body.skip)
+                    return [2 /*return*/, res.json({ posts: paginatedPosts })];
+                return [2 /*return*/, res.json(__assign(__assign({}, course), { posts: paginatedPosts }))];
+            case 3:
+                error_2 = _b.sent();
+                console.log(error_2);
+                return [2 /*return*/, res.sendStatus(500)];
+            case 4: return [2 /*return*/];
         }
     });
 }); });

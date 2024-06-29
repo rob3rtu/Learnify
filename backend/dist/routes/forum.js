@@ -56,7 +56,7 @@ forumRouter.get("/:id", function (req, res) { return __awaiter(void 0, void 0, v
                 return [4 /*yield*/, prisma.forum.findFirst({
                         where: { classId: classId },
                         include: {
-                            messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+                            messages: { include: { user: true }, orderBy: { createdAt: "asc" } },
                         },
                     })];
             case 2:
@@ -89,7 +89,7 @@ forumRouter.post("/new", function (req, res) { return __awaiter(void 0, void 0, 
                 return [4 /*yield*/, prisma.forum.findFirst({
                         where: { id: (_a = createdMessage.forumId) !== null && _a !== void 0 ? _a : "" },
                         include: {
-                            messages: { include: { user: true }, orderBy: { createdAt: "desc" } },
+                            messages: { include: { user: true }, orderBy: { createdAt: "asc" } },
                         },
                     })];
             case 3:

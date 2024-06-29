@@ -56,15 +56,17 @@ var rolePermission_1 = __importDefault(require("../middlewares/rolePermission"))
 var userRouter = express_1.default.Router();
 var prisma = new client_1.PrismaClient();
 //get user's posts
-userRouter.get("/posts", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, posts, error_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+userRouter.post("/posts", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, body, posts, postsBySection, searchedPosts, paginatedPosts, error_1;
+    var _a;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
                 user = req.user;
-                _a.label = 1;
+                body = req.body;
+                _b.label = 1;
             case 1:
-                _a.trys.push([1, 3, , 4]);
+                _b.trys.push([1, 3, , 4]);
                 return [4 /*yield*/, prisma.post.findMany({
                         where: { userId: user === null || user === void 0 ? void 0 : user.id },
                         orderBy: { createdAt: "desc" },
@@ -75,12 +77,28 @@ userRouter.get("/posts", function (req, res) { return __awaiter(void 0, void 0, 
                         },
                     })];
             case 2:
-                posts = _a.sent();
-                return [2 /*return*/, res.json({
-                        posts: posts,
-                    })];
+                posts = _b.sent();
+                postsBySection = void 0, searchedPosts = void 0;
+                switch (body.section) {
+                    case "materials":
+                    case "courses":
+                    case "seminars":
+                    case "laboratory":
+                        postsBySection = posts.filter(function (post) { return post.classSection === body.section; });
+                        break;
+                    default:
+                        postsBySection = posts;
+                        break;
+                }
+                if (body.search) {
+                    searchedPosts = postsBySection.filter(function (post) { var _a, _b, _c; return (_a = post.title) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes((_c = (_b = body.search) === null || _b === void 0 ? void 0 : _b.toLowerCase()) !== null && _c !== void 0 ? _c : ""); });
+                }
+                else
+                    searchedPosts = postsBySection;
+                paginatedPosts = searchedPosts.slice((_a = body.skip) !== null && _a !== void 0 ? _a : 0, body.skip ? body.skip + 10 : 10);
+                return [2 /*return*/, res.json({ posts: paginatedPosts })];
             case 3:
-                error_1 = _a.sent();
+                error_1 = _b.sent();
                 console.log(error_1);
                 return [2 /*return*/, res.sendStatus(500)];
             case 4: return [2 /*return*/];

@@ -42,6 +42,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var cors = require("cors");
@@ -54,9 +55,11 @@ var course_1 = __importDefault(require("./routes/course"));
 var teacher_1 = __importDefault(require("./routes/teacher"));
 var post_1 = __importDefault(require("./routes/post"));
 var forum_1 = __importDefault(require("./routes/forum"));
+var http_1 = require("http");
+var socket_io_1 = require("socket.io");
 require("dotenv").config();
 var prisma = new client_1.PrismaClient();
-var port = 3001;
+var port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3001;
 var app = (0, express_1.default)();
 app.use(cors());
 app.use(express_1.default.json());
@@ -93,7 +96,40 @@ var checkDbConnection = function () { return __awaiter(void 0, void 0, void 0, f
         }
     });
 }); };
-app.listen(port, function () { return __awaiter(void 0, void 0, void 0, function () {
+var expressServer = (0, http_1.createServer)(app);
+var io = new socket_io_1.Server(expressServer, { cors: { origin: "*" } });
+io.on("connection", function (socket) {
+    socket.on("send-message", function (message) { return __awaiter(void 0, void 0, void 0, function () {
+        var createdMessage, forum, error_2;
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 3, , 4]);
+                    return [4 /*yield*/, prisma.message.create({ data: message })];
+                case 1:
+                    createdMessage = _b.sent();
+                    return [4 /*yield*/, prisma.forum.findFirst({
+                            where: { id: (_a = createdMessage.forumId) !== null && _a !== void 0 ? _a : "" },
+                            include: {
+                                messages: { include: { user: true }, orderBy: { createdAt: "asc" } },
+                            },
+                        })];
+                case 2:
+                    forum = _b.sent();
+                    socket.broadcast.emit("message-response", forum);
+                    socket.emit("message-response", forum);
+                    return [3 /*break*/, 4];
+                case 3:
+                    error_2 = _b.sent();
+                    console.log(error_2);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); });
+});
+expressServer.listen(port, function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -106,4 +142,5 @@ app.listen(port, function () { return __awaiter(void 0, void 0, void 0, function
     });
 }); });
 var templateObject_1;
+// io.listen(3002);
 //# sourceMappingURL=index.js.map
